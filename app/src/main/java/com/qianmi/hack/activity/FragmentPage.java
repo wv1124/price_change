@@ -23,7 +23,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.qianmi.hack.PcApplication;
 import com.qianmi.hack.R;
-import com.qianmi.hack.bean.AppInfo;
 import com.qianmi.hack.bean.Product;
 import com.qianmi.hack.bean.ProductListResult;
 import com.qianmi.hack.network.GsonRequest;
@@ -46,7 +45,7 @@ public class FragmentPage extends Fragment implements View.OnClickListener {
     private List<Product> mList = new ArrayList<Product>();
     private CustomListAdapter mAdapter;
     private CustomListView mListView;
-    private int mCount = 10;
+    private int curPage = 1;
 
     private Button mCanPullRefBtn, mCanLoadMoreBtn, mCanAutoLoadMoreBtn, mIsMoveToFirstItemBtn;
 
@@ -91,7 +90,8 @@ public class FragmentPage extends Fragment implements View.OnClickListener {
         mCanLoadMoreBtn.setOnClickListener(this);
         mCanAutoLoadMoreBtn.setOnClickListener(this);
         mIsMoveToFirstItemBtn.setOnClickListener(this);
-        bindData();
+        initView();
+        requestDate(curPage);
         return view;
     }
 
@@ -100,12 +100,11 @@ public class FragmentPage extends Fragment implements View.OnClickListener {
         mListView.setAdapter(mAdapter);
         mAdapter.notifyDataSetChanged();
         mListView.setOnRefreshListener(new CustomListView.OnRefreshListener() {
-
             @Override
             public void onRefresh() {
                 // TODO 下拉刷新
                 Log.e(TAG, "onRefresh");
-                loadData(0);
+                //loadData(0);
             }
         });
 
@@ -178,43 +177,16 @@ public class FragmentPage extends Fragment implements View.OnClickListener {
         new Thread() {
             @Override
             public void run() {
-                List<AppInfo> _List = null;
+                List<Product> _List = null;
                 switch (type) {
-                    case 0:
-                        mCount = 10;
-
-                        _List = new ArrayList<AppInfo>();
-                        for (int i = 1; i <= mCount; i++) {
-                            AppInfo ai = new AppInfo();
-
-                            ai.setAppIcon(BitmapFactory.decodeResource(getResources(),
-                                    R.drawable.ic_launcher));
-                            ai.setAppName("应用Demo_" + i);
-                            ai.setAppVer("版本: " + (i % 10 + 1) + "." + (i % 8 + 2) + "."
-                                    + (i % 6 + 3));
-                            ai.setAppSize("大小: " + i * 10 + "MB");
-
-                            _List.add(ai);
-                        }
+                    case 0:     // TODO 下拉刷新
+                        //_List = new ArrayList<Product>();
+                        //requestDate(++curPage);
                         break;
 
-                    case 1:
-                        _List = new ArrayList<AppInfo>();
-                        int _Index = mCount + 10;
-
-                        for (int i = mCount + 1; i <= _Index; i++) {
-                            AppInfo ai = new AppInfo();
-
-                            ai.setAppIcon(BitmapFactory.decodeResource(getResources(),
-                                    R.drawable.ic_launcher));
-                            ai.setAppName("应用Demo_" + i);
-                            ai.setAppVer("版本: " + (i % 10 + 1) + "." + (i % 8 + 2) + "."
-                                    + (i % 6 + 3));
-                            ai.setAppSize("大小: " + i * 10 + "MB");
-
-                            _List.add(ai);
-                        }
-                        mCount = _Index;
+                    case 1:         // TODO 加载更多
+                        //_List = new ArrayList<Product>();
+                        requestDate(++curPage);
                         break;
                 }
 
@@ -223,32 +195,32 @@ public class FragmentPage extends Fragment implements View.OnClickListener {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-
-                if (type == 0) {    //下拉刷新
-//					Collections.reverse(mList);	//逆序
-                    Message _Msg = mHandler.obtainMessage(REFRESH_DATA_FINISH, _List);
-                    mHandler.sendMessage(_Msg);
-                } else if (type == 1) {
-                    Message _Msg = mHandler.obtainMessage(LOAD_DATA_FINISH, _List);
-                    mHandler.sendMessage(_Msg);
-                }
             }
         }.start();
     }
 
-    private void bindData() {
+    private void requestDate(int curentPage) {
         GsonRequest mRequest = new GsonRequest(Request.Method.GET,
-                PcApplication.SERVER_URL + "supproducts/", null, ProductListResult.class,
+                PcApplication.SERVER_URL + "/supproducts/?page=" + curentPage, null, ProductListResult.class,
                 new Response.Listener<ProductListResult>() {
                     @Override
                     public void onResponse(ProductListResult resp) {
                         L.d("buildAppData return ");
                         ((TabHostActivity) FragmentPage.this.getActivity()).dismissLoadingDialog();
-                            if (resp != null) {
-                                L.d(resp.toString());
-                                mList.clear();
+                        if (resp != null) {
+                            L.d(resp.toString());
+                            mList.clear();
                             mList.addAll(resp.results);
-                            initView();
+                            //mCount = resp.count;
+                            //if (type == 0) {    //下拉刷新
+                            //					Collections.reverse(mList);	//逆序
+                            //Message _Msg = mHandler.obtainMessage(REFRESH_DATA_FINISH, mList);
+                            //mHandler.sendMessage(_Msg);
+                            //} else if (type == 1) {
+                            Message _Msg = mHandler.obtainMessage(LOAD_DATA_FINISH, mList);
+                            mHandler.sendMessage(_Msg);
+                            //}
+
                         } else {
                             L.e("lonin return error");
                         }
@@ -262,21 +234,6 @@ public class FragmentPage extends Fragment implements View.OnClickListener {
             }
         });
         ((TabHostActivity) FragmentPage.this.getActivity()).startRequest(mRequest);
-
-        /*
-        for (int i = 1; i <= 10; i++) {
-            AppInfo ai = new AppInfo();
-
-            ai.setAppIcon(BitmapFactory.decodeResource(getResources(),
-                    R.drawable.ic_launcher));
-            ai.setAppName("应用Demo_" + i);
-            ai.setAppVer("版本: " + (i % 10 + 1) + "." + (i % 8 + 2) + "."
-                    + (i % 6 + 3));
-            ai.setAppSize("大小: " + i * 10 + "MB");
-
-            mList.add(ai);
-        }
-        */
     }
 
     private class CustomListAdapter extends BaseAdapter {

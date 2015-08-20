@@ -294,7 +294,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     private void executeRequest(Request<?> request) {
         if (mNetworkOK) {
             if (request != null) {
-                showLoadingDialog();
+                //showLoadingDialog();
                 mVolleyQueue.add(request);
             } else {
                 L.e("request is null");

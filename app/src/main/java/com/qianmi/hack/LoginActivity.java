@@ -83,6 +83,10 @@ public class LoginActivity extends BaseActivity {
         mWrapperUsername.setErrorEnabled(true);
         mWrapperPwd.setErrorEnabled(true);
 
+        if(){
+            SPUtils.put(this, Constant.TOKEN, PcApplication.TOKEN);
+        }
+
         // set username and password input text watcher
         setInputZone();
     }
@@ -205,6 +209,7 @@ public class LoginActivity extends BaseActivity {
     }
 
     private void loginSuccess(String loginReturnData) {
+        SPUtils.put(this, Constant.TOKEN, PcApplication.TOKEN);
         Intent intent = new Intent(this, TabHostActivity.class);
         this.startActivity(intent);
         this.finish();
