@@ -1,0 +1,16 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.qianmi.epos.activity.OrderSearchActivity">
+
+    <item android:id="@+id/menu_search"
+        android:title="@string/menu_settings"
+        android:icon="@drawable/toolbar_menu_search_order"
+        app:showAsAction="never" />
+
+    <item android:id="@+id/menu_exit"
+        android:title="@string/menu_exit"
+        android:icon="@drawable/toolbar_menu_search_pos"
+        app:showAsAction="never" />
+
+</menu>

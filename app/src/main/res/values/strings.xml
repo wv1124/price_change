@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (C) 2015 The Android Open Source Project
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+-->
+
+<resources>
+    <string name="app_name">Cheesesquare</string>
+
+  <string name="cheese_ipsum">Jarlsberg lancashire edam. Dolcelatte hard cheese brie st. agur blue
+    cheese caerphilly bavarian bergkase cheese and biscuits mascarpone. Cheeseburger swiss bavarian
+    bergkase cream cheese fromage frais cheesy feet port-salut airedale. St. agur blue cheese rubber
+    cheese caerphilly cheddar cheesecake cream cheese manchego lancashire. Roquefort squirty cheese
+    the big cheese.</string>
+    <string name="checkin">Checkin</string>
+    <string name="menu_settings">Settings</string>
+    <string name="menu_exit">退出</string>
+
+    <string name="login_button_text">登录</string>
+    <string name="login_ongoing">登录中&#8230;&#8230;&#8230;</string>
+    <string name="login_input_hint_username">请输入用户名</string>
+    <string name="login_input_hint_pwd">请输入密码</string>
+    <string name="login_err_username">用户名不正确！</string>
+    <string name="login_err_pwd">密码不正确！</string>
+    <string name="login_err_not_exist_user">用户不存在！</string>
+    <string name="login_err_poor_network">网络异常，请稍后再试！</string>
+    <string name="login_hint_success">登录成功！</string>
+    <string name="login_username_format_error">请输入正确的用户名！</string>
+    <string name="login_pwd_format_error">请输入正确的密码！</string>
+    <string name="login_service_error">系统异常</string>
+    <string name="login_request_error">请求异常</string>
+    <string name="login_login_failed">用户登录失败</string>
+    <string name="login_token_refresh">登录有效期失效，请重新登录</string>
+    <string name="netConnectedError">网络异常，请稍后再试！</string>
+    <string name="dialog_common_loading">正在加载&#8230;&#8230;&#8230;</string>
+    <string name="dialog_btn_ok">确定</string>
+    <string name="dialog_btn_cancel">取消</string>
+    <string name="dialog_exit_confirm_title">退出</string>
+    <string name="dialog_exit_confirm_content">正在操作，是否确定退出？</string>
+    <string name="dialog_common_submitting">正在提交&#8230;&#8230;&#8230;</string>
+    <!-- 网络和请求相关 -->
+    <string name="requestError">请求发生错误</string>
+    <string-array name="str_arr">
+        <item>设置1</item>
+        <item>设置2</item>
+    </string-array>
+  <string-array name="str_arr_val">
+    <item>1</item>
+    <item>2</item>
+  </string-array>
+
+
+</resources>
