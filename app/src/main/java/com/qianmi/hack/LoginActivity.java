@@ -20,7 +20,6 @@ import com.qianmi.hack.activity.TabHostActivity;
 import com.qianmi.hack.bean.LoginRequest;
 import com.qianmi.hack.bean.Token;
 import com.qianmi.hack.network.GsonRequest;
-import com.qianmi.hack.network.ServerConnector;
 import com.qianmi.hack.utils.Constant;
 import com.qianmi.hack.utils.L;
 import com.qianmi.hack.utils.SPUtils;
@@ -83,8 +82,10 @@ public class LoginActivity extends BaseActivity {
         mWrapperUsername.setErrorEnabled(true);
         mWrapperPwd.setErrorEnabled(true);
 
-        if(){
-            SPUtils.put(this, Constant.TOKEN, PcApplication.TOKEN);
+        String token = (String) SPUtils.get(this, Constant.TOKEN, "");
+
+        if (token != null && token.length() > 0) {
+            loginSuccess(token);
         }
 
         // set username and password input text watcher
@@ -209,7 +210,7 @@ public class LoginActivity extends BaseActivity {
     }
 
     private void loginSuccess(String loginReturnData) {
-        SPUtils.put(this, Constant.TOKEN, PcApplication.TOKEN);
+        SPUtils.put(this, Constant.TOKEN, loginReturnData);
         Intent intent = new Intent(this, TabHostActivity.class);
         this.startActivity(intent);
         this.finish();
