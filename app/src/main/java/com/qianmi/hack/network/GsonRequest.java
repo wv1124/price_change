@@ -62,7 +62,7 @@ public class GsonRequest<T> extends Request<T> {
 
     @Override
     public String getBodyContentType() {
-        return "application/json; charset=" + getParamsEncoding();
+        return "application/json; charset=UTF-8";
     }
 
     @Override

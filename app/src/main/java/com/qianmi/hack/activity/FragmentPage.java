@@ -19,9 +19,12 @@ import android.widget.TextView;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.qianmi.hack.PcApplication;
 import com.qianmi.hack.R;
 import com.qianmi.hack.bean.AppInfo;
+import com.qianmi.hack.bean.Product;
 import com.qianmi.hack.bean.ProductListResult;
 import com.qianmi.hack.network.GsonRequest;
 import com.qianmi.hack.utils.L;
@@ -40,7 +43,7 @@ public class FragmentPage extends Fragment implements View.OnClickListener {
     private static final int LOAD_DATA_FINISH = 10;
     private static final int REFRESH_DATA_FINISH = 11;
 
-    private List<AppInfo> mList = new ArrayList<AppInfo>();
+    private List<Product> mList = new ArrayList<Product>();
     private CustomListAdapter mAdapter;
     private CustomListView mListView;
     private int mCount = 10;
@@ -54,14 +57,14 @@ public class FragmentPage extends Fragment implements View.OnClickListener {
             switch (msg.what) {
                 case REFRESH_DATA_FINISH:
                     if (mAdapter != null) {
-                        mAdapter.mList = (ArrayList<AppInfo>) msg.obj;
+                        mAdapter.mList = (ArrayList<Product>) msg.obj;
                         mAdapter.notifyDataSetChanged();
                     }
                     mListView.onRefreshComplete();    //下拉刷新完成
                     break;
                 case LOAD_DATA_FINISH:
                     if (mAdapter != null) {
-                        mAdapter.mList.addAll((ArrayList<AppInfo>) msg.obj);
+                        mAdapter.mList.addAll((ArrayList<Product>) msg.obj);
                         mAdapter.notifyDataSetChanged();
                     }
                     mListView.onLoadMoreComplete();    //加载更多完成
@@ -79,17 +82,23 @@ public class FragmentPage extends Fragment implements View.OnClickListener {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_productlist, null);
 
-        buildAppData();
-        initView(view);
-
+        mListView = (CustomListView) view.findViewById(R.id.mListView);
+        mCanPullRefBtn = (Button) view.findViewById(R.id.canPullRefBtn);
+        mCanLoadMoreBtn = (Button) view.findViewById(R.id.canLoadMoreFlagBtn);
+        mCanAutoLoadMoreBtn = (Button) view.findViewById(R.id.autoLoadMoreFlagBtn);
+        mIsMoveToFirstItemBtn = (Button) view.findViewById(R.id.isMoveToFirstItemBtn);
+        mCanPullRefBtn.setOnClickListener(this);
+        mCanLoadMoreBtn.setOnClickListener(this);
+        mCanAutoLoadMoreBtn.setOnClickListener(this);
+        mIsMoveToFirstItemBtn.setOnClickListener(this);
+        bindData();
         return view;
     }
 
-    private void initView(View parent) {
-        mAdapter = new CustomListAdapter(this.getActivity(), mList);
-        mListView = (CustomListView) parent.findViewById(R.id.mListView);
+    private void initView() {
+        mAdapter = new CustomListAdapter(FragmentPage.this.getActivity(), mList);
         mListView.setAdapter(mAdapter);
-
+        mAdapter.notifyDataSetChanged();
         mListView.setOnRefreshListener(new CustomListView.OnRefreshListener() {
 
             @Override
@@ -120,16 +129,6 @@ public class FragmentPage extends Fragment implements View.OnClickListener {
 //				Log.e(TAG, "__ mAdapter.getItemId() = "+mAdapter.getItemId(position));
             }
         });
-
-        mCanPullRefBtn = (Button) parent.findViewById(R.id.canPullRefBtn);
-        mCanLoadMoreBtn = (Button) parent.findViewById(R.id.canLoadMoreFlagBtn);
-        mCanAutoLoadMoreBtn = (Button) parent.findViewById(R.id.autoLoadMoreFlagBtn);
-        mIsMoveToFirstItemBtn = (Button) parent.findViewById(R.id.isMoveToFirstItemBtn);
-
-        mCanPullRefBtn.setOnClickListener(this);
-        mCanLoadMoreBtn.setOnClickListener(this);
-        mCanAutoLoadMoreBtn.setOnClickListener(this);
-        mIsMoveToFirstItemBtn.setOnClickListener(this);
     }
 
     @Override
@@ -237,15 +236,19 @@ public class FragmentPage extends Fragment implements View.OnClickListener {
         }.start();
     }
 
-    private void buildAppData() {
+    private void bindData() {
         GsonRequest mRequest = new GsonRequest(Request.Method.GET,
                 PcApplication.SERVER_URL + "supproducts/", null, ProductListResult.class,
                 new Response.Listener<ProductListResult>() {
                     @Override
                     public void onResponse(ProductListResult resp) {
-                        ((TabHostActivity)FragmentPage.this.getActivity()).dismissLoadingDialog();
-                        if (resp != null) {
-                            L.d(resp.toString());
+                        L.d("buildAppData return ");
+                        ((TabHostActivity) FragmentPage.this.getActivity()).dismissLoadingDialog();
+                            if (resp != null) {
+                                L.d(resp.toString());
+                                mList.clear();
+                            mList.addAll(resp.results);
+                            initView();
                         } else {
                             L.e("lonin return error");
                         }
@@ -253,13 +256,14 @@ public class FragmentPage extends Fragment implements View.OnClickListener {
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                ((TabHostActivity)FragmentPage.this.getActivity()).dismissLoadingDialog();
+                ((TabHostActivity) FragmentPage.this.getActivity()).dismissLoadingDialog();
                 Log.e("TAG", error.getMessage(), error);
-                ((TabHostActivity)FragmentPage.this.getActivity()).showSnackMsg(FragmentPage.this.getActivity().getString(R.string.login_err));
+                ((TabHostActivity) FragmentPage.this.getActivity()).showSnackMsg(FragmentPage.this.getActivity().getString(R.string.login_err));
             }
         });
-        ((TabHostActivity)FragmentPage.this.getActivity()).startRequest(mRequest);
+        ((TabHostActivity) FragmentPage.this.getActivity()).startRequest(mRequest);
 
+        /*
         for (int i = 1; i <= 10; i++) {
             AppInfo ai = new AppInfo();
 
@@ -272,19 +276,20 @@ public class FragmentPage extends Fragment implements View.OnClickListener {
 
             mList.add(ai);
         }
+        */
     }
 
     private class CustomListAdapter extends BaseAdapter {
 
         private LayoutInflater mInflater;
-        public List<AppInfo> mList;
+        public List<Product> mList;
 
-        public CustomListAdapter(Context pContext, List<AppInfo> pList) {
+        public CustomListAdapter(Context pContext, List<Product> pList) {
             mInflater = LayoutInflater.from(pContext);
             if (pList != null) {
                 mList = pList;
             } else {
-                mList = new ArrayList<AppInfo>();
+                mList = new ArrayList<Product>();
             }
         }
 
@@ -327,11 +332,17 @@ public class FragmentPage extends Fragment implements View.OnClickListener {
                 holder = (ViewHolder) convertView.getTag();
             }
 
-            AppInfo ai = mList.get(position);
-            holder.mImage.setImageBitmap(ai.getAppIcon());
-            holder.mName.setText(ai.getAppName());
-            holder.mVer.setText(ai.getAppVer());
-            holder.mSize.setText(ai.getAppSize());
+            Product ai = mList.get(position);
+            Glide.with(FragmentPage.this.getActivity())
+                    .load(ai.pic_url)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .centerCrop()
+                    .placeholder(R.drawable.order_detail_proof_preload)
+                    .into(holder.mImage);
+            //holder.mImage.setImageUrl(ai.getAppIcon());
+            holder.mName.setText(ai.product_name);
+            holder.mVer.setText(String.valueOf(ai.sale_price));
+            holder.mSize.setText(String.valueOf(ai.cost_price));
 
             return convertView;
         }
