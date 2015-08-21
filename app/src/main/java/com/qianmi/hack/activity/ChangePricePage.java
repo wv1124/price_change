@@ -9,12 +9,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -38,20 +40,21 @@ import java.util.List;
 /**
  * Created by wv on 2015/8/20.
  */
-public class ChangePricePage extends Fragment implements View.OnClickListener {
+public class ChangePricePage extends Fragment implements View.OnClickListener, AbsListView.OnScrollListener {
 
     private static final String TAG = "MainActivity";
 
     private static final int LOAD_DATA_FINISH = 10;
-    private static final int REFRESH_DATA_FINISH = 11;
-    private static final int LOADING_DATA = 12;
 
     private List<PriceChange> mList = new ArrayList<PriceChange>();
     private CustomListAdapter mAdapter;
-    private CustomListView mListView;
+    private ListView mListView;
     private int curPage = 1;
     private boolean hasNext = true;
     private GsonRequest mRequest;
+
+    private int visibleLastIndex = 0;   //最后的可视项索引
+    private int visibleItemCount;       // 当前窗口可见项总数
     private LinearLayout loading;
 
     private Handler mHandler = new Handler() {
@@ -59,12 +62,8 @@ public class ChangePricePage extends Fragment implements View.OnClickListener {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case LOAD_DATA_FINISH:
-                    if (mAdapter != null) {
-                        mAdapter.mList.addAll((ArrayList<PriceChange>) msg.obj);
-                        mAdapter.notifyDataSetChanged();
-                    }
-                    break;
-                case LOADING_DATA:
+                    mAdapter.mList = mList;
+                    mAdapter.notifyDataSetChanged();
                     break;
                 default:
                     break;
@@ -78,7 +77,9 @@ public class ChangePricePage extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_pricelist, null);
-        mListView = (CustomListView) view.findViewById(R.id.mListView);
+        mListView = (ListView) view.findViewById(R.id.mListView);
+        loading = (LinearLayout) view.findViewById(R.id.loading);
+        loading.setVisibility(View.GONE);
         initView();
         requestDate(curPage);
         return view;
@@ -87,16 +88,7 @@ public class ChangePricePage extends Fragment implements View.OnClickListener {
     private void initView() {
         mAdapter = new CustomListAdapter(ChangePricePage.this.getActivity(), mList);
         mListView.setAdapter(mAdapter);
-
-        mListView.setOnLoadListener(new CustomListView.OnLoadMoreListener() {
-
-            @Override
-            public void onLoadMore() {
-                // TODO 加载更多
-                Log.e(TAG, "-----------------------onLoad");
-            }
-        });
-
+        mListView.setOnScrollListener(this);     //添加滑动监听
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
@@ -104,15 +96,11 @@ public class ChangePricePage extends Fragment implements View.OnClickListener {
                 Log.e(TAG, "click position:" + position);
             }
         });
-        //mListView.setCanLoadMore(true);
-        //mListView.setMoveToFirstItemAfterRefresh(true);
-        mListView.setAutoLoadMore(true);
     }
 
     @Override
     public void onClick(View pV) {
         switch (pV.getId()) {
-
         }
     }
 
@@ -126,7 +114,7 @@ public class ChangePricePage extends Fragment implements View.OnClickListener {
                         ((TabHostActivity) ChangePricePage.this.getActivity()).dismissLoadingDialog();
                         if (resp != null) {
                             L.d(resp.toString());
-                            mList.clear();
+                            //mList.clear();
                             mList.addAll(resp.results);
                             if (resp.next == null || resp.next.length() == 0 || resp.next == "null") {
                                 hasNext = false;
@@ -135,6 +123,9 @@ public class ChangePricePage extends Fragment implements View.OnClickListener {
                             }
                             Message _Msg = mHandler.obtainMessage(LOAD_DATA_FINISH, mList);
                             mHandler.sendMessage(_Msg);
+                            if (loading != null) {
+                                loading.setVisibility(View.GONE);
+                            }
 
                         } else {
                             L.e("lonin return error");
@@ -148,6 +139,32 @@ public class ChangePricePage extends Fragment implements View.OnClickListener {
         });
         L.d("**************load date :curentPage=" + curentPage);
         ((TabHostActivity) ChangePricePage.this.getActivity()).startRequest(mRequest);
+    }
+
+    @Override
+    public void onScrollStateChanged(AbsListView view, int scrollState) {
+        int itemsLastIndex = mAdapter.getCount() - 1;    //数据集最后一项的索引
+        int lastIndex = itemsLastIndex;             //加上底部的loadMoreView项
+        if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
+            L.d("*************** onScrollStateChanged itemsLastIndex=" + itemsLastIndex + ", lastIndex=" + lastIndex);
+            if (visibleLastIndex == lastIndex) {
+                //如果是自动加载,可以在这里放置异步加载数据的代码
+                ++curPage;
+                if (hasNext) {
+                    Log.i("LOADMORE", "loading... page: " + hasNext);
+                    loading.setVisibility(View.VISIBLE);
+                    requestDate(curPage);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+        //L.d("------------ onScrollStateChanged firstVisibleItem=" + firstVisibleItem
+        //        + ", visibleItemCount=" + visibleItemCount + ", totalItemCount=" + totalItemCount);
+        this.visibleItemCount = visibleItemCount;
+        visibleLastIndex = firstVisibleItem + visibleItemCount - 1;
     }
 
     private class CustomListAdapter extends BaseAdapter {
