@@ -8,10 +8,13 @@ import android.content.Intent;
 public class Trade {
 
     public String tid;
-    public Double payment;
-    public Intent pay_status;
-    public int deliver_status;
-    public int complete_status;
+    public double payment;
+    public double pay_status;
+    public String pay_status_display;
+    public double deliver_status;
+    public String deliver_status_display;
+    public double complete_status;
+    public String complete_status_display;
     public double total_fee;
     public String applier_nick;
     public String reciver_name;

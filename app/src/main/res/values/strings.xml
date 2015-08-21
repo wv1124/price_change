@@ -68,6 +68,8 @@
     <string name="size">大小: 13MB</string>
     <string name="mgr">管理</string>
     <string name="name">应用Demo</string>
+    <string name="yuan_sign">￥</string>
+
 
 
 </resources>

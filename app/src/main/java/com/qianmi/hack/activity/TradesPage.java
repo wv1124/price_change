@@ -1,6 +1,7 @@
 package com.qianmi.hack.activity;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -18,12 +19,11 @@ import android.widget.TextView;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.qianmi.hack.PcApplication;
 import com.qianmi.hack.R;
-import com.qianmi.hack.bean.Product;
 import com.qianmi.hack.bean.ProductListResult;
+import com.qianmi.hack.bean.Trade;
+import com.qianmi.hack.bean.TradeListResult;
 import com.qianmi.hack.network.GsonRequest;
 import com.qianmi.hack.utils.L;
 import com.qianmi.hack.widget.CustomListView;
@@ -42,7 +42,7 @@ public class TradesPage extends Fragment implements View.OnClickListener {
     private static final int REFRESH_DATA_FINISH = 11;
     private static final int LOADING_DATA = 12;
 
-    private List<Product> mList = new ArrayList<Product>();
+    private List<Trade> mList = new ArrayList<Trade>();
     private CustomListAdapter mAdapter;
     private CustomListView mListView;
     private int curPage = 1;
@@ -56,14 +56,14 @@ public class TradesPage extends Fragment implements View.OnClickListener {
             switch (msg.what) {
                 case REFRESH_DATA_FINISH:
                     if (mAdapter != null) {
-                        mAdapter.mList = (ArrayList<Product>) msg.obj;
+                        mAdapter.mList = (ArrayList<Trade>) msg.obj;
                         mAdapter.notifyDataSetChanged();
                     }
                     mListView.onRefreshComplete();    //下拉刷新完成
                     break;
                 case LOAD_DATA_FINISH:
                     if (mAdapter != null) {
-                        mAdapter.mList.addAll((ArrayList<Product>) msg.obj);
+                        mAdapter.mList.addAll((ArrayList<Trade>) msg.obj);
                         mAdapter.notifyDataSetChanged();
                     }
                     mListView.onRefreshComplete();
@@ -195,10 +195,10 @@ public class TradesPage extends Fragment implements View.OnClickListener {
 
     private void requestDate(int curentPage) {
         GsonRequest mRequest = new GsonRequest(Request.Method.GET,
-                PcApplication.SERVER_URL + "/supproducts/?page=" + curentPage, null, ProductListResult.class,
-                new Response.Listener<ProductListResult>() {
+                PcApplication.SERVER_URL + "/trades/?page=" + curentPage, null, TradeListResult.class,
+                new Response.Listener<TradeListResult>() {
                     @Override
-                    public void onResponse(ProductListResult resp) {
+                    public void onResponse(TradeListResult resp) {
                         L.d("buildAppData return ");
                         ((TabHostActivity) TradesPage.this.getActivity()).dismissLoadingDialog();
                         if (resp != null) {
@@ -239,14 +239,14 @@ public class TradesPage extends Fragment implements View.OnClickListener {
     private class CustomListAdapter extends BaseAdapter {
 
         private LayoutInflater mInflater;
-        public List<Product> mList;
+        public List<Trade> mList;
 
-        public CustomListAdapter(Context pContext, List<Product> pList) {
+        public CustomListAdapter(Context pContext, List<Trade> pList) {
             mInflater = LayoutInflater.from(pContext);
             if (pList != null) {
                 mList = pList;
             } else {
-                mList = new ArrayList<Product>();
+                mList = new ArrayList<Trade>();
             }
         }
 
@@ -271,49 +271,53 @@ public class TradesPage extends Fragment implements View.OnClickListener {
             if (getCount() == 0) {
                 return null;
             }
-//			System.out.println("position = "+position);
             ViewHolder holder = null;
             if (convertView == null) {
-                convertView = mInflater.inflate(R.layout.product_listview, null);
+                convertView = mInflater.inflate(R.layout.trade_listview, null);
 
                 holder = new ViewHolder();
-                holder.mImage = (ImageView) convertView
-                        .findViewById(R.id.ivIcon);
-                holder.mName = (TextView) convertView
-                        .findViewById(R.id.tvName);
-                holder.mVer = (TextView) convertView.findViewById(R.id.tvVer);
-                holder.mSize = (TextView) convertView
-                        .findViewById(R.id.tvSize);
+                holder.tid = (TextView) convertView
+                        .findViewById(R.id.tid);
+                holder.payment = (TextView) convertView
+                        .findViewById(R.id.payment);
+                holder.totalFee = (TextView) convertView.findViewById(R.id.totalFee);
+                holder.payStatus = (TextView) convertView
+                        .findViewById(R.id.payStatus);
+                holder.deliverStatus = (TextView) convertView
+                        .findViewById(R.id.deliverStatus);
+                holder.comletetStatus = (TextView) convertView
+                        .findViewById(R.id.comletetStatus);
                 convertView.setTag(holder);
             } else {
                 holder = (ViewHolder) convertView.getTag();
             }
 
-            Product ai = mList.get(position);
-            Glide.with(TradesPage.this.getActivity())
-                    .load(ai.pic_url)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .centerCrop()
-                    .placeholder(R.drawable.order_detail_proof_preload)
-                    .into(holder.mImage);
-            //holder.mImage.setImageUrl(ai.getAppIcon());
-            try {
-                String name = new String(ai.product_name.getBytes(), "UTF-8");
-                holder.mName.setText(name);
-            } catch (Exception e) {
-                e.printStackTrace();
+            Trade ai = mList.get(position);
+            if (ai.complete_status == 0) { //进行中
+                convertView.setBackgroundColor(Color.YELLOW);
+            } else if (ai.complete_status == 1) { //已完成
+                convertView.setBackgroundColor(Color.GREEN);
+            } else if (ai.complete_status == 2) { //作废
+                convertView.setBackgroundColor(Color.GRAY);
             }
-            holder.mVer.setText(String.valueOf(ai.sale_price));
-            holder.mSize.setText(String.valueOf(ai.cost_price));
-
+            holder.tid.setText(ai.tid);
+            holder.payment.setText(TradesPage.this.getActivity().getString(R.string.yuan_sign) +
+                    String.valueOf(ai.payment));
+            holder.totalFee.setText(TradesPage.this.getActivity().getString(R.string.yuan_sign) +
+                    String.valueOf(ai.total_fee));
+            holder.payStatus.setText(ai.pay_status_display);
+            holder.deliverStatus.setText(ai.deliver_status_display);
+            holder.comletetStatus.setText(ai.complete_status_display);
             return convertView;
         }
     }
 
     private static class ViewHolder {
-        private ImageView mImage;
-        private TextView mName;
-        private TextView mVer;
-        private TextView mSize;
+        private TextView tid;
+        private TextView payment;
+        private TextView totalFee;
+        private TextView payStatus;
+        private TextView deliverStatus;
+        private TextView comletetStatus;
     }
 }
