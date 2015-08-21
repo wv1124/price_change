@@ -12,15 +12,18 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.qianmi.hack.PcApplication;
 import com.qianmi.hack.R;
-import com.qianmi.hack.bean.Trade;
-import com.qianmi.hack.bean.TradeListResult;
+import com.qianmi.hack.bean.Product;
+import com.qianmi.hack.bean.ProductListResult;
 import com.qianmi.hack.network.GsonRequest;
 import com.qianmi.hack.utils.L;
 import com.qianmi.hack.widget.CustomListView;
@@ -31,15 +34,14 @@ import java.util.List;
 /**
  * Created by wv on 2015/8/20.
  */
-public class TradesPage extends Fragment implements View.OnClickListener {
+public class ProductPage extends Fragment implements View.OnClickListener {
 
     private static final String TAG = "MainActivity";
 
     private static final int LOAD_DATA_FINISH = 10;
     private static final int REFRESH_DATA_FINISH = 11;
-    private static final int LOADING_DATA = 12;
 
-    private List<Trade> mList = new ArrayList<Trade>();
+    private List<Product> mList = new ArrayList<Product>();
     private CustomListAdapter mAdapter;
     private CustomListView mListView;
     private int curPage = 1;
@@ -47,26 +49,25 @@ public class TradesPage extends Fragment implements View.OnClickListener {
 
     private Button mCanPullRefBtn, mCanLoadMoreBtn, mCanAutoLoadMoreBtn, mIsMoveToFirstItemBtn;
 
+    @SuppressWarnings("unchecked")
     private Handler mHandler = new Handler() {
 
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case REFRESH_DATA_FINISH:
                     if (mAdapter != null) {
-                        mAdapter.mList = (ArrayList<Trade>) msg.obj;
+                        mAdapter.mList = (ArrayList<Product>) msg.obj;
                         mAdapter.notifyDataSetChanged();
                     }
                     mListView.onRefreshComplete();    //下拉刷新完成
                     break;
                 case LOAD_DATA_FINISH:
                     if (mAdapter != null) {
-                        mAdapter.mList.addAll((ArrayList<Trade>) msg.obj);
+                        mAdapter.mList.addAll((ArrayList<Product>) msg.obj);
                         mAdapter.notifyDataSetChanged();
                     }
                     mListView.onRefreshComplete();
                     //mListView.onLoadMoreComplete();    //加载更多完成
-                    break;
-                case LOADING_DATA:
                     break;
                 default:
                     break;
@@ -79,37 +80,29 @@ public class TradesPage extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.activity_tradelist, null);
+        View view = inflater.inflate(R.layout.activity_productlist, null);
 
         mListView = (CustomListView) view.findViewById(R.id.mListView);
-        mCanPullRefBtn = (Button) view.findViewById(R.id.canPullRefBtn);
-        mCanLoadMoreBtn = (Button) view.findViewById(R.id.canLoadMoreFlagBtn);
-        mCanAutoLoadMoreBtn = (Button) view.findViewById(R.id.autoLoadMoreFlagBtn);
-        mIsMoveToFirstItemBtn = (Button) view.findViewById(R.id.isMoveToFirstItemBtn);
-        mCanPullRefBtn.setOnClickListener(this);
-        mCanLoadMoreBtn.setOnClickListener(this);
-        mCanAutoLoadMoreBtn.setOnClickListener(this);
-        mIsMoveToFirstItemBtn.setOnClickListener(this);
+
         initView();
         requestDate(curPage);
         return view;
     }
 
     private void initView() {
-        mAdapter = new CustomListAdapter(TradesPage.this.getActivity(), mList);
+        mAdapter = new CustomListAdapter(ProductPage.this.getActivity(), mList);
         mListView.setAdapter(mAdapter);
-        //mAdapter.notifyDataSetChanged();
-        /*mListView.setOnRefreshListener(new CustomListView.OnRefreshListener() {
+        mAdapter.notifyDataSetChanged();
+        mListView.setOnRefreshListener(new CustomListView.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 // TODO 下拉刷新
                 Log.e(TAG, "-----------------------onRefresh");
                 //loadData(0);
             }
-        });*/
+        });
 
         mListView.setOnLoadListener(new CustomListView.OnLoadMoreListener() {
-
             @Override
             public void onLoadMore() {
                 // TODO 加载更多
@@ -119,14 +112,17 @@ public class TradesPage extends Fragment implements View.OnClickListener {
         });
 
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
+                // 此处传回来的position和mAdapter.getItemId()获取的一致;
                 Log.e(TAG, "click position:" + position);
+//				Log.e(TAG, "__ mAdapter.getItemId() = "+mAdapter.getItemId(position));
             }
         });
-        //mListView.setCanLoadMore(true);
-        //mListView.setMoveToFirstItemAfterRefresh(true);
+        mListView.setCanLoadMore(true);
+        mListView.setMoveToFirstItemAfterRefresh(true);
         mListView.setAutoLoadMore(true);
     }
 
@@ -174,30 +170,44 @@ public class TradesPage extends Fragment implements View.OnClickListener {
     }
 
     public void loadData(final int type) {
-        switch (type) {
-            case 0:     // TODO 下拉刷新
-                //requestDate(++curPage);
-                break;
+        new Thread() {
+            @Override
+            public void run() {
+                List<Product> _List = null;
+                switch (type) {
+                    case 0:     // TODO 下拉刷新
+                        //_List = new ArrayList<Product>();
+                        //requestDate(++curPage);
+                        break;
 
-            case 1:         // TODO 加载更多
-                if (hasNext) {
-                    requestDate(++curPage);
-                } else {
-                    ((TabHostActivity) TradesPage.this.getActivity()).showSnackMsg("No more data!");
+                    case 1:         // TODO 加载更多
+                        //_List = new ArrayList<Product>();
+                        if (hasNext) {
+                            requestDate(++curPage);
+                        } else {
+                            ((TabHostActivity) ProductPage.this.getActivity()).showSnackMsg("No more data!");
+                            //Toast.makeText(ProductPage.this.getActivity(), "No more data!", Toast.LENGTH_LONG).show();
+                        }
+                        break;
                 }
-                break;
-        }
 
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }.start();
     }
 
     private void requestDate(int curentPage) {
         GsonRequest mRequest = new GsonRequest(Request.Method.GET,
-                PcApplication.SERVER_URL + "/trades/?page=" + curentPage, null, TradeListResult.class,
-                new Response.Listener<TradeListResult>() {
+                PcApplication.SERVER_URL + "/supproducts/?page=" + curentPage, null, ProductListResult.class,
+                new Response.Listener<ProductListResult>() {
                     @Override
-                    public void onResponse(TradeListResult resp) {
+                    public void onResponse(ProductListResult resp) {
                         L.d("buildAppData return ");
-                        ((TabHostActivity) TradesPage.this.getActivity()).dismissLoadingDialog();
+                        ((TabHostActivity) ProductPage.this.getActivity()).dismissLoadingDialog();
                         if (resp != null) {
                             L.d(resp.toString());
                             mList.clear();
@@ -224,26 +234,26 @@ public class TradesPage extends Fragment implements View.OnClickListener {
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                ((TabHostActivity) TradesPage.this.getActivity()).dismissLoadingDialog();
+                ((TabHostActivity) ProductPage.this.getActivity()).dismissLoadingDialog();
                 Log.e("TAG", error.getMessage(), error);
-                ((TabHostActivity) TradesPage.this.getActivity()).showSnackMsg(TradesPage.this.getActivity().getString(R.string.login_err));
+                ((TabHostActivity) ProductPage.this.getActivity()).showSnackMsg(ProductPage.this.getActivity().getString(R.string.login_err));
             }
         });
         L.d("**************load date :curentPage=" + curentPage);
-        ((TabHostActivity) TradesPage.this.getActivity()).startRequest(mRequest);
+        ((TabHostActivity) ProductPage.this.getActivity()).startRequest(mRequest);
     }
 
     private class CustomListAdapter extends BaseAdapter {
 
         private LayoutInflater mInflater;
-        public List<Trade> mList;
+        public List<Product> mList;
 
-        public CustomListAdapter(Context pContext, List<Trade> pList) {
+        public CustomListAdapter(Context pContext, List<Product> pList) {
             mInflater = LayoutInflater.from(pContext);
             if (pList != null) {
                 mList = pList;
             } else {
-                mList = new ArrayList<Trade>();
+                mList = new ArrayList<Product>();
             }
         }
 
@@ -268,53 +278,49 @@ public class TradesPage extends Fragment implements View.OnClickListener {
             if (getCount() == 0) {
                 return null;
             }
+//			System.out.println("position = "+position);
             ViewHolder holder = null;
             if (convertView == null) {
-                convertView = mInflater.inflate(R.layout.trade_listview, null);
+                convertView = mInflater.inflate(R.layout.product_listview, null);
 
                 holder = new ViewHolder();
-                holder.tid = (TextView) convertView
-                        .findViewById(R.id.tid);
-                holder.payment = (TextView) convertView
-                        .findViewById(R.id.payment);
-                holder.totalFee = (TextView) convertView.findViewById(R.id.totalFee);
-                holder.payStatus = (TextView) convertView
-                        .findViewById(R.id.payStatus);
-                holder.deliverStatus = (TextView) convertView
-                        .findViewById(R.id.deliverStatus);
-                holder.comletetStatus = (TextView) convertView
-                        .findViewById(R.id.comletetStatus);
+                holder.mImage = (ImageView) convertView
+                        .findViewById(R.id.ivIcon);
+                holder.mName = (TextView) convertView
+                        .findViewById(R.id.tvName);
+                holder.mVer = (TextView) convertView.findViewById(R.id.tvVer);
+                holder.mSize = (TextView) convertView
+                        .findViewById(R.id.tvSize);
                 convertView.setTag(holder);
             } else {
                 holder = (ViewHolder) convertView.getTag();
             }
 
-            Trade ai = mList.get(position);
-            if (ai.complete_status == 0) { //进行中
-                convertView.setBackgroundResource(R.drawable.shopping_going);
-            } else if (ai.complete_status == 1) { //已完成
-                convertView.setBackgroundResource(R.drawable.shopping_finish);
-            } else if (ai.complete_status == 2) { //作废
-                convertView.setBackgroundResource(R.drawable.shopping_cancel);
+            Product ai = mList.get(position);
+            Glide.with(ProductPage.this.getActivity())
+                    .load(ai.pic_url)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .centerCrop()
+                    .placeholder(R.drawable.order_detail_proof_preload)
+                    .into(holder.mImage);
+            //holder.mImage.setImageUrl(ai.getAppIcon());
+            try {
+                String name = new String(ai.product_name.getBytes(), "UTF-8");
+                holder.mName.setText(name);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            holder.tid.setText(ai.tid);
-            holder.payment.setText(TradesPage.this.getActivity().getString(R.string.yuan_sign) +
-                    String.valueOf(ai.payment));
-            holder.totalFee.setText(TradesPage.this.getActivity().getString(R.string.yuan_sign) +
-                    String.valueOf(ai.total_fee));
-            holder.payStatus.setText(ai.pay_status_display);
-            holder.deliverStatus.setText(ai.deliver_status_display);
-            holder.comletetStatus.setText(ai.complete_status_display);
+            holder.mVer.setText(String.valueOf(ai.sale_price));
+            holder.mSize.setText(String.valueOf(ai.cost_price));
+
             return convertView;
         }
     }
 
     private static class ViewHolder {
-        private TextView tid;
-        private TextView payment;
-        private TextView totalFee;
-        private TextView payStatus;
-        private TextView deliverStatus;
-        private TextView comletetStatus;
+        private ImageView mImage;
+        private TextView mName;
+        private TextView mVer;
+        private TextView mSize;
     }
 }

@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -22,7 +23,9 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.qianmi.hack.PcApplication;
 import com.qianmi.hack.R;
-import com.qianmi.hack.bean.Product;
+import com.qianmi.hack.bean.PriceChange;
+import com.qianmi.hack.bean.PriceChange;
+import com.qianmi.hack.bean.PriceChangeListResult;
 import com.qianmi.hack.bean.ProductListResult;
 import com.qianmi.hack.network.GsonRequest;
 import com.qianmi.hack.utils.L;
@@ -42,7 +45,7 @@ public class ChangePricePage extends Fragment implements View.OnClickListener {
     private static final int REFRESH_DATA_FINISH = 11;
     private static final int LOADING_DATA = 12;
 
-    private List<Product> mList = new ArrayList<Product>();
+    private List<PriceChange> mList = new ArrayList<PriceChange>();
     private CustomListAdapter mAdapter;
     private CustomListView mListView;
     private int curPage = 1;
@@ -56,14 +59,14 @@ public class ChangePricePage extends Fragment implements View.OnClickListener {
             switch (msg.what) {
                 case REFRESH_DATA_FINISH:
                     if (mAdapter != null) {
-                        mAdapter.mList = (ArrayList<Product>) msg.obj;
+                        mAdapter.mList = (ArrayList<PriceChange>) msg.obj;
                         mAdapter.notifyDataSetChanged();
                     }
                     mListView.onRefreshComplete();    //下拉刷新完成
                     break;
                 case LOAD_DATA_FINISH:
                     if (mAdapter != null) {
-                        mAdapter.mList.addAll((ArrayList<Product>) msg.obj);
+                        mAdapter.mList.addAll((ArrayList<PriceChange>) msg.obj);
                         mAdapter.notifyDataSetChanged();
                     }
                     mListView.onRefreshComplete();
@@ -195,10 +198,10 @@ public class ChangePricePage extends Fragment implements View.OnClickListener {
 
     private void requestDate(int curentPage) {
         GsonRequest mRequest = new GsonRequest(Request.Method.GET,
-                PcApplication.SERVER_URL + "/supproducts/?page=" + curentPage, null, ProductListResult.class,
-                new Response.Listener<ProductListResult>() {
+                PcApplication.SERVER_URL + "/changenotifys/?page=" + curentPage, null, PriceChangeListResult.class,
+                new Response.Listener<PriceChangeListResult>() {
                     @Override
-                    public void onResponse(ProductListResult resp) {
+                    public void onResponse(PriceChangeListResult resp) {
                         L.d("buildAppData return ");
                         ((TabHostActivity) ChangePricePage.this.getActivity()).dismissLoadingDialog();
                         if (resp != null) {
@@ -239,14 +242,14 @@ public class ChangePricePage extends Fragment implements View.OnClickListener {
     private class CustomListAdapter extends BaseAdapter {
 
         private LayoutInflater mInflater;
-        public List<Product> mList;
+        public List<PriceChange> mList;
 
-        public CustomListAdapter(Context pContext, List<Product> pList) {
+        public CustomListAdapter(Context pContext, List<PriceChange> pList) {
             mInflater = LayoutInflater.from(pContext);
             if (pList != null) {
                 mList = pList;
             } else {
-                mList = new ArrayList<Product>();
+                mList = new ArrayList<PriceChange>();
             }
         }
 
@@ -274,46 +277,64 @@ public class ChangePricePage extends Fragment implements View.OnClickListener {
 //			System.out.println("position = "+position);
             ViewHolder holder = null;
             if (convertView == null) {
-                convertView = mInflater.inflate(R.layout.product_listview, null);
+                convertView = mInflater.inflate(R.layout.pricechange_listview, null);
 
                 holder = new ViewHolder();
-                holder.mImage = (ImageView) convertView
-                        .findViewById(R.id.ivIcon);
-                holder.mName = (TextView) convertView
-                        .findViewById(R.id.tvName);
-                holder.mVer = (TextView) convertView.findViewById(R.id.tvVer);
-                holder.mSize = (TextView) convertView
-                        .findViewById(R.id.tvSize);
+                holder.priceIcon = (ImageView) convertView
+                        .findViewById(R.id.priceIcon);
+                holder.name = (TextView) convertView
+                        .findViewById(R.id.name);
+                holder.supplier = (TextView) convertView.findViewById(R.id.supplier);
+                holder.oldPrice = (TextView) convertView
+                        .findViewById(R.id.old_price);
+                holder.newPrice = (TextView) convertView
+                        .findViewById(R.id.new_price);
+                holder.draftPrice = (TextView) convertView
+                        .findViewById(R.id.draft_price);
+                holder.sync = (CheckBox) convertView
+                        .findViewById(R.id.sync);
                 convertView.setTag(holder);
             } else {
                 holder = (ViewHolder) convertView.getTag();
             }
 
-            Product ai = mList.get(position);
-            Glide.with(ChangePricePage.this.getActivity())
-                    .load(ai.pic_url)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .centerCrop()
-                    .placeholder(R.drawable.order_detail_proof_preload)
-                    .into(holder.mImage);
-            //holder.mImage.setImageUrl(ai.getAppIcon());
-            try {
-                String name = new String(ai.product_name.getBytes(), "UTF-8");
-                holder.mName.setText(name);
-            } catch (Exception e) {
-                e.printStackTrace();
+            PriceChange ai = mList.get(position);
+            if (ai.new_price > ai.old_price) {
+                //涨价;
+                holder.priceIcon.setImageResource(R.drawable.shopping_going);
+            } else if (ai.new_price < ai.hashCode()) {
+                // 降价
+                holder.priceIcon.setImageResource(R.drawable.shopping_cancel);
+            } else {
+                // 不变
+                holder.priceIcon.setImageResource(R.drawable.shopping_finish);
             }
-            holder.mVer.setText(String.valueOf(ai.sale_price));
-            holder.mSize.setText(String.valueOf(ai.cost_price));
+
+            holder.name.setText(ai.gonghuo_product_name);
+            holder.supplier.setText(ai.supplier);
+            holder.oldPrice.setText(String.valueOf(ai.old_price));
+            holder.newPrice.setText(String.valueOf(ai.old_price));
+            holder.draftPrice.setText(String.valueOf(ai.draft_price));
+            if (ai.is_sync) {
+                holder.sync.setChecked(true);
+                holder.sync.setEnabled(false);
+            } else {
+                holder.sync.setChecked(false);
+                holder.sync.setEnabled(true);
+            }
 
             return convertView;
         }
     }
 
     private static class ViewHolder {
-        private ImageView mImage;
-        private TextView mName;
-        private TextView mVer;
-        private TextView mSize;
+        private ImageView priceIcon;
+        private TextView name;
+        private TextView supplier;
+        private TextView oldPrice;
+        private TextView newPrice;
+        private TextView draftPrice;
+        private CheckBox sync;
     }
 }
+

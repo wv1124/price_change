@@ -1,7 +1,6 @@
 package com.qianmi.hack.activity;
 
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTabHost;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,7 +24,7 @@ public class TabHostActivity extends BaseActivity {
     private LayoutInflater layoutInflater;
 
     //定义数组来存放Fragment界面
-    private Class fragmentArray[] = {FragmentPage.class, ChangePricePage.class, TradesPage.class, PrefsFragement.class};
+    private Class fragmentArray[] = {ProductPage.class, ChangePricePage.class, TradesPage.class, PrefsFragement.class};
 
     //定义数组来存放按钮图片
     private int mImageViewArray[] = {R.drawable.tab_home_btn, R.drawable.tab_message_btn, R.drawable.tab_selfinfo_btn,

@@ -59,8 +59,8 @@
 
     <color name="pull_refresh_textview">#000000</color>
     <color name="gold">#000000</color>
-    <color name="trade_going">#E9B450</color>
-    <color name="trade_finish">#E9B450</color>
-    <color name="trade_">#3e493e</color>
+    <color name="trade_going">#e9d659</color>
+    <color name="trade_finish">#1fe925</color>
+    <color name="trade_cancel">#3e493e</color>
 
 </resources>

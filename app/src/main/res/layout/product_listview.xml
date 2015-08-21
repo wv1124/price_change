@@ -10,7 +10,7 @@
         android:contentDescription="@string/image_desc"
         android:minHeight="50dp"
         android:minWidth="50dp"
-        android:src="@drawable/ic_launcher" />
+        android:src="@drawable/shopping_cart" />
 
     <LinearLayout
         android:id="@+id/appInfo"
