@@ -57,9 +57,9 @@
         android:id="@+id/mListView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
         android:cacheColorHint="@android:color/transparent"
-        android:fadingEdgeLength="0dp" />
+        android:fadingEdgeLength="0dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp" />
 
 </RelativeLayout>

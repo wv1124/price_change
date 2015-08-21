@@ -73,6 +73,7 @@
     <string name="trade_payment">实付:%s</string>
     <string name="sync">同步</string>
     <string name="sync_alredy">已同步</string>
+    <string name="order_id">订单号:</string>
     <string name="sync_success">同步失败</string>
 
 
