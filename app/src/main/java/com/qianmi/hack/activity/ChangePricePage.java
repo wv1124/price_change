@@ -177,6 +177,7 @@ public class ChangePricePage extends Fragment implements View.OnClickListener, A
                     if (sync != null) {
                         sync.setText("已同步");
                         sync.setEnabled(false);
+                        sync.setTag(R.id.priceIcon, true);
                     }
                 }
             }
@@ -318,7 +319,14 @@ public class ChangePricePage extends Fragment implements View.OnClickListener, A
             }
             holder.sync.setTag(R.id.sync, ai.id);
             holder.sync.setOnCheckedChangeListener(mListener);
-
+            Object b = holder.sync.getTag(R.id.priceIcon);
+            if (b != null && b instanceof Boolean) {
+                Boolean isSync = (Boolean) b;
+                if (isSync) {
+                    holder.sync.setChecked(true);
+                    holder.sync.setEnabled(false);
+                }
+            }
             return convertView;
         }
     }
