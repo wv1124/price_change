@@ -2,6 +2,8 @@ package com.qianmi.hack.bean;
 
 import android.content.Intent;
 
+import java.util.ArrayList;
+
 /**
  * Created by wv on 2015/8/21.
  */
@@ -24,5 +26,6 @@ public class Trade {
     public String end_time;
     public String applier_memo;
     public String detail;
+    public ArrayList<Order> orders;
 
 }

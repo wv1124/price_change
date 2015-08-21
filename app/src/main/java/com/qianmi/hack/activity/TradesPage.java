@@ -1,6 +1,7 @@
 package com.qianmi.hack.activity;
 
 import android.content.Context;
+import android.media.Image;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -12,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -300,6 +302,7 @@ public class TradesPage extends Fragment implements View.OnClickListener {
                 convertView = mInflater.inflate(R.layout.trade_listview, null);
 
                 holder = new ViewHolder();
+                holder.img = (ImageView) convertView.findViewById(R.id.img);
                 holder.tid = (TextView) convertView
                         .findViewById(R.id.tid);
                 holder.payment = (TextView) convertView
@@ -318,11 +321,11 @@ public class TradesPage extends Fragment implements View.OnClickListener {
 
             Trade ai = mList.get(position);
             if (ai.complete_status == 0) { //进行中
-                convertView.setBackgroundResource(R.drawable.shopping_going);
+                holder.img.setBackgroundResource(R.drawable.shopping_going);
             } else if (ai.complete_status == 1) { //已完成
-                convertView.setBackgroundResource(R.drawable.shopping_finish);
+                holder.img.setBackgroundResource(R.drawable.shopping_finish);
             } else if (ai.complete_status == 2) { //作废
-                convertView.setBackgroundResource(R.drawable.shopping_cancel);
+                holder.img.setBackgroundResource(R.drawable.shopping_cancel);
             }
             holder.tid.setText(ai.tid);
             holder.payment.setText(TradesPage.this.getActivity().getString(R.string.yuan_sign) +
@@ -337,6 +340,7 @@ public class TradesPage extends Fragment implements View.OnClickListener {
     }
 
     private static class ViewHolder {
+        private ImageView img;
         private TextView tid;
         private TextView payment;
         private TextView totalFee;
