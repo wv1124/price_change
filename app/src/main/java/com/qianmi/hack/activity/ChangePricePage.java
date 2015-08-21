@@ -239,9 +239,9 @@ public class ChangePricePage extends Fragment implements View.OnClickListener {
 
             holder.name.setText(ai.gonghuo_product_name);
             holder.supplier.setText(ai.supplier);
-            holder.oldPrice.setText("原价:" + String.valueOf(ai.old_price));
-            holder.newPrice.setText("新价:" + String.valueOf(ai.new_price));
-            holder.draftPrice.setText("拟设价:" + String.valueOf(ai.draft_price));
+            holder.oldPrice.setText("原价: ￥" + String.valueOf(ai.old_price));
+            holder.newPrice.setText("新价: ￥" + String.valueOf(ai.new_price));
+            holder.draftPrice.setText("拟设价: ￥" + String.valueOf(ai.draft_price));
             if (ai.is_sync) {
                 holder.sync.setText(R.string.sync_alredy);
                 holder.sync.setChecked(true);

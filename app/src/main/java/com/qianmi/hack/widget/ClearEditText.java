@@ -1,9 +1,5 @@
 package com.qianmi.hack.widget;
 
-/**
- * Created by Chen Haitao on 2015/7/7.
- */
-
 import android.content.Context;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;

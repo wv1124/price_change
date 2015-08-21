@@ -31,9 +31,6 @@ import java.util.Map;
 import butterknife.Bind;
 import butterknife.OnClick;
 
-/**
- * Created by Chen Haitao on 2015/7/7.
- */
 public class LoginActivity extends BaseActivity {
 
     private static final String REQ_TAG = "login";
@@ -225,6 +222,7 @@ public class LoginActivity extends BaseActivity {
         SPUtils.put(this, Constant.PASSOWD, passwd);
         SPUtils.put(this, Constant.TOKEN, loginReturnData);
         Intent intent = new Intent(this, TabHostActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         this.startActivity(intent);
         this.finish();
     }
@@ -237,12 +235,6 @@ public class LoginActivity extends BaseActivity {
     private void shakeErrorInputUsername() {
         mInputUsername.startAnimation(AnimationUtils.loadAnimation(this, R.anim.login_error_shake));
     }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        return false;
-    }
-
 
     public void tokenRequest(final String username, final String token, String installationId) {
         Map<String, String> request = new HashMap<String, String>();

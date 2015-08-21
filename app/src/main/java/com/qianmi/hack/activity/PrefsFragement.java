@@ -32,8 +32,8 @@ public class PrefsFragement extends Fragment implements View.OnClickListener {
         switch (v.getId()) {
             case R.id.btn_logout:
                 //SPUtils.clear(getActivity());
-                Intent intent = new Intent(PrefsFragement.this.getActivity(), LoginActivity.class);
-                this.startActivity(intent);
+                //Intent intent = new Intent(PrefsFragement.this.getActivity(), LoginActivity.class);
+                //this.startActivity(intent);
                 ((TabHostActivity) this.getActivity()).exitApplication(this.getActivity());
                 break;
         }

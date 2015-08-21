@@ -15,7 +15,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,26 +23,16 @@ import android.view.animation.BounceInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.VolleyError;
-import com.android.volley.VolleyLog;
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import com.android.volley.*;
 import com.android.volley.toolbox.Volley;
 import com.qianmi.hack.network.GsonRequest;
 import com.qianmi.hack.utils.L;
-
 import org.json.JSONObject;
 
 import java.lang.reflect.Method;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
-
-/**
- * Created by Chen Haitao on 2015/7/6.
- */
 public abstract class BaseActivity extends AppCompatActivity {
 
     private CommonReceiver mCommonReceiver = null;
