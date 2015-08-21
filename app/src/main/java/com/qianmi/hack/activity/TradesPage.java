@@ -316,9 +316,9 @@ public class TradesPage extends Fragment implements View.OnClickListener {
                 holder.img.setBackgroundResource(R.drawable.shopping_cancel);
             }
             holder.tid.setText("订单号:" + ai.tid);
-            holder.payment.setText(TradesPage.this.getActivity().getString(R.string.yuan_sign) +
+            holder.payment.setText("应付金额: ￥"  +
                     String.valueOf(ai.payment));
-            holder.totalFee.setText(TradesPage.this.getActivity().getString(R.string.yuan_sign) +
+            holder.totalFee.setText("订单总额: ￥" +
                     String.valueOf(ai.total_fee));
             holder.payStatus.setText(ai.pay_status_display);
             holder.deliverStatus.setText(ai.deliver_status_display);
@@ -352,9 +352,9 @@ public class TradesPage extends Fragment implements View.OnClickListener {
             Order order = ai.orders.get(childPosition);
             if (order != null) {
                 //holder.img.setImageResource(ai.img);
-                holder.name.setText(order.brand_name);
-                holder.price.setText(String.valueOf(order.unit_cost));
-                holder.num.setText(String.valueOf(order.num));
+                holder.name.setText(order.title);
+                holder.price.setText("￥" + String.valueOf(order.unit_cost));
+                holder.num.setText("X" + String.valueOf(order.num));
             }
 
             return convertView;
