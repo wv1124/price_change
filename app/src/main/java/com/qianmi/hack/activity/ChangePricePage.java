@@ -13,6 +13,7 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -82,20 +83,13 @@ public class ChangePricePage extends Fragment implements View.OnClickListener, A
 
     private void initView() {
         mAdapter = new CustomListAdapter(ChangePricePage.this.getActivity(), mList);
+        mAdapter.setOnCheckedChangeListener(priceLister);
         mListView.setAdapter(mAdapter);
         mListView.setOnScrollListener(this);     //添加滑动监听
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-                CheckBox isSync = (CheckBox) view.findViewById(R.id.sync);
-                if (isSync != null) {
-                    Object changeId = (Object) view.getTag(R.id.priceIcon);
-                    L.d("change id :" + changeId);
-                    if (changeId != null && changeId instanceof Integer) {
-                        changePrice((Integer) changeId);
-                    }
-                }
                 Log.e(TAG, "click position:" + position);
 
             }
@@ -171,6 +165,24 @@ public class ChangePricePage extends Fragment implements View.OnClickListener, A
         visibleLastIndex = firstVisibleItem + visibleItemCount - 1;
     }
 
+    private CompoundButton.OnCheckedChangeListener priceLister = new CompoundButton.OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            if (isChecked && buttonView != null) {
+                Object changeId = (Object) buttonView.getTag(R.id.sync);
+                L.d("change id :" + changeId);
+                if (changeId != null && changeId instanceof Integer) {
+                    changePrice((Integer) changeId);
+                    CheckBox sync = ((CheckBox) buttonView);
+                    if (sync != null) {
+                        sync.setText("已同步");
+                        sync.setEnabled(false);
+                    }
+                }
+            }
+        }
+    };
+
     private void changePrice(int id) {
         GsonRequest request = new GsonRequest(Request.Method.GET,
                 PcApplication.SERVER_URL + "changenotifys/" + id, null, PriceChangeListResult.class,
@@ -180,7 +192,7 @@ public class ChangePricePage extends Fragment implements View.OnClickListener, A
                         L.d("change price return ");
                         ((TabHostActivity) ChangePricePage.this.getActivity()).dismissLoadingDialog();
                         if (resp != null) {
-
+                            Toast.makeText(PcApplication.getInstance(), "同步成功!", Toast.LENGTH_LONG);
                         } else {
                             L.e("changePrice return error");
                             Toast.makeText(PcApplication.getInstance(), "修改价格失败!", Toast.LENGTH_LONG);
@@ -200,6 +212,7 @@ public class ChangePricePage extends Fragment implements View.OnClickListener, A
 
         private LayoutInflater mInflater;
         public List<PriceChange> mList;
+        CompoundButton.OnCheckedChangeListener mListener;
 
         public CustomListAdapter(Context pContext, List<PriceChange> pList) {
             mInflater = LayoutInflater.from(pContext);
@@ -224,6 +237,10 @@ public class ChangePricePage extends Fragment implements View.OnClickListener, A
         public long getItemId(int position) {
             System.out.println("getItemId = " + position);
             return position;
+        }
+
+        public void setOnCheckedChangeListener(CompoundButton.OnCheckedChangeListener listener) {
+            mListener = listener;
         }
 
         @Override
@@ -255,6 +272,7 @@ public class ChangePricePage extends Fragment implements View.OnClickListener, A
                 holder = (ViewHolder) convertView.getTag();
             }
 
+
             PriceChange ai = mList.get(position);
             /**
              * CHANGE_TYPE = (
@@ -283,7 +301,6 @@ public class ChangePricePage extends Fragment implements View.OnClickListener, A
                     break;
             }
 
-            convertView.setTag(R.id.priceIcon, ai.id);
             holder.name.setText(ai.gonghuo_product_name);
             holder.supplier.setText(ai.supplier);
             holder.oldPrice.setText("原价: ￥" + String.valueOf(ai.old_price));
@@ -299,6 +316,8 @@ public class ChangePricePage extends Fragment implements View.OnClickListener, A
                 holder.sync.setChecked(false);
                 holder.sync.setEnabled(true);
             }
+            holder.sync.setTag(R.id.sync, ai.id);
+            holder.sync.setOnCheckedChangeListener(mListener);
 
             return convertView;
         }
