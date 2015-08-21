@@ -186,17 +186,20 @@ public class ChangePricePage extends Fragment implements View.OnClickListener, A
 
     class Ret {
         public String ret;
+        public int id;
     }
 
     private void changePrice(int id) {
-        GsonRequest request = new GsonRequest(Request.Method.GET,
-                PcApplication.SERVER_URL + "changenotifys/" + id, null, Ret.class,
+        Ret ret = new Ret();
+        ret.id = id;
+        GsonRequest request = new GsonRequest(Request.Method.PUT,
+                PcApplication.SERVER_URL + "changenotifys/" + id + "/", ret, Ret.class,
                 new Response.Listener<Ret>() {
                     @Override
                     public void onResponse(Ret resp) {
                         L.d("change price return ");
                         ((TabHostActivity) ChangePricePage.this.getActivity()).dismissLoadingDialog();
-                        if (resp != null && resp.ret == "0") {
+                        if (resp != null && resp.ret.equalsIgnoreCase("0")) {
                             Toast.makeText(PcApplication.getInstance(), "同步成功!", Toast.LENGTH_LONG).show();
                         } else {
                             L.e("changePrice return error");
@@ -320,9 +323,9 @@ public class ChangePricePage extends Fragment implements View.OnClickListener, A
                 holder.sync.setText(R.string.sync);
                 holder.sync.setChecked(false);
                 holder.sync.setEnabled(true);
+                holder.sync.setOnCheckedChangeListener(mListener);
             }
             holder.sync.setTag(R.id.sync, ai.id);
-            holder.sync.setOnCheckedChangeListener(mListener);
             Object b = holder.sync.getTag(R.id.priceIcon);
             if (b != null && b instanceof Boolean) {
                 Boolean isSync = (Boolean) b;
