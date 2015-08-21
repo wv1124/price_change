@@ -292,7 +292,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     /* volley request */
     private void executeRequest(Request<?> request) {
-        if (mNetworkOK) {
+        //if (mNetworkOK) {
             if (request != null) {
                 //showLoadingDialog();
                 mVolleyQueue.add(request);
@@ -300,11 +300,11 @@ public abstract class BaseActivity extends AppCompatActivity {
                 L.e("request is null");
                 showSnackMsg(getString(R.string.requestError));
             }
-        } else {
+        /*} else {
             // network is not ok
             request.deliverError(new VolleyError(getString(R.string.netConnectedError)));
             showSnackMsg(getString(R.string.netConnectedError));
-        }
+        }*/
     }
 
     /**

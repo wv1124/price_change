@@ -84,7 +84,7 @@ public class GsonRequest<T> extends Request<T> {
     @Override
     public Map<String, String> getHeaders() throws AuthFailureError {
         HashMap<String, String> extraHeaders = new HashMap<>();
-        extraHeaders.put("Content-Type", "application/json");
+        extraHeaders.put("Content-Type", "application/json; charset=UTF-8");
         extraHeaders.put("Accept", "application/json");
 
         //Data Sign

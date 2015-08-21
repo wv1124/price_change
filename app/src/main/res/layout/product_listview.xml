@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout 
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content" >
+    android:layout_height="wrap_content">
 
     <ImageView
         android:id="@+id/ivIcon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:contentDescription="@string/image_desc"
+        android:minHeight="50dp"
+        android:minWidth="50dp"
         android:src="@drawable/ic_launcher" />
 
     <LinearLayout
@@ -17,7 +18,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="5dip"
         android:layout_toRightOf="@id/ivIcon"
-        android:orientation="vertical" >
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/tvName"
@@ -44,7 +45,7 @@
             android:textSize="13sp" />
     </LinearLayout>
 
-    <Button
+    <!--<Button
         android:id="@+id/btnClick"
         android:layout_width="80dip"
         android:layout_height="wrap_content"
@@ -53,6 +54,6 @@
         android:focusable="false"
         android:text="@string/mgr"
         android:textColor="#000000"
-        android:textSize="16sp" />
+        android:textSize="16sp" />-->
 
 </RelativeLayout>

@@ -83,9 +83,9 @@ public class LoginActivity extends BaseActivity {
         mWrapperPwd.setErrorEnabled(true);
 
         String token = (String) SPUtils.get(this, Constant.TOKEN, "");
-
+        L.d("get token:" + token);
         if (token != null && token.length() > 0) {
-            loginSuccess(token);
+            //loginSuccess(token);
         }
 
         // set username and password input text watcher

@@ -2,20 +2,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ProductListActivity" >
-	<TextView
-	    android:id="@+id/titile"
-	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content"
-	    android:text="按钮显示文字表示当前ListView的设置状态"
-	    android:gravity="center"/>
+    tools:context=".ProductListActivity">
+    <!--<TextView
+        android:id="@+id/titile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="按钮显示文字表示当前ListView的设置状态"
+        android:gravity="center"/>
     <LinearLayout
         android:id="@+id/flagLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/titile"
         android:orientation="horizontal" >
-		
+
         <Button
             android:id="@+id/canPullRefBtn"
             android:layout_width="0dp"
@@ -46,13 +46,12 @@
             android:layout_weight="1"
             android:text="关闭移动到第一条Item"
             android:textSize="10sp" />
-    </LinearLayout>
+    </LinearLayout>-->
 
     <com.qianmi.hack.widget.CustomListView
         android:id="@+id/mListView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/flagLayout"
         android:cacheColorHint="@android:color/transparent"
         android:fadingEdgeLength="0dp" />
 

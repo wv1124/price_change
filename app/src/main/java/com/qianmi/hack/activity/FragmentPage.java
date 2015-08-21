@@ -1,7 +1,6 @@
 package com.qianmi.hack.activity;
 
 import android.content.Context;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -15,6 +14,7 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -46,6 +46,7 @@ public class FragmentPage extends Fragment implements View.OnClickListener {
     private CustomListAdapter mAdapter;
     private CustomListView mListView;
     private int curPage = 1;
+    private boolean hasNext = true;
 
     private Button mCanPullRefBtn, mCanLoadMoreBtn, mCanAutoLoadMoreBtn, mIsMoveToFirstItemBtn;
 
@@ -66,7 +67,8 @@ public class FragmentPage extends Fragment implements View.OnClickListener {
                         mAdapter.mList.addAll((ArrayList<Product>) msg.obj);
                         mAdapter.notifyDataSetChanged();
                     }
-                    mListView.onLoadMoreComplete();    //加载更多完成
+                    mListView.onRefreshComplete();
+                    //mListView.onLoadMoreComplete();    //加载更多完成
                     break;
                 default:
                     break;
@@ -82,14 +84,14 @@ public class FragmentPage extends Fragment implements View.OnClickListener {
         View view = inflater.inflate(R.layout.activity_productlist, null);
 
         mListView = (CustomListView) view.findViewById(R.id.mListView);
-        mCanPullRefBtn = (Button) view.findViewById(R.id.canPullRefBtn);
+        /*mCanPullRefBtn = (Button) view.findViewById(R.id.canPullRefBtn);
         mCanLoadMoreBtn = (Button) view.findViewById(R.id.canLoadMoreFlagBtn);
         mCanAutoLoadMoreBtn = (Button) view.findViewById(R.id.autoLoadMoreFlagBtn);
-        mIsMoveToFirstItemBtn = (Button) view.findViewById(R.id.isMoveToFirstItemBtn);
-        mCanPullRefBtn.setOnClickListener(this);
+        mIsMoveToFirstItemBtn = (Button) view.findViewById(R.id.isMoveToFirstItemBtn);*/
+        /*mCanPullRefBtn.setOnClickListener(this);
         mCanLoadMoreBtn.setOnClickListener(this);
         mCanAutoLoadMoreBtn.setOnClickListener(this);
-        mIsMoveToFirstItemBtn.setOnClickListener(this);
+        mIsMoveToFirstItemBtn.setOnClickListener(this);*/
         initView();
         requestDate(curPage);
         return view;
@@ -103,7 +105,7 @@ public class FragmentPage extends Fragment implements View.OnClickListener {
             @Override
             public void onRefresh() {
                 // TODO 下拉刷新
-                Log.e(TAG, "onRefresh");
+                Log.e(TAG, "-----------------------onRefresh");
                 //loadData(0);
             }
         });
@@ -113,8 +115,8 @@ public class FragmentPage extends Fragment implements View.OnClickListener {
             @Override
             public void onLoadMore() {
                 // TODO 加载更多
-                Log.e(TAG, "onLoad");
-                loadData(1);
+                Log.e(TAG, "-----------------------onLoad");
+                //loadData(1);
             }
         });
 
@@ -128,12 +130,16 @@ public class FragmentPage extends Fragment implements View.OnClickListener {
 //				Log.e(TAG, "__ mAdapter.getItemId() = "+mAdapter.getItemId(position));
             }
         });
+        mListView.setCanLoadMore(true);
+        mListView.setMoveToFirstItemAfterRefresh(true);
+        mListView.setAutoLoadMore(true);
+
     }
 
     @Override
     public void onClick(View pV) {
         switch (pV.getId()) {
-            case R.id.canPullRefBtn:
+            /*case R.id.canPullRefBtn:
                 mListView.setCanRefresh(!mListView.isCanRefresh());
                 if (mCanPullRefBtn.getText().toString().
                         equals("关闭下拉刷新")) {
@@ -169,7 +175,7 @@ public class FragmentPage extends Fragment implements View.OnClickListener {
                 } else {
                     mIsMoveToFirstItemBtn.setText("关闭移动到第一条Item");
                 }
-                break;
+                break;*/
         }
     }
 
@@ -186,7 +192,12 @@ public class FragmentPage extends Fragment implements View.OnClickListener {
 
                     case 1:         // TODO 加载更多
                         //_List = new ArrayList<Product>();
-                        requestDate(++curPage);
+                        if (hasNext) {
+                            requestDate(++curPage);
+                        } else {
+                            ((TabHostActivity) FragmentPage.this.getActivity()).showSnackMsg("No more data!");
+                            //Toast.makeText(FragmentPage.this.getActivity(), "No more data!", Toast.LENGTH_LONG).show();
+                        }
                         break;
                 }
 
@@ -211,6 +222,11 @@ public class FragmentPage extends Fragment implements View.OnClickListener {
                             L.d(resp.toString());
                             mList.clear();
                             mList.addAll(resp.results);
+                            if (resp.next == null || resp.next.length() == 0 || resp.next == "null") {
+                                hasNext = false;
+                            } else {
+                                hasNext = true;
+                            }
                             //mCount = resp.count;
                             //if (type == 0) {    //下拉刷新
                             //					Collections.reverse(mList);	//逆序
@@ -233,6 +249,7 @@ public class FragmentPage extends Fragment implements View.OnClickListener {
                 ((TabHostActivity) FragmentPage.this.getActivity()).showSnackMsg(FragmentPage.this.getActivity().getString(R.string.login_err));
             }
         });
+        L.d("**************load date :curentPage=" + curentPage);
         ((TabHostActivity) FragmentPage.this.getActivity()).startRequest(mRequest);
     }
 
@@ -297,7 +314,12 @@ public class FragmentPage extends Fragment implements View.OnClickListener {
                     .placeholder(R.drawable.order_detail_proof_preload)
                     .into(holder.mImage);
             //holder.mImage.setImageUrl(ai.getAppIcon());
-            holder.mName.setText(ai.product_name);
+            try {
+                String name = new String(ai.product_name.getBytes(), "UTF-8");
+                holder.mName.setText(name);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             holder.mVer.setText(String.valueOf(ai.sale_price));
             holder.mSize.setText(String.valueOf(ai.cost_price));
 
