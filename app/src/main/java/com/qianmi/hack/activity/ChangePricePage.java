@@ -14,7 +14,6 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -35,12 +34,13 @@ import java.util.List;
 /**
  * Created by wv on 2015/8/20.
  */
-public class FragmentPage extends Fragment implements View.OnClickListener {
+public class ChangePricePage extends Fragment implements View.OnClickListener {
 
     private static final String TAG = "MainActivity";
 
     private static final int LOAD_DATA_FINISH = 10;
     private static final int REFRESH_DATA_FINISH = 11;
+    private static final int LOADING_DATA = 12;
 
     private List<Product> mList = new ArrayList<Product>();
     private CustomListAdapter mAdapter;
@@ -50,7 +50,6 @@ public class FragmentPage extends Fragment implements View.OnClickListener {
 
     private Button mCanPullRefBtn, mCanLoadMoreBtn, mCanAutoLoadMoreBtn, mIsMoveToFirstItemBtn;
 
-    @SuppressWarnings("unchecked")
     private Handler mHandler = new Handler() {
 
         public void handleMessage(Message msg) {
@@ -70,6 +69,8 @@ public class FragmentPage extends Fragment implements View.OnClickListener {
                     mListView.onRefreshComplete();
                     //mListView.onLoadMoreComplete();    //加载更多完成
                     break;
+                case LOADING_DATA:
+                    break;
                 default:
                     break;
             }
@@ -81,29 +82,37 @@ public class FragmentPage extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.activity_productlist, null);
+        View view = inflater.inflate(R.layout.activity_tradelist, null);
 
         mListView = (CustomListView) view.findViewById(R.id.mListView);
-
+        mCanPullRefBtn = (Button) view.findViewById(R.id.canPullRefBtn);
+        mCanLoadMoreBtn = (Button) view.findViewById(R.id.canLoadMoreFlagBtn);
+        mCanAutoLoadMoreBtn = (Button) view.findViewById(R.id.autoLoadMoreFlagBtn);
+        mIsMoveToFirstItemBtn = (Button) view.findViewById(R.id.isMoveToFirstItemBtn);
+        mCanPullRefBtn.setOnClickListener(this);
+        mCanLoadMoreBtn.setOnClickListener(this);
+        mCanAutoLoadMoreBtn.setOnClickListener(this);
+        mIsMoveToFirstItemBtn.setOnClickListener(this);
         initView();
         requestDate(curPage);
         return view;
     }
 
     private void initView() {
-        mAdapter = new CustomListAdapter(FragmentPage.this.getActivity(), mList);
+        mAdapter = new CustomListAdapter(ChangePricePage.this.getActivity(), mList);
         mListView.setAdapter(mAdapter);
-        mAdapter.notifyDataSetChanged();
-        mListView.setOnRefreshListener(new CustomListView.OnRefreshListener() {
+        //mAdapter.notifyDataSetChanged();
+        /*mListView.setOnRefreshListener(new CustomListView.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 // TODO 下拉刷新
                 Log.e(TAG, "-----------------------onRefresh");
                 //loadData(0);
             }
-        });
+        });*/
 
         mListView.setOnLoadListener(new CustomListView.OnLoadMoreListener() {
+
             @Override
             public void onLoadMore() {
                 // TODO 加载更多
@@ -113,17 +122,14 @@ public class FragmentPage extends Fragment implements View.OnClickListener {
         });
 
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-                // 此处传回来的position和mAdapter.getItemId()获取的一致;
                 Log.e(TAG, "click position:" + position);
-//				Log.e(TAG, "__ mAdapter.getItemId() = "+mAdapter.getItemId(position));
             }
         });
-        mListView.setCanLoadMore(true);
-        mListView.setMoveToFirstItemAfterRefresh(true);
+        //mListView.setCanLoadMore(true);
+        //mListView.setMoveToFirstItemAfterRefresh(true);
         mListView.setAutoLoadMore(true);
     }
 
@@ -171,34 +177,20 @@ public class FragmentPage extends Fragment implements View.OnClickListener {
     }
 
     public void loadData(final int type) {
-        new Thread() {
-            @Override
-            public void run() {
-                List<Product> _List = null;
-                switch (type) {
-                    case 0:     // TODO 下拉刷新
-                        //_List = new ArrayList<Product>();
-                        //requestDate(++curPage);
-                        break;
+        switch (type) {
+            case 0:     // TODO 下拉刷新
+                //requestDate(++curPage);
+                break;
 
-                    case 1:         // TODO 加载更多
-                        //_List = new ArrayList<Product>();
-                        if (hasNext) {
-                            requestDate(++curPage);
-                        } else {
-                            ((TabHostActivity) FragmentPage.this.getActivity()).showSnackMsg("No more data!");
-                            //Toast.makeText(FragmentPage.this.getActivity(), "No more data!", Toast.LENGTH_LONG).show();
-                        }
-                        break;
+            case 1:         // TODO 加载更多
+                if (hasNext) {
+                    requestDate(++curPage);
+                } else {
+                    ((TabHostActivity) ChangePricePage.this.getActivity()).showSnackMsg("No more data!");
                 }
+                break;
+        }
 
-                try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }.start();
     }
 
     private void requestDate(int curentPage) {
@@ -208,7 +200,7 @@ public class FragmentPage extends Fragment implements View.OnClickListener {
                     @Override
                     public void onResponse(ProductListResult resp) {
                         L.d("buildAppData return ");
-                        ((TabHostActivity) FragmentPage.this.getActivity()).dismissLoadingDialog();
+                        ((TabHostActivity) ChangePricePage.this.getActivity()).dismissLoadingDialog();
                         if (resp != null) {
                             L.d(resp.toString());
                             mList.clear();
@@ -235,13 +227,13 @@ public class FragmentPage extends Fragment implements View.OnClickListener {
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                ((TabHostActivity) FragmentPage.this.getActivity()).dismissLoadingDialog();
+                ((TabHostActivity) ChangePricePage.this.getActivity()).dismissLoadingDialog();
                 Log.e("TAG", error.getMessage(), error);
-                ((TabHostActivity) FragmentPage.this.getActivity()).showSnackMsg(FragmentPage.this.getActivity().getString(R.string.login_err));
+                ((TabHostActivity) ChangePricePage.this.getActivity()).showSnackMsg(ChangePricePage.this.getActivity().getString(R.string.login_err));
             }
         });
         L.d("**************load date :curentPage=" + curentPage);
-        ((TabHostActivity) FragmentPage.this.getActivity()).startRequest(mRequest);
+        ((TabHostActivity) ChangePricePage.this.getActivity()).startRequest(mRequest);
     }
 
     private class CustomListAdapter extends BaseAdapter {
@@ -298,7 +290,7 @@ public class FragmentPage extends Fragment implements View.OnClickListener {
             }
 
             Product ai = mList.get(position);
-            Glide.with(FragmentPage.this.getActivity())
+            Glide.with(ChangePricePage.this.getActivity())
                     .load(ai.pic_url)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .centerCrop()
