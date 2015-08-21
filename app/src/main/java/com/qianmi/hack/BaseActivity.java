@@ -81,13 +81,6 @@ public abstract class BaseActivity extends AppCompatActivity {
      */
     public abstract boolean needInitRequestQueue();
 
-    /**
-     * return true if want to show a print item on menu
-     *
-     * @return
-     */
-    public abstract boolean needPrintActionOnMenu();
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 

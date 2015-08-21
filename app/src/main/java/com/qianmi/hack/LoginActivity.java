@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
@@ -13,8 +14,13 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.qianmi.hack.activity.TabHostActivity;
-import com.support.android.designlibdemo.MainActivity;
+import com.qianmi.hack.bean.LoginRequest;
+import com.qianmi.hack.bean.Token;
+import com.qianmi.hack.network.GsonRequest;
+import com.qianmi.hack.network.ServerConnector;
 import com.qianmi.hack.utils.Constant;
 import com.qianmi.hack.utils.L;
 import com.qianmi.hack.utils.SPUtils;
@@ -63,12 +69,7 @@ public class LoginActivity extends BaseActivity {
 
     @Override
     public boolean needInitRequestQueue() {
-        return false;
-    }
-
-    @Override
-    public boolean needPrintActionOnMenu() {
-        return false;
+        return true;
     }
 
     @Override
@@ -174,12 +175,39 @@ public class LoginActivity extends BaseActivity {
     private void loginRequest(String username, String password) {
         L.d("login");
         //NetworkRequest.getInstance().loginRequest(username, password);
-        Intent intent = new Intent(this, TabHostActivity.class);
-        this.startActivity(intent);
+        LoginRequest loginRequest = new LoginRequest();
+        loginRequest.username = username;
+        loginRequest.password = password;
+
+        mRequest = new GsonRequest(
+                PcApplication.SERVER_URL + "api-token-auth/", loginRequest, Token.class,
+                new Response.Listener<Token>() {
+                    @Override
+                    public void onResponse(Token resp) {
+                        LoginActivity.this.dismissLoadingDialog();
+                        L.d("TAG", "token is " + resp.token);
+                        if (resp != null) {
+                            PcApplication.TOKEN = resp.token;
+                            loginSuccess(resp.token);
+                        } else {
+                            L.e("lonin return error");
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                LoginActivity.this.dismissLoadingDialog();
+                Log.e("TAG", error.getMessage(), error);
+                LoginActivity.this.showSnackMsg(LoginActivity.this.getString(R.string.login_err));
+            }
+        });
+        startRequest(mRequest);
     }
 
-    private void loginReturnHandler(String loginReturnData) {
-
+    private void loginSuccess(String loginReturnData) {
+        Intent intent = new Intent(this, TabHostActivity.class);
+        this.startActivity(intent);
+        this.finish();
     }
 
 

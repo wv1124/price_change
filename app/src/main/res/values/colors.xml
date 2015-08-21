@@ -37,7 +37,7 @@
     <color name="text_color_yellow">#FFC63C</color>
     <color name="text_img_size_tip_color">#666666</color>
 
-    <color name="text_button_login">#FFFFFF</color>
+    <color name="text_button_login">#000000</color>
     <color name="text_button_order_search">#FFF5F5F5</color>
     <color name="text_hint_color">#a8a8a9</color>
     <color name="transparent">#00000000</color>
@@ -56,5 +56,8 @@
     <color name="box_menu_background">#1eb86b</color>
     <color name="trade_view_background_one">#222429</color>
     <color name="trade_view_background_two">#292728</color>
+
+    <color name="pull_refresh_textview">#000000</color>
+    <color name="gold">#000000</color>
 
 </resources>

@@ -9,13 +9,14 @@ import android.widget.ImageView;
 import android.widget.TabHost;
 import android.widget.TextView;
 
+import com.qianmi.hack.BaseActivity;
 import com.qianmi.hack.R;
 
 
 /**
  * Created by wv on 2015/8/20.
  */
-public class TabHostActivity extends FragmentActivity {
+public class TabHostActivity extends BaseActivity {
 
     //定义FragmentTabHost对象
     private FragmentTabHost mTabHost;
@@ -32,6 +33,21 @@ public class TabHostActivity extends FragmentActivity {
 
     //Tab选项卡的文字
     private String mTextviewArray[] = {"商品", "调价记录", "订单", "设置"};
+
+    @Override
+    public void onBeginRequest() {
+
+    }
+
+    @Override
+    public void onNetworkFailed() {
+
+    }
+
+    @Override
+    public boolean needInitRequestQueue() {
+        return true;
+    }
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

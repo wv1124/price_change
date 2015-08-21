@@ -45,21 +45,25 @@
         android:label="@string/app_name"
         android:theme="@style/Theme.DesignDemo">
 
-        <activity android:name=".MainActivity"></activity>
-
-        <activity android:name="com.qianmi.hack.LoginActivity">
-        </activity>
-        <activity android:name="com.qianmi.hack.activity.TabHostActivity">
+        <activity android:name="com.qianmi.hack.LoginActivity"
+            android:label="@string/login_button_text">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.DEFAULT" />
+                <!-- <category android:name="android.intent.category.DEFAULT" />-->
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name="com.qianmi.hack.activity.TabHostActivity"></activity>
 
+        <activity
+            android:name=".activity.ProductListActivity"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-        <activity android:name=".CheeseDetailActivity" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
     </application>
 

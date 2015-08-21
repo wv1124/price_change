@@ -88,9 +88,11 @@ public class GsonRequest<T> extends Request<T> {
         extraHeaders.put("Accept", "application/json");
 
         //Data Sign
+        /*
         if (!TextUtils.isEmpty(mBody)) {
             extraHeaders.put("Sign", MD5Util.stringToMD5(PcApplication.SIGN_SECRET + mBody));
         }
+        */
 
         //JWT token
         if (!TextUtils.isEmpty(PcApplication.TOKEN)) {
