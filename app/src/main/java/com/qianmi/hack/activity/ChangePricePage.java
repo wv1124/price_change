@@ -299,15 +299,31 @@ public class ChangePricePage extends Fragment implements View.OnClickListener {
             }
 
             PriceChange ai = mList.get(position);
-            if (ai.new_price > ai.old_price) {
-                //涨价;
-                holder.priceIcon.setImageResource(R.drawable.shopping_going);
-            } else if (ai.new_price < ai.hashCode()) {
-                // 降价
-                holder.priceIcon.setImageResource(R.drawable.shopping_cancel);
-            } else {
-                // 不变
-                holder.priceIcon.setImageResource(R.drawable.shopping_finish);
+            /**
+             * CHANGE_TYPE = (
+             (1, u’上架’),
+             (2, u’降价’),
+             (3, u’下架’),
+             (4, u’涨价’),
+             (5, u’新增商品’),
+             )
+             */
+            switch (ai.type) {
+                case 1:
+                    holder.priceIcon.setImageResource(R.drawable.upl);
+                    break;
+                case 2:
+                    holder.priceIcon.setImageResource(R.drawable.down);
+                    break;
+                case 3:
+                    holder.priceIcon.setImageResource(R.drawable.downl);
+                    break;
+                case 4:
+                    holder.priceIcon.setImageResource(R.drawable.up);
+                    break;
+                case 5:
+                    holder.priceIcon.setImageResource(R.drawable.add);
+                    break;
             }
 
             holder.name.setText(ai.gonghuo_product_name);
