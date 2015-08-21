@@ -19,6 +19,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.qianmi.hack.PcApplication;
 import com.qianmi.hack.R;
+import com.qianmi.hack.bean.PriceChange;
 import com.qianmi.hack.bean.Trade;
 import com.qianmi.hack.bean.TradeListResult;
 import com.qianmi.hack.network.GsonRequest;
@@ -226,11 +227,37 @@ public class TradesPage extends Fragment implements View.OnClickListener {
             public void onErrorResponse(VolleyError error) {
                 ((TabHostActivity) TradesPage.this.getActivity()).dismissLoadingDialog();
                 Log.e("TAG", error.getMessage(), error);
-                ((TabHostActivity) TradesPage.this.getActivity()).showSnackMsg(TradesPage.this.getActivity().getString(R.string.login_err));
+                ((TabHostActivity) TradesPage.this.getActivity()).showSnackMsg(R.string.login_err_poor_network);
             }
         });
         L.d("**************load date :curentPage=" + curentPage);
         ((TabHostActivity) TradesPage.this.getActivity()).startRequest(mRequest);
+    }
+
+    private void syncPrice(PriceChange change) {
+        GsonRequest request = new GsonRequest(Request.Method.GET,
+                PcApplication.SERVER_URL + "/trades/", null, TradeListResult.class,
+                new Response.Listener<TradeListResult>() {
+                    @Override
+                    public void onResponse(TradeListResult resp) {
+                        L.d("buildAppData return ");
+                        if (resp != null) {
+                            ((TabHostActivity) TradesPage.this.getActivity()).dismissLoadingDialog();
+                        } else {
+                            L.e("lonin return error");
+                            ((TabHostActivity) TradesPage.this.getActivity()).showSnackMsg(R.string.sync_success);
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                ((TabHostActivity) TradesPage.this.getActivity()).dismissLoadingDialog();
+                Log.e("TAG", error.getMessage(), error);
+                ((TabHostActivity) TradesPage.this.getActivity()).showSnackMsg(R.string.login_err_poor_network);
+            }
+        });
+        ((TabHostActivity) TradesPage.this.getActivity()).startRequest(request);
+
     }
 
     private class CustomListAdapter extends BaseAdapter {

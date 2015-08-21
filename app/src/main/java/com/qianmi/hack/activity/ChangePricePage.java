@@ -232,7 +232,7 @@ public class ChangePricePage extends Fragment implements View.OnClickListener {
             public void onErrorResponse(VolleyError error) {
                 ((TabHostActivity) ChangePricePage.this.getActivity()).dismissLoadingDialog();
                 Log.e("TAG", error.getMessage(), error);
-                ((TabHostActivity) ChangePricePage.this.getActivity()).showSnackMsg(ChangePricePage.this.getActivity().getString(R.string.login_err));
+                ((TabHostActivity) ChangePricePage.this.getActivity()).showSnackMsg(R.string.login_err_poor_network);
             }
         });
         L.d("**************load date :curentPage=" + curentPage);

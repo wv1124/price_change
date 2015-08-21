@@ -8,12 +8,12 @@ import android.content.Intent;
 public class PriceChange {
     public String batch;
     public String supplier;
-    public Double old_price;
-    public Double new_price;
+    public double old_price;
+    public double new_price;
     public String gonghuo_product;
     public String gonghuo_product_name;
-    public Double gonghuo_price;
-    public Double draft_price;
-    public Intent type;
+    public double gonghuo_price;
+    public double draft_price;
+    public int type;
     public boolean is_sync;
 }

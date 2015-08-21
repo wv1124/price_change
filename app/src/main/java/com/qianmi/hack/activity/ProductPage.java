@@ -236,7 +236,7 @@ public class ProductPage extends Fragment implements View.OnClickListener {
             public void onErrorResponse(VolleyError error) {
                 ((TabHostActivity) ProductPage.this.getActivity()).dismissLoadingDialog();
                 Log.e("TAG", error.getMessage(), error);
-                ((TabHostActivity) ProductPage.this.getActivity()).showSnackMsg(ProductPage.this.getActivity().getString(R.string.login_err));
+                ((TabHostActivity) ProductPage.this.getActivity()).showSnackMsg(R.string.login_err_poor_network);
             }
         });
         L.d("**************load date :curentPage=" + curentPage);
