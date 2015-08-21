@@ -47,6 +47,7 @@ public class TradesPage extends Fragment implements View.OnClickListener {
     private ExpandableListView mListView;
     private int curPage = 1;
     private boolean hasNext = true;
+    private GsonRequest mRequest;
 
     private Button mCanPullRefBtn, mCanLoadMoreBtn, mCanAutoLoadMoreBtn, mIsMoveToFirstItemBtn;
 
@@ -144,7 +145,7 @@ public class TradesPage extends Fragment implements View.OnClickListener {
     }
 
     private void requestDate(int curentPage) {
-        GsonRequest mRequest = new GsonRequest(Request.Method.GET,
+        mRequest = new GsonRequest(Request.Method.GET,
                 PcApplication.SERVER_URL + "/trades/?page=" + curentPage, null, TradeListResult.class,
                 new Response.Listener<TradeListResult>() {
                     @Override
@@ -177,9 +178,7 @@ public class TradesPage extends Fragment implements View.OnClickListener {
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                ((TabHostActivity) TradesPage.this.getActivity()).dismissLoadingDialog();
-                Log.e("TAG", error.getMessage(), error);
-                ((TabHostActivity) TradesPage.this.getActivity()).showSnackMsg(R.string.login_err_poor_network);
+                ((TabHostActivity) TradesPage.this.getActivity()).handleError(error, mRequest);
             }
         });
         L.d("**************load date :curentPage=" + curentPage);
@@ -316,7 +315,7 @@ public class TradesPage extends Fragment implements View.OnClickListener {
                 holder.img.setBackgroundResource(R.drawable.shopping_cancel);
             }
             holder.tid.setText("订单号:" + ai.tid);
-            holder.payment.setText("应付金额: ￥"  +
+            holder.payment.setText("应付金额: ￥" +
                     String.valueOf(ai.payment));
             holder.totalFee.setText("订单总额: ￥" +
                     String.valueOf(ai.total_fee));

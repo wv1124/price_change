@@ -4,55 +4,6 @@
     android:layout_height="match_parent"
     tools:context=".ProductListActivity">
 
-    <TextView
-        android:id="@+id/titile"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="按钮显示文字表示当前ListView的设置状态"
-        android:visibility="gone" />
-
-    <LinearLayout
-        android:id="@+id/flagLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/titile"
-        android:orientation="horizontal"
-        android:visibility="gone">
-
-        <Button
-            android:id="@+id/canPullRefBtn"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="启用下拉刷新"
-            android:textSize="10sp" />
-
-        <Button
-            android:id="@+id/canLoadMoreFlagBtn"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="启用加载更多"
-            android:textSize="10sp" />
-
-        <Button
-            android:id="@+id/autoLoadMoreFlagBtn"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="启用自动加载更多"
-            android:textSize="10sp" />
-
-        <Button
-            android:id="@+id/isMoveToFirstItemBtn"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="关闭移动到第一条Item"
-            android:textSize="10sp" />
-    </LinearLayout>
-
     <com.qianmi.hack.widget.CustomListView
         android:id="@+id/mListView"
         android:layout_width="match_parent"

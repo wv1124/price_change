@@ -9,10 +9,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -26,51 +29,41 @@ import com.qianmi.hack.bean.Product;
 import com.qianmi.hack.bean.ProductListResult;
 import com.qianmi.hack.network.GsonRequest;
 import com.qianmi.hack.utils.L;
-import com.qianmi.hack.widget.CustomListView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by wv on 2015/8/20.
  */
-public class ProductPage extends Fragment implements View.OnClickListener {
+public class ProductPage extends Fragment implements View.OnClickListener, AbsListView.OnScrollListener {
 
     private static final String TAG = "MainActivity";
 
     private static final int LOAD_DATA_FINISH = 10;
-    private static final int REFRESH_DATA_FINISH = 11;
+
+    private int visibleLastIndex = 0;   //最后的可视项索引
+    private int visibleItemCount;       // 当前窗口可见项总数
 
     private List<Product> mList = new ArrayList<Product>();
     private CustomListAdapter mAdapter;
-    private CustomListView mListView;
+    private ListView mListView;
     private int curPage = 1;
     private boolean hasNext = true;
-    private  GsonRequest mRequest;
+    private GsonRequest mRequest;
+    private LayoutInflater mInflater;
+    private LinearLayout loading;
 
     private Button mCanPullRefBtn, mCanLoadMoreBtn, mCanAutoLoadMoreBtn, mIsMoveToFirstItemBtn;
 
-    @SuppressWarnings("unchecked")
     private Handler mHandler = new Handler() {
 
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case REFRESH_DATA_FINISH:
-                    if (mAdapter != null) {
-                        mAdapter.mList = (ArrayList<Product>) msg.obj;
-                        mAdapter.notifyDataSetChanged();
-                    }
-                    mListView.onRefreshComplete();    //下拉刷新完成
-                    break;
                 case LOAD_DATA_FINISH:
-                    if (mAdapter != null) {
-                        mAdapter.mList.addAll((ArrayList<Product>) msg.obj);
-                        mAdapter.notifyDataSetChanged();
-                    }
-                    mListView.onRefreshComplete();
-                    //mListView.onLoadMoreComplete();    //加载更多完成
-                    break;
-                default:
+                    mAdapter.mList = mList;
+                    mAdapter.notifyDataSetChanged();
                     break;
             }
         }
@@ -81,9 +74,11 @@ public class ProductPage extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        mInflater = inflater;
         View view = inflater.inflate(R.layout.activity_productlist, null);
-
-        mListView = (CustomListView) view.findViewById(R.id.mListView);
+        loading = (LinearLayout) view.findViewById(R.id.loading);
+        loading.setVisibility(View.GONE);
+        mListView = (ListView) view.findViewById(R.id.mListView);
 
         initView();
         requestDate(curPage);
@@ -93,112 +88,23 @@ public class ProductPage extends Fragment implements View.OnClickListener {
     private void initView() {
         mAdapter = new CustomListAdapter(ProductPage.this.getActivity(), mList);
         mListView.setAdapter(mAdapter);
+        mListView.setOnScrollListener(this);     //添加滑动监听
         mAdapter.notifyDataSetChanged();
-        mListView.setOnRefreshListener(new CustomListView.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                // TODO 下拉刷新
-                Log.e(TAG, "-----------------------onRefresh");
-                //loadData(0);
-            }
-        });
-
-        mListView.setOnLoadListener(new CustomListView.OnLoadMoreListener() {
-            @Override
-            public void onLoadMore() {
-                // TODO 加载更多
-                Log.e(TAG, "-----------------------onLoad");
-                loadData(1);
-            }
-        });
-
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-                // 此处传回来的position和mAdapter.getItemId()获取的一致;
                 Log.e(TAG, "click position:" + position);
-//				Log.e(TAG, "__ mAdapter.getItemId() = "+mAdapter.getItemId(position));
             }
         });
-        mListView.setCanLoadMore(true);
-        mListView.setMoveToFirstItemAfterRefresh(true);
-        mListView.setAutoLoadMore(true);
     }
 
     @Override
     public void onClick(View pV) {
         switch (pV.getId()) {
-            case R.id.canPullRefBtn:
-                mListView.setCanRefresh(!mListView.isCanRefresh());
-                if (mCanPullRefBtn.getText().toString().
-                        equals("关闭下拉刷新")) {
-                    mCanPullRefBtn.setText("启用下拉刷新");
-                } else {
-                    mCanPullRefBtn.setText("关闭下拉刷新");
-                }
-                break;
-            case R.id.canLoadMoreFlagBtn:
-                mListView.setCanLoadMore(!mListView.isCanLoadMore());
-                if (mCanLoadMoreBtn.getText().toString().
-                        equals("关闭加载更多")) {
-                    mCanLoadMoreBtn.setText("启用加载更多");
-                } else {
-                    mCanLoadMoreBtn.setText("关闭加载更多");
-                }
-                break;
-            case R.id.autoLoadMoreFlagBtn:
-                mListView.setAutoLoadMore(!mListView.isAutoLoadMore());
-                if (mCanAutoLoadMoreBtn.getText().toString().
-                        equals("关闭自动加载更多")) {
-                    mCanAutoLoadMoreBtn.setText("启用自动加载更多");
-                } else {
-                    mCanAutoLoadMoreBtn.setText("关闭自动加载更多");
-                }
-                break;
-            case R.id.isMoveToFirstItemBtn:
-                mListView.setMoveToFirstItemAfterRefresh(
-                        !mListView.isMoveToFirstItemAfterRefresh());
-                if (mIsMoveToFirstItemBtn.getText().toString().
-                        equals("关闭移动到第一条Item")) {
-                    mIsMoveToFirstItemBtn.setText("启用移动到第一条Item");
-                } else {
-                    mIsMoveToFirstItemBtn.setText("关闭移动到第一条Item");
-                }
-                break;
+
         }
-    }
-
-    public void loadData(final int type) {
-        new Thread() {
-            @Override
-            public void run() {
-                List<Product> _List = null;
-                switch (type) {
-                    case 0:     // TODO 下拉刷新
-                        //_List = new ArrayList<Product>();
-                        //requestDate(++curPage);
-                        break;
-
-                    case 1:         // TODO 加载更多
-                        //_List = new ArrayList<Product>();
-                        if (hasNext) {
-                            requestDate(++curPage);
-                        } else {
-                            ((TabHostActivity) ProductPage.this.getActivity()).showSnackMsg("No more data!");
-                            //Toast.makeText(ProductPage.this.getActivity(), "No more data!", Toast.LENGTH_LONG).show();
-                        }
-                        break;
-                }
-
-                try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }.start();
     }
 
     private void requestDate(int curentPage) {
@@ -211,23 +117,19 @@ public class ProductPage extends Fragment implements View.OnClickListener {
                         ((TabHostActivity) ProductPage.this.getActivity()).dismissLoadingDialog();
                         if (resp != null) {
                             L.d(resp.toString());
-                            mList.clear();
+                            //mList.clear();
                             mList.addAll(resp.results);
                             if (resp.next == null || resp.next.length() == 0 || resp.next == "null") {
                                 hasNext = false;
                             } else {
                                 hasNext = true;
                             }
-                            //mCount = resp.count;
-                            //if (type == 0) {    //下拉刷新
-                            //					Collections.reverse(mList);	//逆序
-                            //Message _Msg = mHandler.obtainMessage(REFRESH_DATA_FINISH, mList);
-                            //mHandler.sendMessage(_Msg);
-                            //} else if (type == 1) {
+
                             Message _Msg = mHandler.obtainMessage(LOAD_DATA_FINISH, mList);
                             mHandler.sendMessage(_Msg);
-                            //}
-
+                            if (loading != null) {
+                                loading.setVisibility(View.GONE);
+                            }
                         } else {
                             L.e("lonin return error");
                         }
@@ -235,11 +137,37 @@ public class ProductPage extends Fragment implements View.OnClickListener {
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                  ((TabHostActivity) ProductPage.this.getActivity()).handleError(error, mRequest);
+                ((TabHostActivity) ProductPage.this.getActivity()).handleError(error, mRequest);
             }
         });
         L.d("**************load date :curentPage=" + curentPage);
         ((TabHostActivity) ProductPage.this.getActivity()).startRequest(mRequest);
+    }
+
+    @Override
+    public void onScrollStateChanged(AbsListView view, int scrollState) {
+        int itemsLastIndex = mAdapter.getCount() - 1;    //数据集最后一项的索引
+        int lastIndex = itemsLastIndex;             //加上底部的loadMoreView项
+        if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
+            L.d("*************** onScrollStateChanged itemsLastIndex=" + itemsLastIndex + ", lastIndex=" + lastIndex);
+            if (visibleLastIndex == lastIndex) {
+                //如果是自动加载,可以在这里放置异步加载数据的代码
+                ++curPage;
+                if (hasNext) {
+                    Log.i("LOADMORE", "loading... page: " + hasNext);
+                    loading.setVisibility(View.VISIBLE);
+                    requestDate(curPage);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+        //L.d("------------ onScrollStateChanged firstVisibleItem=" + firstVisibleItem
+        //        + ", visibleItemCount=" + visibleItemCount + ", totalItemCount=" + totalItemCount);
+        this.visibleItemCount = visibleItemCount;
+        visibleLastIndex = firstVisibleItem + visibleItemCount - 1;
     }
 
     private class CustomListAdapter extends BaseAdapter {
@@ -284,12 +212,13 @@ public class ProductPage extends Fragment implements View.OnClickListener {
 
                 holder = new ViewHolder();
                 holder.mImage = (ImageView) convertView
-                        .findViewById(R.id.ivIcon);
-                holder.mName = (TextView) convertView
-                        .findViewById(R.id.tvName);
-                holder.mVer = (TextView) convertView.findViewById(R.id.tvVer);
-                holder.mSize = (TextView) convertView
-                        .findViewById(R.id.tvSize);
+                        .findViewById(R.id.img);
+                holder.name = (TextView) convertView
+                        .findViewById(R.id.name);
+                holder.salePrice = (TextView) convertView.findViewById(R.id.sale_price);
+                holder.costPrice = (TextView) convertView
+                        .findViewById(R.id.cost_price);
+                holder.updateTime = (TextView) convertView.findViewById(R.id.update_time);
                 convertView.setTag(holder);
             } else {
                 holder = (ViewHolder) convertView.getTag();
@@ -303,23 +232,23 @@ public class ProductPage extends Fragment implements View.OnClickListener {
                     .placeholder(R.drawable.order_detail_proof_preload)
                     .into(holder.mImage);
             //holder.mImage.setImageUrl(ai.getAppIcon());
-            try {
-                String name = new String(ai.product_name.getBytes(), "UTF-8");
-                holder.mName.setText(name);
-            } catch (Exception e) {
-                e.printStackTrace();
+            holder.name.setText(ai.product_name);
+            holder.salePrice.setText("销售价: ￥" + String.valueOf(ai.sale_price));
+            holder.costPrice.setText("进货价: ￥" + String.valueOf(ai.cost_price));
+            if (ai.updated != null && ai.updated.length() > "2015-08-18".length()) {
+                String date = ai.updated.substring(0, "2015-08-18".length());
+                holder.updateTime.setText(date);
             }
-            holder.mVer.setText(String.valueOf(ai.sale_price));
-            holder.mSize.setText(String.valueOf(ai.cost_price));
-
             return convertView;
         }
     }
 
     private static class ViewHolder {
         private ImageView mImage;
-        private TextView mName;
-        private TextView mVer;
-        private TextView mSize;
+        private TextView name;
+        private TextView salePrice;
+        private TextView costPrice;
+        private TextView updateTime;
     }
+
 }
