@@ -184,19 +184,23 @@ public class ChangePricePage extends Fragment implements View.OnClickListener, A
         }
     };
 
+    class Ret {
+        public String ret;
+    }
+
     private void changePrice(int id) {
         GsonRequest request = new GsonRequest(Request.Method.GET,
-                PcApplication.SERVER_URL + "changenotifys/" + id, null, PriceChangeListResult.class,
-                new Response.Listener<PriceChangeListResult>() {
+                PcApplication.SERVER_URL + "changenotifys/" + id, null, Ret.class,
+                new Response.Listener<Ret>() {
                     @Override
-                    public void onResponse(PriceChangeListResult resp) {
+                    public void onResponse(Ret resp) {
                         L.d("change price return ");
                         ((TabHostActivity) ChangePricePage.this.getActivity()).dismissLoadingDialog();
-                        if (resp != null) {
-                            Toast.makeText(PcApplication.getInstance(), "同步成功!", Toast.LENGTH_LONG);
+                        if (resp != null && resp.ret == "0") {
+                            Toast.makeText(PcApplication.getInstance(), "同步成功!", Toast.LENGTH_LONG).show();
                         } else {
                             L.e("changePrice return error");
-                            Toast.makeText(PcApplication.getInstance(), "修改价格失败!", Toast.LENGTH_LONG);
+                            Toast.makeText(PcApplication.getInstance(), "修改价格失败!", Toast.LENGTH_LONG).show();
                         }
                     }
                 }, new Response.ErrorListener() {

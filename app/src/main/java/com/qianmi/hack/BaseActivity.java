@@ -471,7 +471,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     public void handleError(VolleyError error, GsonRequest request) {
         if (error instanceof AuthFailureError) {
             L.d("authfailure");
-            Toast.makeText(this, this.getString(R.string.session_expire), Toast.LENGTH_LONG);
+            Toast.makeText(this, this.getString(R.string.session_expire), Toast.LENGTH_LONG).show();
             Intent intent = new Intent(this, LoginActivity.class);
             this.startActivity(intent);
         } else {
