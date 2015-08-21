@@ -50,6 +50,7 @@ public class ChangePricePage extends Fragment implements View.OnClickListener {
     private CustomListView mListView;
     private int curPage = 1;
     private boolean hasNext = true;
+    private GsonRequest mRequest;
 
     private Button mCanPullRefBtn, mCanLoadMoreBtn, mCanAutoLoadMoreBtn, mIsMoveToFirstItemBtn;
 
@@ -197,7 +198,7 @@ public class ChangePricePage extends Fragment implements View.OnClickListener {
     }
 
     private void requestDate(int curentPage) {
-        GsonRequest mRequest = new GsonRequest(Request.Method.GET,
+        mRequest = new GsonRequest(Request.Method.GET,
                 PcApplication.SERVER_URL + "/changenotifys/?page=" + curentPage, null, PriceChangeListResult.class,
                 new Response.Listener<PriceChangeListResult>() {
                     @Override
@@ -230,9 +231,7 @@ public class ChangePricePage extends Fragment implements View.OnClickListener {
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                ((TabHostActivity) ChangePricePage.this.getActivity()).dismissLoadingDialog();
-                Log.e("TAG", error.getMessage(), error);
-                ((TabHostActivity) ChangePricePage.this.getActivity()).showSnackMsg(R.string.login_err_poor_network);
+                ((TabHostActivity) ChangePricePage.this.getActivity()).handleError(error, mRequest);
             }
         });
         L.d("**************load date :curentPage=" + curentPage);

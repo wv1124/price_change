@@ -87,6 +87,12 @@ public class LoginActivity extends BaseActivity {
         mWrapperPwd.setErrorEnabled(true);
 
         String token = (String) SPUtils.get(this, Constant.TOKEN, "");
+        String user = (String) SPUtils.get(this, Constant.USER_NAME, "");
+        String paswd = (String) SPUtils.get(this, Constant.PASSOWD, "");
+        if (user.length() > 0) {
+            mInputUsername.setText(user);
+            mInputPwd.setText(paswd);
+        }
         L.d("get token:" + token);
         if (token != null && token.length() > 0) {
             //loginSuccess(token);
@@ -181,7 +187,7 @@ public class LoginActivity extends BaseActivity {
     }
 
 
-    private void loginRequest(final String username, String password) {
+    private void loginRequest(final String username, final String password) {
         L.d("login");
         //NetworkRequest.getInstance().loginRequest(username, password);
         LoginRequest loginRequest = new LoginRequest();
@@ -198,7 +204,7 @@ public class LoginActivity extends BaseActivity {
                         if (resp != null) {
                             PcApplication.TOKEN = resp.token;
                             tokenRequest(username, PcApplication.TOKEN, PcApplication.INSTALLATION_ID);
-                            loginSuccess(resp.token);
+                            loginSuccess(resp.token, username, password);
                         } else {
                             L.e("lonin return error");
                         }
@@ -214,7 +220,9 @@ public class LoginActivity extends BaseActivity {
         startRequest(mRequest);
     }
 
-    private void loginSuccess(String loginReturnData) {
+    private void loginSuccess(String loginReturnData, String username, String passwd) {
+        SPUtils.put(this, Constant.USER_NAME, username);
+        SPUtils.put(this, Constant.PASSOWD, passwd);
         SPUtils.put(this, Constant.TOKEN, loginReturnData);
         Intent intent = new Intent(this, TabHostActivity.class);
         this.startActivity(intent);

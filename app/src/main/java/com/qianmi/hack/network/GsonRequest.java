@@ -60,6 +60,8 @@ public class GsonRequest<T> extends Request<T> {
         return mBody.getBytes();
     }
 
+    public int statusCode = 0;
+
     @Override
     public String getBodyContentType() {
         return "application/json; charset=UTF-8";
@@ -69,6 +71,7 @@ public class GsonRequest<T> extends Request<T> {
     protected Response<T> parseNetworkResponse(NetworkResponse response) {
         try {
             //String jsonString = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
+            statusCode = response.statusCode;
             String jsonString = new String(response.data, "UTF-8");
             return Response.success(mGson.fromJson(jsonString, mClass), HttpHeaderParser.parseCacheHeaders(response));
         } catch (UnsupportedEncodingException e) {

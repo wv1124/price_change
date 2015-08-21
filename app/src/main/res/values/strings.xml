@@ -75,6 +75,7 @@
     <string name="sync_alredy">已同步</string>
     <string name="order_id">订单号:</string>
     <string name="sync_success">同步失败</string>
+    <string name="session_expire">会话过期,请重新登录!</string>
 
 
 </resources>

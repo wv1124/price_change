@@ -15,6 +15,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,12 +23,15 @@ import android.view.Window;
 import android.view.animation.BounceInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.Volley;
+import com.qianmi.hack.network.GsonRequest;
 import com.qianmi.hack.utils.L;
 
 import org.json.JSONObject;
@@ -293,13 +297,13 @@ public abstract class BaseActivity extends AppCompatActivity {
     /* volley request */
     private void executeRequest(Request<?> request) {
         //if (mNetworkOK) {
-            if (request != null) {
-                //showLoadingDialog();
-                mVolleyQueue.add(request);
-            } else {
-                L.e("request is null");
-                showSnackMsg(getString(R.string.requestError));
-            }
+        if (request != null) {
+            //showLoadingDialog();
+            mVolleyQueue.add(request);
+        } else {
+            L.e("request is null");
+            showSnackMsg(getString(R.string.requestError));
+        }
         /*} else {
             // network is not ok
             request.deliverError(new VolleyError(getString(R.string.netConnectedError)));
@@ -473,6 +477,19 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     public void setShowDefaultMenu(boolean show) {
         this.mShowDefaultMenu = show;
+    }
+
+    public void handleError(VolleyError error, GsonRequest request) {
+        if (error instanceof AuthFailureError) {
+            L.d("authfailure");
+            Toast.makeText(this, this.getString(R.string.session_expire), Toast.LENGTH_LONG);
+            Intent intent = new Intent(this, LoginActivity.class);
+            this.startActivity(intent);
+        } else {
+            this.dismissLoadingDialog();
+            L.e(error.getMessage());
+            this.showSnackMsg(R.string.login_err_poor_network);
+        }
     }
 
 

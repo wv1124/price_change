@@ -46,6 +46,7 @@ public class ProductPage extends Fragment implements View.OnClickListener {
     private CustomListView mListView;
     private int curPage = 1;
     private boolean hasNext = true;
+    private  GsonRequest mRequest;
 
     private Button mCanPullRefBtn, mCanLoadMoreBtn, mCanAutoLoadMoreBtn, mIsMoveToFirstItemBtn;
 
@@ -201,7 +202,7 @@ public class ProductPage extends Fragment implements View.OnClickListener {
     }
 
     private void requestDate(int curentPage) {
-        GsonRequest mRequest = new GsonRequest(Request.Method.GET,
+        mRequest = new GsonRequest(Request.Method.GET,
                 PcApplication.SERVER_URL + "/supproducts/?page=" + curentPage, null, ProductListResult.class,
                 new Response.Listener<ProductListResult>() {
                     @Override
@@ -234,9 +235,7 @@ public class ProductPage extends Fragment implements View.OnClickListener {
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                ((TabHostActivity) ProductPage.this.getActivity()).dismissLoadingDialog();
-                Log.e("TAG", error.getMessage(), error);
-                ((TabHostActivity) ProductPage.this.getActivity()).showSnackMsg(R.string.login_err_poor_network);
+                  ((TabHostActivity) ProductPage.this.getActivity()).handleError(error, mRequest);
             }
         });
         L.d("**************load date :curentPage=" + curentPage);
