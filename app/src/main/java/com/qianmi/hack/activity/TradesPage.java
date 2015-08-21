@@ -9,11 +9,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -34,13 +36,11 @@ import java.util.List;
 /**
  * Created by wv on 2015/8/20.
  */
-public class TradesPage extends Fragment implements View.OnClickListener {
+public class TradesPage extends Fragment implements View.OnClickListener, AbsListView.OnScrollListener {
 
     private static final String TAG = "MainActivity";
 
     private static final int LOAD_DATA_FINISH = 10;
-    private static final int REFRESH_DATA_FINISH = 11;
-    private static final int LOADING_DATA = 12;
 
     private List<Trade> mList = new ArrayList<Trade>();
     private TradeListAdapter mAdapter;
@@ -48,30 +48,17 @@ public class TradesPage extends Fragment implements View.OnClickListener {
     private int curPage = 1;
     private boolean hasNext = true;
     private GsonRequest mRequest;
-
-    private Button mCanPullRefBtn, mCanLoadMoreBtn, mCanAutoLoadMoreBtn, mIsMoveToFirstItemBtn;
+    private LinearLayout loading;
+    private int visibleLastIndex = 0;   //最后的可视项索引
+    private int visibleItemCount;       // 当前窗口可见项总数
 
     private Handler mHandler = new Handler() {
 
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case REFRESH_DATA_FINISH:
-                    if (mAdapter != null) {
-                        mAdapter.mList = (ArrayList<Trade>) msg.obj;
-                        mAdapter.notifyDataSetChanged();
-                    }
-//                    mListView.onRefreshComplete();    //下拉刷新完成
-                    break;
                 case LOAD_DATA_FINISH:
-                    if (mAdapter != null) {
-                        mAdapter.mList.addAll((ArrayList<Trade>) msg.obj);
-                        mAdapter.notifyDataSetChanged();
-                    }
-                    //mListView.onLoadMoreComplete();    //加载更多完成
-                    break;
-                case LOADING_DATA:
-                    break;
-                default:
+                    mAdapter.mList = mList;
+                    mAdapter.notifyDataSetChanged();
                     break;
             }
         }
@@ -83,16 +70,9 @@ public class TradesPage extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_tradelist, null);
-
         mListView = (ExpandableListView) view.findViewById(R.id.mListView);
-        mCanPullRefBtn = (Button) view.findViewById(R.id.canPullRefBtn);
-        mCanLoadMoreBtn = (Button) view.findViewById(R.id.canLoadMoreFlagBtn);
-        mCanAutoLoadMoreBtn = (Button) view.findViewById(R.id.autoLoadMoreFlagBtn);
-        mIsMoveToFirstItemBtn = (Button) view.findViewById(R.id.isMoveToFirstItemBtn);
-        mCanPullRefBtn.setOnClickListener(this);
-        mCanLoadMoreBtn.setOnClickListener(this);
-        mCanAutoLoadMoreBtn.setOnClickListener(this);
-        mIsMoveToFirstItemBtn.setOnClickListener(this);
+        loading = (LinearLayout) view.findViewById(R.id.loading);
+        loading.setVisibility(View.GONE);
         initView();
         requestDate(curPage);
         return view;
@@ -101,7 +81,9 @@ public class TradesPage extends Fragment implements View.OnClickListener {
     private void initView() {
         mAdapter = new TradeListAdapter(TradesPage.this.getActivity(), mList);
         mListView.setAdapter(mAdapter);
-        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mListView.setOnScrollListener(this);     //添加滑动监听
+        mAdapter.notifyDataSetChanged();
+       /* mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (view.findViewById(R.id.updown) != null) {
@@ -117,7 +99,7 @@ public class TradesPage extends Fragment implements View.OnClickListener {
                     }
                 }
             }
-        });
+        });*/
     }
 
     @Override
@@ -154,22 +136,19 @@ public class TradesPage extends Fragment implements View.OnClickListener {
                         ((TabHostActivity) TradesPage.this.getActivity()).dismissLoadingDialog();
                         if (resp != null) {
                             L.d(resp.toString());
-                            mList.clear();
+                            //mList.clear();
                             mList.addAll(resp.results);
                             if (resp.next == null || resp.next.length() == 0 || resp.next == "null") {
                                 hasNext = false;
                             } else {
                                 hasNext = true;
                             }
-                            //mCount = resp.count;
-                            //if (type == 0) {    //下拉刷新
-                            //					Collections.reverse(mList);	//逆序
-                            //Message _Msg = mHandler.obtainMessage(REFRESH_DATA_FINISH, mList);
-                            //mHandler.sendMessage(_Msg);
-                            //} else if (type == 1) {
+
                             Message _Msg = mHandler.obtainMessage(LOAD_DATA_FINISH, mList);
                             mHandler.sendMessage(_Msg);
-                            //}
+                            if (loading != null) {
+                                loading.setVisibility(View.GONE);
+                            }
 
                         } else {
                             L.e("lonin return error");
@@ -185,30 +164,31 @@ public class TradesPage extends Fragment implements View.OnClickListener {
         ((TabHostActivity) TradesPage.this.getActivity()).startRequest(mRequest);
     }
 
-    private void syncPrice(PriceChange change) {
-        GsonRequest request = new GsonRequest(Request.Method.GET,
-                PcApplication.SERVER_URL + "/trades/", null, TradeListResult.class,
-                new Response.Listener<TradeListResult>() {
-                    @Override
-                    public void onResponse(TradeListResult resp) {
-                        L.d("buildAppData return ");
-                        if (resp != null) {
-                            ((TabHostActivity) TradesPage.this.getActivity()).dismissLoadingDialog();
-                        } else {
-                            L.e("lonin return error");
-                            ((TabHostActivity) TradesPage.this.getActivity()).showSnackMsg(R.string.sync_success);
-                        }
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                ((TabHostActivity) TradesPage.this.getActivity()).dismissLoadingDialog();
-                Log.e("TAG", error.getMessage(), error);
-                ((TabHostActivity) TradesPage.this.getActivity()).showSnackMsg(R.string.login_err_poor_network);
-            }
-        });
-        ((TabHostActivity) TradesPage.this.getActivity()).startRequest(request);
 
+    @Override
+    public void onScrollStateChanged(AbsListView view, int scrollState) {
+        int itemsLastIndex = mAdapter.getGroupCount() - 1;    //数据集最后一项的索引
+        int lastIndex = itemsLastIndex;             //加上底部的loadMoreView项
+        if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
+            L.d("*************** onScrollStateChanged itemsLastIndex=" + itemsLastIndex + ", lastIndex=" + lastIndex);
+            if (visibleLastIndex == lastIndex) {
+                //如果是自动加载,可以在这里放置异步加载数据的代码
+                ++curPage;
+                if (hasNext) {
+                    Log.i("LOADMORE", "loading... page: " + hasNext);
+                    loading.setVisibility(View.VISIBLE);
+                    requestDate(curPage);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+        //L.d("------------ onScrollStateChanged firstVisibleItem=" + firstVisibleItem
+        //        + ", visibleItemCount=" + visibleItemCount + ", totalItemCount=" + totalItemCount);
+        this.visibleItemCount = visibleItemCount;
+        visibleLastIndex = firstVisibleItem + visibleItemCount - 1;
     }
 
     private class TradeListAdapter extends BaseExpandableListAdapter {
@@ -301,7 +281,7 @@ public class TradesPage extends Fragment implements View.OnClickListener {
                         .findViewById(R.id.deliverStatus);
                 holder.comletetStatus = (TextView) convertView
                         .findViewById(R.id.comletetStatus);
-                holder.status = (TextView)convertView.findViewById(R.id.status);
+                holder.status = (TextView) convertView.findViewById(R.id.status);
                 convertView.setTag(holder);
             } else {
                 holder = (ViewHolder) convertView.getTag();

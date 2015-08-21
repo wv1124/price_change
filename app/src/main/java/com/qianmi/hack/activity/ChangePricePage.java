@@ -12,27 +12,22 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.qianmi.hack.PcApplication;
 import com.qianmi.hack.R;
 import com.qianmi.hack.bean.PriceChange;
-import com.qianmi.hack.bean.PriceChange;
 import com.qianmi.hack.bean.PriceChangeListResult;
-import com.qianmi.hack.bean.ProductListResult;
 import com.qianmi.hack.network.GsonRequest;
 import com.qianmi.hack.utils.L;
-import com.qianmi.hack.widget.CustomListView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -93,7 +88,16 @@ public class ChangePricePage extends Fragment implements View.OnClickListener, A
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
+                CheckBox isSync = (CheckBox) view.findViewById(R.id.sync);
+                if (isSync != null) {
+                    Object changeId = (Object) view.getTag(R.id.priceIcon);
+                    L.d("change id :" + changeId);
+                    if (changeId != null && changeId instanceof Integer) {
+                        changePrice((Integer) changeId);
+                    }
+                }
                 Log.e(TAG, "click position:" + position);
+
             }
         });
     }
@@ -128,7 +132,7 @@ public class ChangePricePage extends Fragment implements View.OnClickListener, A
                             }
 
                         } else {
-                            L.e("lonin return error");
+                            L.e("requestDate return error");
                         }
                     }
                 }, new Response.ErrorListener() {
@@ -165,6 +169,31 @@ public class ChangePricePage extends Fragment implements View.OnClickListener, A
         //        + ", visibleItemCount=" + visibleItemCount + ", totalItemCount=" + totalItemCount);
         this.visibleItemCount = visibleItemCount;
         visibleLastIndex = firstVisibleItem + visibleItemCount - 1;
+    }
+
+    private void changePrice(int id) {
+        GsonRequest request = new GsonRequest(Request.Method.GET,
+                PcApplication.SERVER_URL + "changenotifys/" + id, null, PriceChangeListResult.class,
+                new Response.Listener<PriceChangeListResult>() {
+                    @Override
+                    public void onResponse(PriceChangeListResult resp) {
+                        L.d("change price return ");
+                        ((TabHostActivity) ChangePricePage.this.getActivity()).dismissLoadingDialog();
+                        if (resp != null) {
+
+                        } else {
+                            L.e("changePrice return error");
+                            Toast.makeText(PcApplication.getInstance(), "修改价格失败!", Toast.LENGTH_LONG);
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                ((TabHostActivity) ChangePricePage.this.getActivity()).handleError(error, null);
+            }
+        });
+        L.d("changePrice start");
+        ((TabHostActivity) ChangePricePage.this.getActivity()).startRequest(request);
     }
 
     private class CustomListAdapter extends BaseAdapter {
@@ -254,6 +283,7 @@ public class ChangePricePage extends Fragment implements View.OnClickListener, A
                     break;
             }
 
+            convertView.setTag(R.id.priceIcon, ai.id);
             holder.name.setText(ai.gonghuo_product_name);
             holder.supplier.setText(ai.supplier);
             holder.oldPrice.setText("原价: ￥" + String.valueOf(ai.old_price));

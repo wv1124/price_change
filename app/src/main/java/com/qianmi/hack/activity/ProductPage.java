@@ -52,9 +52,9 @@ public class ProductPage extends Fragment implements View.OnClickListener, AbsLi
     private int curPage = 1;
     private boolean hasNext = true;
     private GsonRequest mRequest;
+    private LayoutInflater mInflater;
     private LinearLayout loading;
 
-    private Button mCanPullRefBtn, mCanLoadMoreBtn, mCanAutoLoadMoreBtn, mIsMoveToFirstItemBtn;
 
     private Handler mHandler = new Handler() {
 
@@ -73,6 +73,7 @@ public class ProductPage extends Fragment implements View.OnClickListener, AbsLi
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        mInflater = inflater;
         View view = inflater.inflate(R.layout.activity_productlist, null);
         loading = (LinearLayout) view.findViewById(R.id.loading);
         loading.setVisibility(View.GONE);

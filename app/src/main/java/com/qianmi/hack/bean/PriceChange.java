@@ -6,6 +6,7 @@ import android.content.Intent;
  * Created by wv on 2015/8/21.
  */
 public class PriceChange {
+    public int id;
     public String batch;
     public String supplier;
     public double old_price;
