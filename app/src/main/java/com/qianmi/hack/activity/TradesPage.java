@@ -301,6 +301,7 @@ public class TradesPage extends Fragment implements View.OnClickListener {
                         .findViewById(R.id.deliverStatus);
                 holder.comletetStatus = (TextView) convertView
                         .findViewById(R.id.comletetStatus);
+                holder.status = (TextView)convertView.findViewById(R.id.status);
                 convertView.setTag(holder);
             } else {
                 holder = (ViewHolder) convertView.getTag();
@@ -308,11 +309,11 @@ public class TradesPage extends Fragment implements View.OnClickListener {
 
             Trade ai = mList.get(groupPosition);
             if (ai.complete_status == 0) { //进行中
-                holder.img.setBackgroundResource(R.drawable.shopping_going);
+                holder.status.setText("进行中");
             } else if (ai.complete_status == 1) { //已完成
-                holder.img.setBackgroundResource(R.drawable.shopping_finish);
+                holder.status.setText("已完成");
             } else if (ai.complete_status == 2) { //作废
-                holder.img.setBackgroundResource(R.drawable.shopping_cancel);
+                holder.status.setText("作废");
             }
             holder.tid.setText("订单号:" + ai.tid);
             holder.payment.setText("应付金额: ￥" +
@@ -381,5 +382,6 @@ public class TradesPage extends Fragment implements View.OnClickListener {
         private TextView payStatus;
         private TextView deliverStatus;
         private TextView comletetStatus;
+        private TextView status;
     }
 }

@@ -15,7 +15,7 @@
 -->
 
 <resources>
-    <string name="app_name">Freyr</string>
+    <string name="app_name">旺铺</string>
 
     <string name="menu_settings">Settings</string>
     <string name="menu_exit">退出</string>
