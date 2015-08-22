@@ -9,6 +9,9 @@ import com.qianmi.hack.bean.LoginRequest;
 import com.qianmi.hack.bean.Token;
 import com.qianmi.hack.utils.L;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class NetworkRequest {
 
     private static NetworkRequest mServerAgency = null;
@@ -33,6 +36,7 @@ public class NetworkRequest {
                     public void onResponse(Token resp) {
                         L.d("TAG", "token is " + resp.token);
                         PcApplication.TOKEN = resp.token;
+
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -42,4 +46,6 @@ public class NetworkRequest {
         });
         ServerConnector.getInstance(PcApplication.getInstance()).add(mRequest);
     }
+
+
 }

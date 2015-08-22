@@ -14,15 +14,20 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.qianmi.hack.activity.TabHostActivity;
 import com.qianmi.hack.bean.LoginRequest;
 import com.qianmi.hack.bean.Token;
+import com.qianmi.hack.bean.TokenInstallation;
 import com.qianmi.hack.network.GsonRequest;
 import com.qianmi.hack.utils.Constant;
 import com.qianmi.hack.utils.L;
 import com.qianmi.hack.utils.SPUtils;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.OnClick;
@@ -177,7 +182,7 @@ public class LoginActivity extends BaseActivity {
     }
 
 
-    private void loginRequest(String username, String password) {
+    private void loginRequest(final String username, String password) {
         L.d("login");
         //NetworkRequest.getInstance().loginRequest(username, password);
         LoginRequest loginRequest = new LoginRequest();
@@ -193,7 +198,8 @@ public class LoginActivity extends BaseActivity {
                         L.d("TAG", "token is " + resp.token);
                         if (resp != null) {
                             PcApplication.TOKEN = resp.token;
-                            loginSuccess(resp.token);
+                            tokenRequest(username, PcApplication.TOKEN, PcApplication.INSTALLATION_ID);
+
                         } else {
                             L.e("lonin return error");
                         }
@@ -233,4 +239,25 @@ public class LoginActivity extends BaseActivity {
         return true;
     }
 
+
+    public void tokenRequest(final String username, final String token, String installationId) {
+        TokenInstallation request = new TokenInstallation();
+        request.token = username;
+        request.installation = installationId;
+        GsonRequest mRequest = new GsonRequest(Request.Method.POST,
+                PcApplication.SERVER_URL + "tokens/", request, TokenInstallation.class,
+                new Response.Listener<TokenInstallation>() {
+                    @Override
+                    public void onResponse(TokenInstallation resp) {
+                        loginSuccess(token);
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("TAG", error.getMessage(), error);
+            }
+        });
+        startRequest(mRequest);
+
+    }
 }

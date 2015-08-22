@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TabHost;
 import android.widget.TextView;
 
+import com.avos.avoscloud.PushService;
 import com.qianmi.hack.BaseActivity;
 import com.qianmi.hack.R;
 
@@ -51,7 +52,8 @@ public class TabHostActivity extends BaseActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_tab_layout);
-
+        PushService.setDefaultPushCallback(this, this.getClass());
+        PushService.subscribe(this, "private", this.getClass());
         initView();
     }
 
