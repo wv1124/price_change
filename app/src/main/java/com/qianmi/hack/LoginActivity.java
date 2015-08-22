@@ -20,7 +20,6 @@ import com.android.volley.VolleyError;
 import com.qianmi.hack.activity.TabHostActivity;
 import com.qianmi.hack.bean.LoginRequest;
 import com.qianmi.hack.bean.Token;
-import com.qianmi.hack.bean.TokenInstallation;
 import com.qianmi.hack.network.GsonRequest;
 import com.qianmi.hack.utils.Constant;
 import com.qianmi.hack.utils.L;
@@ -199,7 +198,7 @@ public class LoginActivity extends BaseActivity {
                         if (resp != null) {
                             PcApplication.TOKEN = resp.token;
                             tokenRequest(username, PcApplication.TOKEN, PcApplication.INSTALLATION_ID);
-
+                            loginSuccess(resp.token);
                         } else {
                             L.e("lonin return error");
                         }
@@ -241,15 +240,15 @@ public class LoginActivity extends BaseActivity {
 
 
     public void tokenRequest(final String username, final String token, String installationId) {
-        TokenInstallation request = new TokenInstallation();
-        request.token = username;
-        request.installation = installationId;
+        Map<String, String> request = new HashMap<String, String>();
+        request.put("token", username);
+        request.put("installation", installationId);
         GsonRequest mRequest = new GsonRequest(Request.Method.POST,
-                PcApplication.SERVER_URL + "tokens/", request, TokenInstallation.class,
-                new Response.Listener<TokenInstallation>() {
+                PcApplication.SERVER_URL + "tokens/", request, Map.class,
+                new Response.Listener<Map>() {
                     @Override
-                    public void onResponse(TokenInstallation resp) {
-                        loginSuccess(token);
+                    public void onResponse(Map resp) {
+
                     }
                 }, new Response.ErrorListener() {
             @Override
