@@ -314,6 +314,17 @@ public class ChangePricePage extends Fragment implements View.OnClickListener, A
             holder.oldPrice.setText("原价: ￥" + String.valueOf(ai.old_price));
             holder.newPrice.setText("新价: ￥" + String.valueOf(ai.new_price));
             holder.draftPrice.setText("拟设价: ￥" + String.valueOf(ai.draft_price));
+            holder.sync.setTag(R.id.sync, ai.id);
+
+            Object b = holder.sync.getTag(R.id.priceIcon);
+            if (b != null && b instanceof Boolean) {
+                Boolean isSync = (Boolean) b;
+                if (isSync) {
+                    holder.sync.setChecked(true);
+                    holder.sync.setEnabled(false);
+                }
+            }
+
             if (ai.is_sync) {
                 holder.sync.setText(R.string.sync_alredy);
                 holder.sync.setChecked(true);
@@ -325,15 +336,7 @@ public class ChangePricePage extends Fragment implements View.OnClickListener, A
                 holder.sync.setEnabled(true);
                 holder.sync.setOnCheckedChangeListener(mListener);
             }
-            holder.sync.setTag(R.id.sync, ai.id);
-            Object b = holder.sync.getTag(R.id.priceIcon);
-            if (b != null && b instanceof Boolean) {
-                Boolean isSync = (Boolean) b;
-                if (isSync) {
-                    holder.sync.setChecked(true);
-                    holder.sync.setEnabled(false);
-                }
-            }
+
             return convertView;
         }
     }
