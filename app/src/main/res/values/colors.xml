@@ -63,4 +63,6 @@
     <color name="trade_finish">#1fe925</color>
     <color name="trade_cancel">#3e493e</color>
 
+    <color name="product_bg_color">#F7FBF7</color>
+
 </resources>

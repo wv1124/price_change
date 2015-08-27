@@ -2,7 +2,24 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="6dp"
+            android:gravity="center"
+            android:text="商品"
+            android:textColor="#04B504"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+    </LinearLayout>
 
     <FrameLayout
         android:id="@+id/realtabcontent"
@@ -13,14 +30,14 @@
     <android.support.v4.app.FragmentTabHost
         android:id="@android:id/tabhost"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content" 
+        android:layout_height="wrap_content"
         android:background="@drawable/maintab_toolbar_bg">
 
         <FrameLayout
             android:id="@android:id/tabcontent"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_weight="0" />            
+            android:layout_weight="0" />
     </android.support.v4.app.FragmentTabHost>
 
 </LinearLayout>

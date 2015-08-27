@@ -32,7 +32,9 @@ public class TabHostActivity extends BaseActivity {
             R.drawable.tab_more_btn};
 
     //Tab选项卡的文字
-    private String mTextviewArray[] = {"商品", "调价记录", "订单", "设置"};
+    private String mTextviewArray[] = {"商品", "调价", "订单", "设置"};
+
+    private TextView title;
 
     @Override
     public void onBeginRequest() {
@@ -57,10 +59,18 @@ public class TabHostActivity extends BaseActivity {
         initView();
     }
 
+    public void setTitle(String str) {
+        if (title != null) {
+            title.setText(str);
+        }
+    }
+
     /**
      * 初始化组件
      */
     private void initView() {
+        title = (TextView) this.findViewById(R.id.title);
+
         //实例化布局对象
         layoutInflater = LayoutInflater.from(this);
 
@@ -79,6 +89,13 @@ public class TabHostActivity extends BaseActivity {
             //设置Tab按钮的背景
             mTabHost.getTabWidget().getChildAt(i).setBackgroundResource(R.drawable.selector_tab_background);
         }
+
+        mTabHost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
+            @Override
+            public void onTabChanged(String tabId) {
+                setTitle(tabId);
+            }
+        });
     }
 
     /**

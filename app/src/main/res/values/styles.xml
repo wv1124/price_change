@@ -46,7 +46,7 @@
         <item name="android:paddingBottom">5dp</item>
         <item name="android:paddingLeft">10dp</item>
         <item name="android:paddingRight">10dp</item>
-        <item name="android:background">@color/white</item>
+        <item name="android:background">@color/product_bg_color</item>
     </style>
 
     <!-- product list item 产名品 -->
