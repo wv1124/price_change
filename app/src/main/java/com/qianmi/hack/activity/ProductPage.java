@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -30,7 +29,6 @@ import com.qianmi.hack.bean.ProductListResult;
 import com.qianmi.hack.network.GsonRequest;
 import com.qianmi.hack.utils.L;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -123,7 +121,7 @@ public class ProductPage extends Fragment implements View.OnClickListener, AbsLi
                             } else {
                                 hasNext = true;
                             }
-
+                            //将结果通知到监听器中，修改界面显示结果
                             Message _Msg = mHandler.obtainMessage(LOAD_DATA_FINISH, mList);
                             mHandler.sendMessage(_Msg);
                             if (loading != null) {
@@ -207,7 +205,7 @@ public class ProductPage extends Fragment implements View.OnClickListener, AbsLi
 //			System.out.println("position = "+position);
             ViewHolder holder = null;
             if (convertView == null) {
-                convertView = mInflater.inflate(R.layout.product_listview, null);
+                convertView = mInflater.inflate(R.layout.product_listitem, null);
 
                 holder = new ViewHolder();
                 holder.mImage = (ImageView) convertView
@@ -215,8 +213,7 @@ public class ProductPage extends Fragment implements View.OnClickListener, AbsLi
                 holder.name = (TextView) convertView
                         .findViewById(R.id.name);
                 holder.salePrice = (TextView) convertView.findViewById(R.id.sale_price);
-                holder.costPrice = (TextView) convertView
-                        .findViewById(R.id.cost_price);
+
                 holder.updateTime = (TextView) convertView.findViewById(R.id.update_time);
                 convertView.setTag(holder);
             } else {
@@ -232,8 +229,7 @@ public class ProductPage extends Fragment implements View.OnClickListener, AbsLi
                     .into(holder.mImage);
             //holder.mImage.setImageUrl(ai.getAppIcon());
             holder.name.setText(ai.product_name);
-            holder.salePrice.setText("销售价: ￥" + String.valueOf(ai.sale_price));
-            holder.costPrice.setText("进货价: ￥" + String.valueOf(ai.cost_price));
+            holder.salePrice.setText("￥" + String.valueOf(ai.sale_price));
             if (ai.updated != null && ai.updated.length() > "2015-08-18".length()) {
                 String date = ai.updated.substring(0, "2015-08-18".length());
                 holder.updateTime.setText(date);
@@ -246,7 +242,6 @@ public class ProductPage extends Fragment implements View.OnClickListener, AbsLi
         private ImageView mImage;
         private TextView name;
         private TextView salePrice;
-        private TextView costPrice;
         private TextView updateTime;
     }
 
