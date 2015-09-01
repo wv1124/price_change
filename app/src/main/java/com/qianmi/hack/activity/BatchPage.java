@@ -28,7 +28,6 @@ import com.qianmi.hack.utils.L;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by caozupeng on 15/8/31.
@@ -56,6 +55,8 @@ public class BatchPage extends Fragment implements View.OnClickListener, AbsList
     //标识是否还有下一页
     private boolean hasNext = true;
 
+    private int visibleLastIndex = 0;   //最后的可视项索引
+    private int visibleItemCount;       // 当前窗口可见项总数
 
     private Handler mHandler = new Handler() {
 
@@ -103,6 +104,10 @@ public class BatchPage extends Fragment implements View.OnClickListener, AbsList
         });
     }
 
+    /**
+     * 用于发出Http请求
+     * @param curentPage
+     */
     private void requestDate(int curentPage) {
         final GsonRequest<BatchListResult> mRequest = new GsonRequest<>(Request.Method.GET,
                 PcApplication.SERVER_URL + "/batchs/?page=" + curentPage, null, BatchListResult.class,
@@ -116,7 +121,11 @@ public class BatchPage extends Fragment implements View.OnClickListener, AbsList
                             //mList.clear();
                             List<Batch> listResult = resp.results;
                             modelList.addAll(listResult);
-                            hasNext = true;
+                            if (resp.next == null || resp.next.length() == 0 || resp.next == "null") {
+                                hasNext = false;
+                            } else {
+                                hasNext = true;
+                            }
                             //将结果通知到监听器中，修改界面显示结果
                             Message _Msg = mHandler.obtainMessage(LOAD_DATA_FINISH, modelList);
                             mHandler.sendMessage(_Msg);
@@ -124,7 +133,7 @@ public class BatchPage extends Fragment implements View.OnClickListener, AbsList
                                 loading.setVisibility(View.GONE);
                             }
                         } else {
-                            L.e("lonin return error");
+                            L.e("return error");
                         }
                     }
                 }, new Response.ErrorListener() {
@@ -143,13 +152,27 @@ public class BatchPage extends Fragment implements View.OnClickListener, AbsList
     }
 
     @Override
-    public void onScrollStateChanged(AbsListView absListView, int i) {
-
+    public void onScrollStateChanged(AbsListView view, int scrollState) {
+        int itemsLastIndex = mAdapter.getCount() - 1;    //数据集最后一项的索引
+        int lastIndex = itemsLastIndex;             //加上底部的loadMoreView项
+        if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
+            L.d("*************** onScrollStateChanged itemsLastIndex=" + itemsLastIndex + ", lastIndex=" + lastIndex);
+            if (visibleLastIndex == lastIndex) {
+                //如果是自动加载,可以在这里放置异步加载数据的代码
+                ++curPage;
+                if (hasNext) {
+                    Log.i("LOAD MORE", "loading... page: " + hasNext);
+                    loading.setVisibility(View.VISIBLE);
+                    requestDate(curPage);
+                }
+            }
+        }
     }
 
     @Override
-    public void onScroll(AbsListView absListView, int i, int i1, int i2) {
-
+    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+        this.visibleItemCount = visibleItemCount;
+        visibleLastIndex = firstVisibleItem + visibleItemCount - 1;
     }
 
     private class CustomListAdapter extends BaseAdapter {
