@@ -76,7 +76,7 @@ public class BatchPage extends Fragment implements View.OnClickListener, AbsList
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         mInflater = inflater;
-        View view = inflater.inflate(R.layout.activity_productlist, null);
+        View view = inflater.inflate(R.layout.batch_listview, null);
         loading = (LinearLayout) view.findViewById(R.id.loading);
         loading.setVisibility(View.GONE);
         mListView = (ListView) view.findViewById(R.id.mListView);
