@@ -27,22 +27,94 @@ public class GsonRequest<T> extends Request<T> {
 
     private static final String TAG = "GsonRequest";
 
-    private final Listener<T> mListener;
-
-    private Gson mGson;
-
-    private Class<T> mClass;
-    private Object mRequest;
+    //返回结果的监听器
+    private Listener<T> mListener;
+    //用于解析Json，可以设置为静态变量，Thread Safe
+    private static Gson Gson = new Gson();
+    //返回结果的类型
+    private Class<T> mRetClazz;
+    //请求参数
     private String mBody;
+    //是否要做md5防篡改校验
+    private boolean isSign = false;
+    //默认的HTTP请求字符集
+    private String charset = "UTF-8";
+
+    public static class Builder<T> {
+        private Response.Listener<T> responseListener;
+        private Response.ErrorListener errorListener;
+        private Class<T> retClazz;
+        private String requestBody;
+        private boolean isSign = false;
+        private String charset = "UTF-8";
+        private String url;
+        private int method = Request.Method.POST;
+
+
+        public Builder() {
+        }
+
+        public Builder registerResListener(Response.Listener<T> listener) {
+            this.responseListener = listener;
+            return this;
+        }
+
+        public Builder setUrl(String url) {
+            this.url = url;
+            return this;
+        }
+
+        public Builder method(int method) {
+            this.method = method;
+            return this;
+        }
+
+        public Builder registerErrorListener(Response.ErrorListener errorListener) {
+            this.errorListener = errorListener;
+            return this;
+        }
+
+        public Builder registerRetClass(Class<T> clazz) {
+            this.retClazz = clazz;
+            return this;
+        }
+
+        public Builder setRequest(Object request) {
+            if (null != request) {
+                this.requestBody = Gson.toJson(request);
+            }
+            return this;
+        }
+
+        public Builder needSignature(boolean isSign) {
+            this.isSign = isSign;
+            return this;
+        }
+
+        public GsonRequest<T> create() {
+            GsonRequest<T> request = new GsonRequest<T>(method, url, errorListener);
+            request.charset = charset;
+            request.isSign = isSign;
+            request.mRetClazz = retClazz;
+            request.mListener = responseListener;
+            request.mBody = requestBody;
+            return request;
+
+        }
+
+    }
+
+
+    public GsonRequest(int method, String url, ErrorListener errorListener) {
+        super(method, url, errorListener);
+    }
 
     public GsonRequest(int method, String url, Object request, Class<T> clazz, Listener<T> listener, ErrorListener errorListener) {
         super(method, url, errorListener);
-        mGson = new Gson();
-        mClass = clazz;
+        mRetClazz = clazz;
         mListener = listener;
-        mRequest = request;
         if (null != request) {
-            mBody = mGson.toJson(mRequest);
+            mBody = Gson.toJson(request);
         }
     }
 
@@ -53,7 +125,7 @@ public class GsonRequest<T> extends Request<T> {
 
     @Override
     public byte[] getBody() throws AuthFailureError {
-        if (null == mRequest) {
+        if (null == mBody) {
             return null;
         }
         Log.d(TAG, "-----request json: " + mBody);
@@ -73,7 +145,7 @@ public class GsonRequest<T> extends Request<T> {
             //String jsonString = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
             statusCode = response.statusCode;
             String jsonString = new String(response.data, "UTF-8");
-            return Response.success(mGson.fromJson(jsonString, mClass), HttpHeaderParser.parseCacheHeaders(response));
+            return Response.success(Gson.fromJson(jsonString, mRetClazz), HttpHeaderParser.parseCacheHeaders(response));
         } catch (UnsupportedEncodingException e) {
             return Response.error(new ParseError(e));
         }
