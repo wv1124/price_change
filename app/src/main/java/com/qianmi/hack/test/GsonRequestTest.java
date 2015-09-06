@@ -50,7 +50,7 @@ public class GsonRequestTest extends InstrumentationTestCase {
         GsonRequest.Builder<Map> builder = new GsonRequest.Builder<>();
         Map<String, String> loginInfo = new HashMap<>();
         loginInfo.put("username", "caozupeng");
-        loginInfo.put("password", "caozupen");
+        loginInfo.put("password", "caozupeng");
         GsonRequest loginRequest = builder.registerRetClass(Map.class)
                 .setUrl("http://frey.sj001.com/api-token-auth/")
                 .setRequest(loginInfo)
@@ -99,5 +99,29 @@ public class GsonRequestTest extends InstrumentationTestCase {
         mVolleyQueue.add(request);
         countDownLatch.await();
 
+    }
+
+    public void testMappingUpdate() throws  Exception {
+        final CountDownLatch countDownLatch = new CountDownLatch(1);
+        final Map<String, String> request = new HashMap<String, String>();
+        request.put("token", "cao");
+        request.put("installation", "xxx-xxxx-xxxx");
+        GsonRequest.Builder<Map> builder = new GsonRequest.Builder<>();
+        GsonRequest infoRequest = builder
+                .registerRetClass(Map.class)
+                .setUrl("http://frey.sj001.com/tokens/")
+                .setRequest(request)
+                .setToken(this.mToken)
+                .registerResListener(new Response.Listener<Map>() {
+                    @Override
+                    public void onResponse(Map response) {
+                        Log.d(TAG, String.valueOf(request));
+                        countDownLatch.countDown();
+                    }
+                })
+
+                .create();
+        mVolleyQueue.add(infoRequest);
+        countDownLatch.await();
     }
 }
