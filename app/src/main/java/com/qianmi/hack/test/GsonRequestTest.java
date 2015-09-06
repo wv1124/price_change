@@ -1,6 +1,7 @@
 package com.qianmi.hack.test;
 
 import android.test.InstrumentationTestCase;
+import android.util.Log;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -18,10 +19,19 @@ import java.util.concurrent.CountDownLatch;
  * Created by caozupeng on 15/9/2.
  */
 public class GsonRequestTest extends InstrumentationTestCase {
-
+    private static String TAG = "UnitTest";
     RequestQueue mVolleyQueue;
+
+    /**
+     * setUp两件事
+     * 1、初始化Volley请求队列
+     * 2、获取JWT的Token
+     * 由于服务端接口都是基于JWT保护的，所以在进行业务接口测试之前
+     * 需要首先获得JWT的Token，这个步骤就放在了Setup方法中
+     */
     @Override
-    protected void setUp(){
+    protected void setUp() {
+        Log.v(TAG, "setup");
         try {
             super.setUp();
         } catch (Exception e) {
@@ -47,7 +57,7 @@ public class GsonRequestTest extends InstrumentationTestCase {
                 .registerResListener(new Response.Listener<Map<String, String>>() {
                     @Override
                     public void onResponse(Map<String, String> response) {
-                        System.out.println(response);
+                        Log.d(TAG, "response = " + response);
                         PcApplication.TOKEN = response.get("token");
                         countDownLatch.countDown();
                     }
@@ -55,7 +65,6 @@ public class GsonRequestTest extends InstrumentationTestCase {
 
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        System.out.println(error);
                         countDownLatch.countDown();
                     }
                 }).create();
@@ -68,21 +77,19 @@ public class GsonRequestTest extends InstrumentationTestCase {
     public void test() throws Exception {
         final CountDownLatch countDownLatch = new CountDownLatch(1);
         GsonRequest.Builder<Map> builder = new GsonRequest.Builder<>();
-        GsonRequest<Map> request = builder.setUrl("http://frey.sj001.com/batchs/")
-//                .setRequest(new Object())
-                .registerRetClass(Map.class)
+        GsonRequest request = builder.registerRetClass(Map.class)
+                .setUrl("http://frey.sj001.com/batchs/")
                 .method(Request.Method.GET)
-                .registerResListener(new Response.Listener<Map>() {
+                .registerResListener(new Response.Listener<Map<String, String>>() {
                     @Override
-                    public void onResponse(Map response) {
-                        System.out.println(response);
+                    public void onResponse(Map<String, String> response) {
+                        Log.d(TAG, String.valueOf(response));
                         countDownLatch.countDown();
                     }
                 }).registerErrorListener(new Response.ErrorListener() {
 
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        System.out.println(error);
                         countDownLatch.countDown();
                     }
                 }).create();

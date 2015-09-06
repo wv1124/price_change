@@ -28,7 +28,7 @@ public class GsonRequest<T> extends Request<T> {
     private static final String TAG = "GsonRequest";
 
     //返回结果的监听器
-    private Listener<T> mListener;
+    private Listener mListener;
     //用于解析Json，可以设置为静态变量，Thread Safe
     private static Gson Gson = new Gson();
     //返回结果的类型
@@ -41,7 +41,7 @@ public class GsonRequest<T> extends Request<T> {
     private String charset = "UTF-8";
 
     public static class Builder<T> {
-        private Response.Listener<T> responseListener;
+        private Response.Listener responseListener;
         private Response.ErrorListener errorListener;
         private Class<T> retClazz;
         private String requestBody;
@@ -54,7 +54,7 @@ public class GsonRequest<T> extends Request<T> {
         public Builder() {
         }
 
-        public Builder registerResListener(Response.Listener<T> listener) {
+        public Builder registerResListener(Response.Listener listener) {
             this.responseListener = listener;
             return this;
         }
