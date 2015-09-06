@@ -38,8 +38,10 @@ public class GsonRequest<T> extends Request<T> {
     private boolean isSign = false;
     //默认的HTTP请求字符集
     private String charset = "UTF-8";
-
+    //如果登录后，需要将Token值加入到Header中
     private String token;
+    //默认Token的名称
+    private String tokenTypeName = "JWT";
 
 
     public GsonRequest(int method, String url, ErrorListener errorListener) {
@@ -78,7 +80,7 @@ public class GsonRequest<T> extends Request<T> {
 
     @Override
     protected Response<T> parseNetworkResponse(NetworkResponse response) {
-        if(mRetClazz != null) {
+        if (mRetClazz != null) {
             try {
                 //String jsonString = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
                 statusCode = response.statusCode;
@@ -94,7 +96,7 @@ public class GsonRequest<T> extends Request<T> {
 
     @Override
     protected void deliverResponse(T response) {
-        if(mListener !=null) {
+        if (mListener != null) {
             mListener.onResponse(response);
             Log.i(TAG, "-----response:" + new Gson().toJson(response));
         }
@@ -107,15 +109,15 @@ public class GsonRequest<T> extends Request<T> {
         extraHeaders.put("Accept", "application/json");
 
         //Data Sign
-        /*
-        if (!TextUtils.isEmpty(mBody)) {
-            extraHeaders.put("Sign", MD5Util.stringToMD5(PcApplication.SIGN_SECRET + mBody));
-        }
-        */
+
+//        if (isSign && !TextUtils.isEmpty(mBody)) {
+//            extraHeaders.put("Sign", MD5Util.stringToMD5(PcApplication.SIGN_SECRET + mBody));
+//        }
+
 
         //JWT token
         if (!TextUtils.isEmpty(this.token)) {
-            extraHeaders.put("Authorization", "JWT " + token);
+            extraHeaders.put("Authorization", String.format("%s %s", tokenTypeName, token));
         }
         Log.d(TAG, "-----extra headers: " + extraHeaders.toString());
 
@@ -132,6 +134,7 @@ public class GsonRequest<T> extends Request<T> {
         private String url;
         private int method = Request.Method.POST;
         private String jwtToken;
+        private String tokenTypeName;
 
 
         public Builder() {
@@ -179,6 +182,11 @@ public class GsonRequest<T> extends Request<T> {
             return this;
         }
 
+        public Builder tokenName(String name) {
+            this.tokenTypeName = name;
+            return this;
+        }
+
         public GsonRequest<T> create() {
             GsonRequest<T> request = new GsonRequest<T>(method, url, errorListener);
             request.charset = charset;
@@ -187,6 +195,7 @@ public class GsonRequest<T> extends Request<T> {
             request.mListener = responseListener;
             request.mBody = requestBody;
             request.token = jwtToken;
+            request.tokenTypeName = tokenTypeName;
             return request;
 
         }
