@@ -41,77 +41,6 @@ public class GsonRequest<T> extends Request<T> {
 
     private String token;
 
-    public static class Builder<T> {
-        private Response.Listener responseListener;
-        private Response.ErrorListener errorListener;
-        private Class<T> retClazz;
-        private String requestBody;
-        private boolean isSign = false;
-        private String charset = "UTF-8";
-        private String url;
-        private int method = Request.Method.POST;
-        private String jwtToken;
-
-
-        public Builder() {
-        }
-
-        public Builder registerResListener(Response.Listener listener) {
-            this.responseListener = listener;
-            return this;
-        }
-
-        public Builder setUrl(String url) {
-            this.url = url;
-            return this;
-        }
-
-        public Builder method(int method) {
-            this.method = method;
-            return this;
-        }
-
-        public Builder registerErrorListener(Response.ErrorListener errorListener) {
-            this.errorListener = errorListener;
-            return this;
-        }
-
-        public Builder registerRetClass(Class<T> clazz) {
-            this.retClazz = clazz;
-            return this;
-        }
-
-        public Builder setRequest(Object request) {
-            if (null != request) {
-                this.requestBody = Gson.toJson(request);
-            }
-            return this;
-        }
-
-        public Builder needSignature(boolean isSign) {
-            this.isSign = isSign;
-            return this;
-        }
-
-        public Builder setToken(String token) {
-            this.jwtToken = token;
-            return this;
-        }
-
-        public GsonRequest<T> create() {
-            GsonRequest<T> request = new GsonRequest<T>(method, url, errorListener);
-            request.charset = charset;
-            request.isSign = isSign;
-            request.mRetClazz = retClazz;
-            request.mListener = responseListener;
-            request.mBody = requestBody;
-            request.token = jwtToken;
-            return request;
-
-        }
-
-    }
-
 
     public GsonRequest(int method, String url, ErrorListener errorListener) {
         super(method, url, errorListener);
@@ -186,4 +115,76 @@ public class GsonRequest<T> extends Request<T> {
 
         return extraHeaders;
     }
+
+    public static class Builder<T> {
+        private Response.Listener responseListener;
+        private Response.ErrorListener errorListener;
+        private Class<T> retClazz;
+        private String requestBody;
+        private boolean isSign = false;
+        private String charset = "UTF-8";
+        private String url;
+        private int method = Request.Method.POST;
+        private String jwtToken;
+
+
+        public Builder() {
+        }
+
+        public Builder registerResListener(Response.Listener listener) {
+            this.responseListener = listener;
+            return this;
+        }
+
+        public Builder setUrl(String url) {
+            this.url = url;
+            return this;
+        }
+
+        public Builder method(int method) {
+            this.method = method;
+            return this;
+        }
+
+        public Builder registerErrorListener(Response.ErrorListener errorListener) {
+            this.errorListener = errorListener;
+            return this;
+        }
+
+        public Builder registerRetClass(Class<T> clazz) {
+            this.retClazz = clazz;
+            return this;
+        }
+
+        public Builder setRequest(Object request) {
+            if (null != request) {
+                this.requestBody = Gson.toJson(request);
+            }
+            return this;
+        }
+
+        public Builder needSignature(boolean isSign) {
+            this.isSign = isSign;
+            return this;
+        }
+
+        public Builder setToken(String token) {
+            this.jwtToken = token;
+            return this;
+        }
+
+        public GsonRequest<T> create() {
+            GsonRequest<T> request = new GsonRequest<T>(method, url, errorListener);
+            request.charset = charset;
+            request.isSign = isSign;
+            request.mRetClazz = retClazz;
+            request.mListener = responseListener;
+            request.mBody = requestBody;
+            request.token = jwtToken;
+            return request;
+
+        }
+
+    }
+
 }
