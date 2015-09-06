@@ -133,38 +133,6 @@ public class ProductPage extends Fragment implements View.OnClickListener, AbsLi
     }
 
     private void requestDate(int curentPage) {
-//        mRequest = new GsonRequest(Request.Method.GET,
-//                PcApplication.SERVER_URL + "/supproducts/?page=" + curentPage, null, ProductListResult.class,
-//                new Response.Listener<ProductListResult>() {
-//                    @Override
-//                    public void onResponse(ProductListResult resp) {
-//                        L.d("buildAppData return ");
-//                        ((TabHostActivity) ProductPage.this.getActivity()).dismissLoadingDialog();
-//                        if (resp != null) {
-//                            L.d(resp.toString());
-//                            //mList.clear();
-//                            mList.addAll(resp.results);
-//                            if (resp.next == null || resp.next.length() == 0 || resp.next == "null") {
-//                                hasNext = false;
-//                            } else {
-//                                hasNext = true;
-//                            }
-//                            //将结果通知到监听器中，修改界面显示结果
-//                            Message _Msg = mHandler.obtainMessage(LOAD_DATA_FINISH, mList);
-//                            mHandler.sendMessage(_Msg);
-//                            if (loading != null) {
-//                                loading.setVisibility(View.GONE);
-//                            }
-//                        } else {
-//                            L.e("lonin return error");
-//                        }
-//                    }
-//                }, new Response.ErrorListener() {
-//            @Override
-//            public void onErrorResponse(VolleyError error) {
-//                ((TabHostActivity) ProductPage.this.getActivity()).handleError(error, mRequest);
-//            }
-//        });
         GsonRequest.Builder<ProductListResult> builder = new GsonRequest.Builder<>();
         GsonRequest request = builder.retClazz(ProductListResult.class)
                 .setUrl(PcApplication.SERVER_URL + "/supproducts/?page=" + curentPage)
