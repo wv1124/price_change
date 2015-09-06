@@ -7,14 +7,12 @@ import android.support.design.widget.TextInputLayout;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.qianmi.hack.activity.TabHostActivity;
@@ -190,10 +188,11 @@ public class LoginActivity extends BaseActivity {
         LoginRequest loginRequest = new LoginRequest();
         loginRequest.username = username;
         loginRequest.password = password;
-
-        mRequest = new GsonRequest(
-                PcApplication.SERVER_URL + "api-token-auth/", loginRequest, Token.class,
-                new Response.Listener<Token>() {
+        GsonRequest.Builder<Token> builder = new GsonRequest.Builder<>();
+        GsonRequest request = builder.retClazz(Token.class)
+                .setUrl(PcApplication.SERVER_URL + "api-token-auth/")
+                .setRequest(loginRequest)
+                .registerResListener(new Response.Listener<Token>() {
                     @Override
                     public void onResponse(Token resp) {
                         LoginActivity.this.dismissLoadingDialog();
@@ -203,18 +202,20 @@ public class LoginActivity extends BaseActivity {
                             tokenRequest(username, PcApplication.TOKEN, PcApplication.INSTALLATION_ID);
                             loginSuccess(resp.token, username, password);
                         } else {
-                            L.e("lonin return error");
+                            L.e("login return error");
                         }
                     }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                LoginActivity.this.dismissLoadingDialog();
-                Log.e("TAG", error.getMessage(), error);
-                LoginActivity.this.showSnackMsg(LoginActivity.this.getString(R.string.login_err));
-            }
-        });
-        startRequest(mRequest);
+                })
+                .registerErrorListener(new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        LoginActivity.this.dismissLoadingDialog();
+                        Log.e("TAG", error.getMessage(), error);
+                        LoginActivity.this.showSnackMsg(LoginActivity.this.getString(R.string.login_err));
+                    }
+                })
+                .create();
+        startRequest(request);
     }
 
     private void loginSuccess(String loginReturnData, String username, String passwd) {
@@ -240,20 +241,20 @@ public class LoginActivity extends BaseActivity {
         Map<String, String> request = new HashMap<String, String>();
         request.put("token", username);
         request.put("installation", installationId);
-        GsonRequest mRequest = new GsonRequest(Request.Method.POST,
-                PcApplication.SERVER_URL + "tokens/", request, Map.class,
-                new Response.Listener<Map>() {
+        GsonRequest.Builder<Map> builder = new GsonRequest.Builder<>();
+        GsonRequest infoRequest = builder
+                .retClazz(Map.class)
+                .setUrl(PcApplication.SERVER_URL + "tokens/")
+                .setRequest(request)
+                .setToken(PcApplication.TOKEN)
+                .registerErrorListener(new Response.ErrorListener() {
                     @Override
-                    public void onResponse(Map resp) {
-
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e(REQ_TAG, String.valueOf(error));
                     }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e("TAG", error.getMessage(), error);
-            }
-        });
-        startRequest(mRequest);
+                })
+                .create();
+        startRequest(infoRequest);
 
     }
 }

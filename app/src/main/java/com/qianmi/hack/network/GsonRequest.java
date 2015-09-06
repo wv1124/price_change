@@ -90,8 +90,10 @@ public class GsonRequest<T> extends Request<T> {
 
     @Override
     protected void deliverResponse(T response) {
-        mListener.onResponse(response);
-        Log.i(TAG, "-----response:" + new Gson().toJson(response));
+        if(mListener !=null) {
+            mListener.onResponse(response);
+            Log.i(TAG, "-----response:" + new Gson().toJson(response));
+        }
     }
 
     @Override
@@ -151,7 +153,7 @@ public class GsonRequest<T> extends Request<T> {
             return this;
         }
 
-        public Builder registerRetClass(Class<T> clazz) {
+        public Builder retClazz(Class<T> clazz) {
             this.retClazz = clazz;
             return this;
         }

@@ -8,7 +8,6 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
-import com.qianmi.hack.PcApplication;
 import com.qianmi.hack.network.GsonRequest;
 
 import java.util.HashMap;
@@ -51,7 +50,7 @@ public class GsonRequestTest extends InstrumentationTestCase {
         Map<String, String> loginInfo = new HashMap<>();
         loginInfo.put("username", "caozupeng");
         loginInfo.put("password", "caozupeng");
-        GsonRequest loginRequest = builder.registerRetClass(Map.class)
+        GsonRequest loginRequest = builder.retClazz(Map.class)
                 .setUrl("http://frey.sj001.com/api-token-auth/")
                 .setRequest(loginInfo)
                 .registerResListener(new Response.Listener<Map<String, String>>() {
@@ -78,7 +77,7 @@ public class GsonRequestTest extends InstrumentationTestCase {
     public void test() throws Exception {
         final CountDownLatch countDownLatch = new CountDownLatch(1);
         GsonRequest.Builder<Map> builder = new GsonRequest.Builder<>();
-        GsonRequest request = builder.registerRetClass(Map.class)
+        GsonRequest request = builder.retClazz(Map.class)
                 .setUrl("http://frey.sj001.com/batchs/")
                 .method(Request.Method.GET)
                 .setToken(this.mToken)
@@ -108,7 +107,7 @@ public class GsonRequestTest extends InstrumentationTestCase {
         request.put("installation", "xxx-xxxx-xxxx");
         GsonRequest.Builder<Map> builder = new GsonRequest.Builder<>();
         GsonRequest infoRequest = builder
-                .registerRetClass(Map.class)
+                .retClazz(Map.class)
                 .setUrl("http://frey.sj001.com/tokens/")
                 .setRequest(request)
                 .setToken(this.mToken)
