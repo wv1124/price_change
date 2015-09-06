@@ -134,7 +134,7 @@ public class GsonRequest<T> extends Request<T> {
         private String url;
         private int method = Request.Method.POST;
         private String jwtToken;
-        private String tokenTypeName;
+        private String tokenTypeName = "JWT";
 
 
         public Builder() {
