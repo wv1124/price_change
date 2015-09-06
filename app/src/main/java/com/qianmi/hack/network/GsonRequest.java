@@ -12,7 +12,6 @@ import com.android.volley.Response.ErrorListener;
 import com.android.volley.Response.Listener;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.google.gson.Gson;
-import com.qianmi.hack.PcApplication;
 
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
@@ -40,6 +39,8 @@ public class GsonRequest<T> extends Request<T> {
     //默认的HTTP请求字符集
     private String charset = "UTF-8";
 
+    private String token;
+
     public static class Builder<T> {
         private Response.Listener responseListener;
         private Response.ErrorListener errorListener;
@@ -49,6 +50,7 @@ public class GsonRequest<T> extends Request<T> {
         private String charset = "UTF-8";
         private String url;
         private int method = Request.Method.POST;
+        private String jwtToken;
 
 
         public Builder() {
@@ -91,6 +93,11 @@ public class GsonRequest<T> extends Request<T> {
             return this;
         }
 
+        public Builder setToken(String token) {
+            this.jwtToken = token;
+            return this;
+        }
+
         public GsonRequest<T> create() {
             GsonRequest<T> request = new GsonRequest<T>(method, url, errorListener);
             request.charset = charset;
@@ -98,6 +105,7 @@ public class GsonRequest<T> extends Request<T> {
             request.mRetClazz = retClazz;
             request.mListener = responseListener;
             request.mBody = requestBody;
+            request.token = jwtToken;
             return request;
 
         }
@@ -171,8 +179,8 @@ public class GsonRequest<T> extends Request<T> {
         */
 
         //JWT token
-        if (!TextUtils.isEmpty(PcApplication.TOKEN)) {
-            extraHeaders.put("Authorization", "JWT " + PcApplication.TOKEN);
+        if (!TextUtils.isEmpty(this.token)) {
+            extraHeaders.put("Authorization", "JWT " + token);
         }
         Log.d(TAG, "-----extra headers: " + extraHeaders.toString());
 

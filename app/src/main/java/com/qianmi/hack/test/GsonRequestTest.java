@@ -20,7 +20,8 @@ import java.util.concurrent.CountDownLatch;
  */
 public class GsonRequestTest extends InstrumentationTestCase {
     private static String TAG = "UnitTest";
-    RequestQueue mVolleyQueue;
+    private RequestQueue mVolleyQueue;
+    private String mToken;
 
     /**
      * setUp两件事
@@ -31,7 +32,6 @@ public class GsonRequestTest extends InstrumentationTestCase {
      */
     @Override
     protected void setUp() {
-        Log.v(TAG, "setup");
         try {
             super.setUp();
         } catch (Exception e) {
@@ -50,7 +50,7 @@ public class GsonRequestTest extends InstrumentationTestCase {
         GsonRequest.Builder<Map> builder = new GsonRequest.Builder<>();
         Map<String, String> loginInfo = new HashMap<>();
         loginInfo.put("username", "caozupeng");
-        loginInfo.put("password", "caozupeng");
+        loginInfo.put("password", "caozupen");
         GsonRequest loginRequest = builder.registerRetClass(Map.class)
                 .setUrl("http://frey.sj001.com/api-token-auth/")
                 .setRequest(loginInfo)
@@ -58,13 +58,14 @@ public class GsonRequestTest extends InstrumentationTestCase {
                     @Override
                     public void onResponse(Map<String, String> response) {
                         Log.d(TAG, "response = " + response);
-                        PcApplication.TOKEN = response.get("token");
+                        GsonRequestTest.this.mToken = response.get("token");
                         countDownLatch.countDown();
                     }
                 }).registerErrorListener(new Response.ErrorListener() {
 
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        Log.e(TAG, String.valueOf(error));
                         countDownLatch.countDown();
                     }
                 }).create();
@@ -80,6 +81,7 @@ public class GsonRequestTest extends InstrumentationTestCase {
         GsonRequest request = builder.registerRetClass(Map.class)
                 .setUrl("http://frey.sj001.com/batchs/")
                 .method(Request.Method.GET)
+                .setToken(this.mToken)
                 .registerResListener(new Response.Listener<Map<String, String>>() {
                     @Override
                     public void onResponse(Map<String, String> response) {
@@ -90,6 +92,7 @@ public class GsonRequestTest extends InstrumentationTestCase {
 
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        Log.e(TAG, String.valueOf(error));
                         countDownLatch.countDown();
                     }
                 }).create();
