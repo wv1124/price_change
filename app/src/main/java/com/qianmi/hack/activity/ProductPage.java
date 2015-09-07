@@ -50,7 +50,6 @@ public class ProductPage extends Fragment implements View.OnClickListener, AbsLi
     private ListView mListView;
     private int curPage = 1;
     private boolean hasNext = true;
-    private GsonRequest mRequest;
     private LayoutInflater mInflater;
     private LinearLayout loading;
 
@@ -105,6 +104,10 @@ public class ProductPage extends Fragment implements View.OnClickListener, AbsLi
         }
     }
 
+    /**
+     * 在界面中下拉到底部，实现加载更多
+     * @return
+     */
     private Response.Listener<ProductListResult> createSuccessListener() {
         return new Response.Listener<ProductListResult>() {
             @Override
@@ -113,8 +116,8 @@ public class ProductPage extends Fragment implements View.OnClickListener, AbsLi
                 ((TabHostActivity) ProductPage.this.getActivity()).dismissLoadingDialog();
                 if (resp != null) {
                     L.d(resp.toString());
-                    //mList.clear();
                     mList.addAll(resp.results);
+                    //判断是否还有下一页
                     if (resp.next == null || resp.next.length() == 0 || resp.next == "null") {
                         hasNext = false;
                     } else {
@@ -133,14 +136,14 @@ public class ProductPage extends Fragment implements View.OnClickListener, AbsLi
         };
     }
 
-    private void requestDate(int curentPage) {
+    private void requestDate(int currentPage) {
         GsonRequest.Builder<ProductListResult> builder = new GsonRequest.Builder<>();
         GsonRequest request = builder.retClazz(ProductListResult.class)
-                .setUrl(PcApplication.SERVER_URL + "/supproducts/?page=" + curentPage)
+                .setUrl(PcApplication.SERVER_URL + "/supproducts/?page=" + currentPage)
                 .registerResListener(createSuccessListener())
                 .method(Request.Method.GET)
                 .create();
-        L.d("**************load date :curentPage=" + curentPage);
+        L.d("**************load date :currentPage=" + currentPage);
         MyVolley.getRequestQueue().add(request);
     }
 

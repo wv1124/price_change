@@ -114,7 +114,6 @@ public class GsonRequestTest extends InstrumentationTestCase {
                 .retClazz(Map.class)
                 .setUrl("http://frey.sj001.com/tokens/")
                 .setRequest(request)
-//                .setToken(this.mToken)
                 .registerResListener(new Response.Listener<Map>() {
                     @Override
                     public void onResponse(Map response) {

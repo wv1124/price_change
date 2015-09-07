@@ -10,9 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
-import android.widget.AdapterView;
 import android.widget.BaseExpandableListAdapter;
-import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -20,12 +18,10 @@ import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.qianmi.hack.PcApplication;
 import com.qianmi.hack.R;
 import com.qianmi.hack.app.MyVolley;
 import com.qianmi.hack.bean.Order;
-import com.qianmi.hack.bean.PriceChange;
 import com.qianmi.hack.bean.Trade;
 import com.qianmi.hack.bean.TradeListResult;
 import com.qianmi.hack.network.GsonRequest;
@@ -127,42 +123,44 @@ public class TradesPage extends Fragment implements View.OnClickListener, AbsLis
 
     }
 
-    private void requestDate(int curentPage) {
-        mRequest = new GsonRequest(Request.Method.GET,
-                PcApplication.SERVER_URL + "/trades/?page=" + curentPage, null, TradeListResult.class,
-                new Response.Listener<TradeListResult>() {
-                    @Override
-                    public void onResponse(TradeListResult resp) {
-                        L.d("buildAppData return ");
-                        ((TabHostActivity) TradesPage.this.getActivity()).dismissLoadingDialog();
-                        if (resp != null) {
-                            L.d(resp.toString());
-                            //mList.clear();
-                            mList.addAll(resp.results);
-                            if (resp.next == null || resp.next.length() == 0 || resp.next == "null") {
-                                hasNext = false;
-                            } else {
-                                hasNext = true;
-                            }
-
-                            Message _Msg = mHandler.obtainMessage(LOAD_DATA_FINISH, mList);
-                            mHandler.sendMessage(_Msg);
-                            if (loading != null) {
-                                loading.setVisibility(View.GONE);
-                            }
-
-                        } else {
-                            L.e("lonin return error");
-                        }
-                    }
-                }, new Response.ErrorListener() {
+    private Response.Listener createSuccessListener() {
+        return new Response.Listener<TradeListResult>() {
             @Override
-            public void onErrorResponse(VolleyError error) {
-                ((TabHostActivity) TradesPage.this.getActivity()).handleError(error, mRequest);
+            public void onResponse(TradeListResult resp) {
+                L.d("buildAppData return ");
+                ((TabHostActivity) TradesPage.this.getActivity()).dismissLoadingDialog();
+                if (resp != null) {
+                    L.d(resp.toString());
+                    //mList.clear();
+                    mList.addAll(resp.results);
+                    if (resp.next == null || resp.next.length() == 0 || resp.next == "null") {
+                        hasNext = false;
+                    } else {
+                        hasNext = true;
+                    }
+
+                    Message _Msg = mHandler.obtainMessage(LOAD_DATA_FINISH, mList);
+                    mHandler.sendMessage(_Msg);
+                    if (loading != null) {
+                        loading.setVisibility(View.GONE);
+                    }
+
+                } else {
+                    L.e("lonin return error");
+                }
             }
-        });
-        L.d("**************load date :curentPage=" + curentPage);
-        MyVolley.getRequestQueue().add(mRequest);
+        };
+    }
+
+    private void requestDate(int currentPage) {
+        GsonRequest.Builder<TradeListResult> builder = new GsonRequest.Builder<>();
+        GsonRequest request = builder.retClazz(TradeListResult.class)
+                .method(Request.Method.GET)
+                .setUrl(PcApplication.SERVER_URL + "/trades/?page=" + currentPage)
+                .registerResListener(createSuccessListener())
+                .create();
+        L.d("**************load date :currentPage=" + currentPage);
+        MyVolley.getRequestQueue().add(request);
     }
 
 
