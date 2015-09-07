@@ -114,7 +114,7 @@ public class ProductPage extends Fragment implements View.OnClickListener, AbsLi
             @Override
             public void onResponse(ProductListResult resp) {
                 L.i(TAG, "product data return ");
-                ((TabHostActivity) ProductPage.this.getActivity()).dismissLoadingDialog();
+                ((BaseActivity) getActivity()).dismissLoadingDialog();
                 if (resp != null) {
                     L.d(resp.toString());
                     mList.addAll(resp.results);
@@ -139,7 +139,7 @@ public class ProductPage extends Fragment implements View.OnClickListener, AbsLi
         GsonRequest request = builder.retClazz(ProductListResult.class)
                 .setUrl(String.format("%s/supproducts/?page=%d", PcApplication.SERVER_URL, currentPage))
                 .registerResListener(createSuccessListener())
-                .registerErrorListener(((BaseActivity) this.getActivity()).createErrorListener())
+                .registerErrorListener(((BaseActivity) getActivity()).createErrorListener())
                 .method(Request.Method.GET)
                 .create();
         L.d("**************load data :currentPage=" + currentPage);

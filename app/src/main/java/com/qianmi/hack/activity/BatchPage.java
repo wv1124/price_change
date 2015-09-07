@@ -91,7 +91,7 @@ public class BatchPage extends Fragment implements View.OnClickListener, AbsList
 
     private void initView() {
         //创建Adapter
-        mAdapter = new CustomListAdapter(BatchPage.this.getActivity(), modelList);
+        mAdapter = new CustomListAdapter(getActivity(), modelList);
         //设置ListView的控制源为Adapter
         mListView.setAdapter(mAdapter);
         mListView.setOnScrollListener(this);     //添加滑动监听
@@ -111,18 +111,14 @@ public class BatchPage extends Fragment implements View.OnClickListener, AbsList
         return new Response.Listener<BatchListResult>() {
             @Override
             public void onResponse(BatchListResult resp) {
-                L.d("buildAppData return ");
-                ((TabHostActivity) BatchPage.this.getActivity()).dismissLoadingDialog();
+                L.d("batch result return ");
+                ((BaseActivity) getActivity()).dismissLoadingDialog();
                 if (resp != null) {
                     L.d(resp.toString());
                     //mList.clear();
                     List<Batch> listResult = resp.results;
                     modelList.addAll(listResult);
-                    if (resp.next == null || resp.next.length() == 0 || resp.next == "null") {
-                        hasNext = false;
-                    } else {
-                        hasNext = true;
-                    }
+                    hasNext = resp.next != null;
                     //将结果通知到监听器中，修改界面显示结果
                     Message _Msg = mHandler.obtainMessage(LOAD_DATA_FINISH, modelList);
                     mHandler.sendMessage(_Msg);
@@ -144,10 +140,10 @@ public class BatchPage extends Fragment implements View.OnClickListener, AbsList
     private void requestDate(int currentPage) {
         GsonRequest.Builder<BatchListResult> builder = new GsonRequest.Builder<>();
         GsonRequest request = builder.retClazz(BatchListResult.class)
-                .setUrl(PcApplication.SERVER_URL + "/batchs/?page=" + currentPage)
+                .setUrl(String.format("%s/batchs/?page=%d", PcApplication.SERVER_URL, currentPage))
                 .method(Request.Method.GET)
                 .registerResListener(createSuccessListener())
-                .registerErrorListener(((BaseActivity) this.getActivity()).createErrorListener())
+                .registerErrorListener(((BaseActivity) getActivity()).createErrorListener())
                 .create();
         L.d("**************load date :currentPage=" + currentPage);
         MyVolley.getRequestQueue().add(request);
