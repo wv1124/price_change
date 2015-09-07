@@ -133,7 +133,7 @@ public class ChangePricePage extends Fragment implements View.OnClickListener, A
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                ((TabHostActivity) ChangePricePage.this.getActivity()).handleError(error, mRequest);
+                ((TabHostActivity) ChangePricePage.this.getActivity()).handleError(error);
             }
         });
         L.d("**************load date :curentPage=" + curentPage);
@@ -210,7 +210,7 @@ public class ChangePricePage extends Fragment implements View.OnClickListener, A
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                ((TabHostActivity) ChangePricePage.this.getActivity()).handleError(error, null);
+                ((TabHostActivity) ChangePricePage.this.getActivity()).handleError(error);
             }
         });
         L.d("changePrice start");

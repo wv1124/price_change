@@ -44,7 +44,6 @@ public class TradesPage extends Fragment implements View.OnClickListener, AbsLis
     private ExpandableListView mListView;
     private int curPage = 1;
     private boolean hasNext = true;
-    private GsonRequest mRequest;
     private LinearLayout loading;
     private int visibleLastIndex = 0;   //最后的可视项索引
     private int visibleItemCount;       // 当前窗口可见项总数

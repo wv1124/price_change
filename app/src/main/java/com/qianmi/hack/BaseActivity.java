@@ -402,7 +402,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         this.mShowDefaultMenu = show;
     }
 
-    public void handleError(VolleyError error, GsonRequest request) {
+    public void handleError(VolleyError error) {
         if (error instanceof AuthFailureError) {
             L.d("authfailure");
             Toast.makeText(this, this.getString(R.string.session_expire), Toast.LENGTH_LONG).show();
@@ -415,5 +415,13 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
     }
 
+    public Response.ErrorListener createErrorListener() {
+        return new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                handleError(error);
+            }
+        };
+    }
 
 }

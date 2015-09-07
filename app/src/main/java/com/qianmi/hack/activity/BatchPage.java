@@ -19,6 +19,7 @@ import android.widget.TextView;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.qianmi.hack.BaseActivity;
 import com.qianmi.hack.PcApplication;
 import com.qianmi.hack.R;
 import com.qianmi.hack.app.MyVolley;
@@ -105,46 +106,51 @@ public class BatchPage extends Fragment implements View.OnClickListener, AbsList
         });
     }
 
+
+    private Response.Listener createSuccessListener() {
+        return new Response.Listener<BatchListResult>() {
+            @Override
+            public void onResponse(BatchListResult resp) {
+                L.d("buildAppData return ");
+                ((TabHostActivity) BatchPage.this.getActivity()).dismissLoadingDialog();
+                if (resp != null) {
+                    L.d(resp.toString());
+                    //mList.clear();
+                    List<Batch> listResult = resp.results;
+                    modelList.addAll(listResult);
+                    if (resp.next == null || resp.next.length() == 0 || resp.next == "null") {
+                        hasNext = false;
+                    } else {
+                        hasNext = true;
+                    }
+                    //将结果通知到监听器中，修改界面显示结果
+                    Message _Msg = mHandler.obtainMessage(LOAD_DATA_FINISH, modelList);
+                    mHandler.sendMessage(_Msg);
+                    if (loading != null) {
+                        loading.setVisibility(View.GONE);
+                    }
+                } else {
+                    L.e("return error");
+                }
+            }
+        };
+    }
+
     /**
      * 用于发出Http请求
-     * @param curentPage
+     *
+     * @param currentPage
      */
-    private void requestDate(int curentPage) {
-        final GsonRequest<BatchListResult> mRequest = new GsonRequest<>(Request.Method.GET,
-                PcApplication.SERVER_URL + "/batchs/?page=" + curentPage, null, BatchListResult.class,
-                new Response.Listener<BatchListResult>() {
-                    @Override
-                    public void onResponse(BatchListResult resp) {
-                        L.d("buildAppData return ");
-                        ((TabHostActivity) BatchPage.this.getActivity()).dismissLoadingDialog();
-                        if (resp != null) {
-                            L.d(resp.toString());
-                            //mList.clear();
-                            List<Batch> listResult = resp.results;
-                            modelList.addAll(listResult);
-                            if (resp.next == null || resp.next.length() == 0 || resp.next == "null") {
-                                hasNext = false;
-                            } else {
-                                hasNext = true;
-                            }
-                            //将结果通知到监听器中，修改界面显示结果
-                            Message _Msg = mHandler.obtainMessage(LOAD_DATA_FINISH, modelList);
-                            mHandler.sendMessage(_Msg);
-                            if (loading != null) {
-                                loading.setVisibility(View.GONE);
-                            }
-                        } else {
-                            L.e("return error");
-                        }
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-//                ((TabHostActivity) BatchPage.this.getActivity()).handleError(error, mRequest);
-            }
-        });
-        L.d("**************load date :curentPage=" + curentPage);
-        MyVolley.getRequestQueue().add(mRequest);
+    private void requestDate(int currentPage) {
+        GsonRequest.Builder<BatchListResult> builder = new GsonRequest.Builder<>();
+        GsonRequest request = builder.retClazz(BatchListResult.class)
+                .setUrl(PcApplication.SERVER_URL + "/batchs/?page=" + currentPage)
+                .method(Request.Method.GET)
+                .registerResListener(createSuccessListener())
+                .registerErrorListener(((BaseActivity) this.getActivity()).createErrorListener())
+                .create();
+        L.d("**************load date :currentPage=" + currentPage);
+        MyVolley.getRequestQueue().add(request);
     }
 
     @Override

@@ -19,9 +19,9 @@ import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.qianmi.hack.BaseActivity;
 import com.qianmi.hack.PcApplication;
 import com.qianmi.hack.R;
 import com.qianmi.hack.app.MyVolley;
@@ -106,6 +106,7 @@ public class ProductPage extends Fragment implements View.OnClickListener, AbsLi
 
     /**
      * 在界面中下拉到底部，实现加载更多
+     *
      * @return
      */
     private Response.Listener<ProductListResult> createSuccessListener() {
@@ -141,6 +142,7 @@ public class ProductPage extends Fragment implements View.OnClickListener, AbsLi
         GsonRequest request = builder.retClazz(ProductListResult.class)
                 .setUrl(PcApplication.SERVER_URL + "/supproducts/?page=" + currentPage)
                 .registerResListener(createSuccessListener())
+                .registerErrorListener(((BaseActivity) this.getActivity()).createErrorListener())
                 .method(Request.Method.GET)
                 .create();
         L.d("**************load date :currentPage=" + currentPage);
@@ -157,7 +159,7 @@ public class ProductPage extends Fragment implements View.OnClickListener, AbsLi
                 //如果是自动加载,可以在这里放置异步加载数据的代码
                 ++curPage;
                 if (hasNext) {
-                    Log.i("LOADMORE", "loading... page: " + hasNext);
+                    Log.i(TAG, "loading... page: " + hasNext);
                     loading.setVisibility(View.VISIBLE);
                     requestDate(curPage);
                 }
