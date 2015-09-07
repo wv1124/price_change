@@ -113,25 +113,22 @@ public class ProductPage extends Fragment implements View.OnClickListener, AbsLi
         return new Response.Listener<ProductListResult>() {
             @Override
             public void onResponse(ProductListResult resp) {
-                L.d("buildAppData return ");
+                L.i(TAG, "product data return ");
                 ((TabHostActivity) ProductPage.this.getActivity()).dismissLoadingDialog();
                 if (resp != null) {
                     L.d(resp.toString());
                     mList.addAll(resp.results);
                     //判断是否还有下一页
-                    if (resp.next == null || resp.next.length() == 0 || resp.next == "null") {
-                        hasNext = false;
-                    } else {
-                        hasNext = true;
-                    }
+                    hasNext = resp.next != null;
                     //将结果通知到监听器中，修改界面显示结果
                     Message _Msg = mHandler.obtainMessage(LOAD_DATA_FINISH, mList);
                     mHandler.sendMessage(_Msg);
+                    //将load控件隐藏掉
                     if (loading != null) {
                         loading.setVisibility(View.GONE);
                     }
                 } else {
-                    L.e("lonin return error");
+                    L.e(TAG, "fetch product list return error");
                 }
             }
         };
@@ -140,12 +137,12 @@ public class ProductPage extends Fragment implements View.OnClickListener, AbsLi
     private void requestDate(int currentPage) {
         GsonRequest.Builder<ProductListResult> builder = new GsonRequest.Builder<>();
         GsonRequest request = builder.retClazz(ProductListResult.class)
-                .setUrl(PcApplication.SERVER_URL + "/supproducts/?page=" + currentPage)
+                .setUrl(String.format("%s/supproducts/?page=%d", PcApplication.SERVER_URL, currentPage))
                 .registerResListener(createSuccessListener())
                 .registerErrorListener(((BaseActivity) this.getActivity()).createErrorListener())
                 .method(Request.Method.GET)
                 .create();
-        L.d("**************load date :currentPage=" + currentPage);
+        L.d("**************load data :currentPage=" + currentPage);
         MyVolley.getRequestQueue().add(request);
     }
 
@@ -210,7 +207,6 @@ public class ProductPage extends Fragment implements View.OnClickListener, AbsLi
             if (getCount() == 0) {
                 return null;
             }
-//			System.out.println("position = "+position);
             ViewHolder holder = null;
             if (convertView == null) {
                 convertView = mInflater.inflate(R.layout.product_listitem, null);
