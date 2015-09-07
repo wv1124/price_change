@@ -23,6 +23,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.qianmi.hack.PcApplication;
 import com.qianmi.hack.R;
+import com.qianmi.hack.app.MyVolley;
 import com.qianmi.hack.bean.Order;
 import com.qianmi.hack.bean.PriceChange;
 import com.qianmi.hack.bean.Trade;
@@ -161,7 +162,7 @@ public class TradesPage extends Fragment implements View.OnClickListener, AbsLis
             }
         });
         L.d("**************load date :curentPage=" + curentPage);
-        ((TabHostActivity) TradesPage.this.getActivity()).startRequest(mRequest);
+        MyVolley.getRequestQueue().add(mRequest);
     }
 
 

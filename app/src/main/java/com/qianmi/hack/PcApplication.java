@@ -7,6 +7,7 @@ import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVInstallation;
 import com.avos.avoscloud.AVOSCloud;
 import com.avos.avoscloud.SaveCallback;
+import com.qianmi.hack.app.MyVolley;
 import com.qianmi.hack.network.RequestManager;
 import com.qianmi.hack.utils.L;
 
@@ -53,6 +54,7 @@ public class PcApplication extends Application {
 
 
         sInstance = this;
+        MyVolley.init(this);
     }
 
     @Override

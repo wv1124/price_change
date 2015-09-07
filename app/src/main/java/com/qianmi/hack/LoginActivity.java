@@ -16,6 +16,7 @@ import android.widget.EditText;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.qianmi.hack.activity.TabHostActivity;
+import com.qianmi.hack.app.MyVolley;
 import com.qianmi.hack.bean.LoginRequest;
 import com.qianmi.hack.bean.Token;
 import com.qianmi.hack.network.GsonRequest;
@@ -199,6 +200,7 @@ public class LoginActivity extends BaseActivity {
                         L.d("TAG", "token is " + resp.token);
                         if (resp != null) {
                             PcApplication.TOKEN = resp.token;
+                            MyVolley.getJwtAuthStack().setAuth(resp.token);
                             tokenRequest(username, PcApplication.TOKEN, PcApplication.INSTALLATION_ID);
                             loginSuccess(resp.token, username, password);
                         } else {
@@ -215,7 +217,7 @@ public class LoginActivity extends BaseActivity {
                     }
                 })
                 .create();
-        startRequest(request);
+        MyVolley.getRequestQueue().add(request);
     }
 
     private void loginSuccess(String loginReturnData, String username, String passwd) {
@@ -246,7 +248,6 @@ public class LoginActivity extends BaseActivity {
                 .retClazz(Map.class)
                 .setUrl(PcApplication.SERVER_URL + "tokens/")
                 .setRequest(request)
-                .setToken(PcApplication.TOKEN)
                 .registerErrorListener(new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
@@ -254,7 +255,7 @@ public class LoginActivity extends BaseActivity {
                     }
                 })
                 .create();
-        startRequest(infoRequest);
+        MyVolley.getRequestQueue().add(infoRequest);
 
     }
 }

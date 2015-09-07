@@ -25,6 +25,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.qianmi.hack.PcApplication;
 import com.qianmi.hack.R;
+import com.qianmi.hack.app.MyVolley;
 import com.qianmi.hack.bean.PriceChange;
 import com.qianmi.hack.bean.PriceChangeListResult;
 import com.qianmi.hack.network.GsonRequest;
@@ -136,7 +137,7 @@ public class ChangePricePage extends Fragment implements View.OnClickListener, A
             }
         });
         L.d("**************load date :curentPage=" + curentPage);
-        ((TabHostActivity) ChangePricePage.this.getActivity()).startRequest(mRequest);
+        MyVolley.getRequestQueue().add(mRequest);
     }
 
     @Override
@@ -213,7 +214,7 @@ public class ChangePricePage extends Fragment implements View.OnClickListener, A
             }
         });
         L.d("changePrice start");
-        ((TabHostActivity) ChangePricePage.this.getActivity()).startRequest(request);
+        MyVolley.getRequestQueue().add(request);
     }
 
     private class CustomListAdapter extends BaseAdapter {

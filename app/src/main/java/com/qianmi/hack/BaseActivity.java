@@ -28,6 +28,7 @@ import butterknife.ButterKnife;
 import com.android.volley.*;
 import com.android.volley.toolbox.Volley;
 import com.qianmi.hack.network.GsonRequest;
+import com.qianmi.hack.network.JwtAuthStack;
 import com.qianmi.hack.utils.L;
 import org.json.JSONObject;
 
@@ -37,9 +38,6 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     private CommonReceiver mCommonReceiver = null;
     protected AlertDialog mExitDialog;
-
-    private RequestQueue mVolleyQueue;
-    public Request<JSONObject> mRequest;
 
     private boolean mNetworkOK = false;
 
@@ -76,10 +74,6 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-        if (needInitRequestQueue()) {
-            mVolleyQueue = Volley.newRequestQueue(this);
-        }
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 
@@ -182,10 +176,6 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     private void destroyResources() {
 
-        if (mVolleyQueue != null) {
-            mVolleyQueue.cancelAll(this);
-        }
-
         if (mLoadingDialog != null) {
             mLoadingDialog.dismiss();
             mLoadingDialog = null;
@@ -283,63 +273,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         });
     }
 
-    /* volley request */
-    private void executeRequest(Request<?> request) {
-        //if (mNetworkOK) {
-        if (request != null) {
-            //showLoadingDialog();
-            mVolleyQueue.add(request);
-        } else {
-            L.e("request is null");
-            showSnackMsg(getString(R.string.requestError));
-        }
-        /*} else {
-            // network is not ok
-            request.deliverError(new VolleyError(getString(R.string.netConnectedError)));
-            showSnackMsg(getString(R.string.netConnectedError));
-        }*/
-    }
 
-    /**
-     * add a request to volley queue by a named tag
-     *
-     * @param req
-     * @param tag
-     * @param <T>
-     */
-    public <T> void startRequest(Request<T> req, String tag) {
-        req.setTag(TextUtils.isEmpty(tag) ? L.getTag() : tag);
-
-        VolleyLog.d("Adding request to queue: %s", req.getUrl());
-
-        executeRequest(req);
-    }
-
-    /**
-     * add a request to volley queue by default tag("epos")
-     *
-     * @param req
-     * @param <T>
-     */
-    public <T> void startRequest(Request<T> req) {
-//        // set the default tag if tag is empty
-//        req.setTag(L.getTag());
-        L.i("###################### start a request : " + this.getClass().getSimpleName());
-        L.i("###################### url : " + req.getUrl());
-        L.i("###################### original url : " + req.getOriginUrl());
-        executeRequest(req);
-    }
-
-    /**
-     * cancel pending request by tag
-     *
-     * @param tag
-     */
-    public void cancelPendingRequests(Object tag) {
-        if (mVolleyQueue != null) {
-            mVolleyQueue.cancelAll(tag);
-        }
-    }
 
     /* overview dialog */
 

@@ -9,6 +9,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 import com.qianmi.hack.network.GsonRequest;
+import com.qianmi.hack.network.JwtAuthStack;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,6 +21,7 @@ import java.util.concurrent.CountDownLatch;
 public class GsonRequestTest extends InstrumentationTestCase {
     private static String TAG = "UnitTest";
     private RequestQueue mVolleyQueue;
+    private JwtAuthStack httpStack;
     private String mToken;
 
     /**
@@ -36,7 +38,8 @@ public class GsonRequestTest extends InstrumentationTestCase {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        mVolleyQueue = Volley.newRequestQueue(getInstrumentation().getContext());
+        httpStack = new JwtAuthStack();
+        mVolleyQueue = Volley.newRequestQueue(getInstrumentation().getContext(), httpStack);
         try {
             login();
         } catch (Exception e) {
@@ -58,6 +61,7 @@ public class GsonRequestTest extends InstrumentationTestCase {
                     public void onResponse(Map<String, String> response) {
                         Log.d(TAG, "response = " + response);
                         GsonRequestTest.this.mToken = response.get("token");
+                        httpStack.setAuth(mToken);
                         countDownLatch.countDown();
                     }
                 }).registerErrorListener(new Response.ErrorListener() {
@@ -76,11 +80,11 @@ public class GsonRequestTest extends InstrumentationTestCase {
 
     public void test() throws Exception {
         final CountDownLatch countDownLatch = new CountDownLatch(1);
+
         GsonRequest.Builder<Map> builder = new GsonRequest.Builder<>();
         GsonRequest request = builder.retClazz(Map.class)
                 .setUrl("http://frey.sj001.com/batchs/")
                 .method(Request.Method.GET)
-                .setToken(this.mToken)
                 .registerResListener(new Response.Listener<Map<String, String>>() {
                     @Override
                     public void onResponse(Map<String, String> response) {
@@ -100,7 +104,7 @@ public class GsonRequestTest extends InstrumentationTestCase {
 
     }
 
-    public void testMappingUpdate() throws  Exception {
+    public void testMappingUpdate() throws Exception {
         final CountDownLatch countDownLatch = new CountDownLatch(1);
         final Map<String, String> request = new HashMap<String, String>();
         request.put("token", "cao");
@@ -110,7 +114,7 @@ public class GsonRequestTest extends InstrumentationTestCase {
                 .retClazz(Map.class)
                 .setUrl("http://frey.sj001.com/tokens/")
                 .setRequest(request)
-                .setToken(this.mToken)
+//                .setToken(this.mToken)
                 .registerResListener(new Response.Listener<Map>() {
                     @Override
                     public void onResponse(Map response) {

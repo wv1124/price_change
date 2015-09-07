@@ -21,6 +21,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.qianmi.hack.PcApplication;
 import com.qianmi.hack.R;
+import com.qianmi.hack.app.MyVolley;
 import com.qianmi.hack.bean.Batch;
 import com.qianmi.hack.bean.BatchListResult;
 import com.qianmi.hack.network.GsonRequest;
@@ -143,7 +144,7 @@ public class BatchPage extends Fragment implements View.OnClickListener, AbsList
             }
         });
         L.d("**************load date :curentPage=" + curentPage);
-        ((TabHostActivity) BatchPage.this.getActivity()).startRequest(mRequest);
+        MyVolley.getRequestQueue().add(mRequest);
     }
 
     @Override

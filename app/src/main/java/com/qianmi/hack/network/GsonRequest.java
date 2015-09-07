@@ -1,6 +1,5 @@
 package com.qianmi.hack.network;
 
-import android.text.TextUtils;
 import android.util.Log;
 
 import com.android.volley.AuthFailureError;
@@ -38,10 +37,6 @@ public class GsonRequest<T> extends Request<T> {
     private boolean isSign = false;
     //默认的HTTP请求字符集
     private String charset = "UTF-8";
-    //如果登录后，需要将Token值加入到Header中
-    private String token;
-    //默认Token的名称
-    private String tokenTypeName = "JWT";
 
 
     public GsonRequest(int method, String url, ErrorListener errorListener) {
@@ -115,12 +110,6 @@ public class GsonRequest<T> extends Request<T> {
 //        }
 
 
-        //JWT token
-        if (!TextUtils.isEmpty(this.token)) {
-            extraHeaders.put("Authorization", String.format("%s %s", tokenTypeName, token));
-        }
-        Log.d(TAG, "-----extra headers: " + extraHeaders.toString());
-
         return extraHeaders;
     }
 
@@ -133,8 +122,6 @@ public class GsonRequest<T> extends Request<T> {
         private String charset = "UTF-8";
         private String url;
         private int method = Request.Method.POST;
-        private String jwtToken;
-        private String tokenTypeName = "JWT";
 
 
         public Builder() {
@@ -177,15 +164,6 @@ public class GsonRequest<T> extends Request<T> {
             return this;
         }
 
-        public Builder setToken(String token) {
-            this.jwtToken = token;
-            return this;
-        }
-
-        public Builder tokenName(String name) {
-            this.tokenTypeName = name;
-            return this;
-        }
 
         public GsonRequest<T> create() {
             GsonRequest<T> request = new GsonRequest<T>(method, url, errorListener);
@@ -194,8 +172,6 @@ public class GsonRequest<T> extends Request<T> {
             request.mRetClazz = retClazz;
             request.mListener = responseListener;
             request.mBody = requestBody;
-            request.token = jwtToken;
-            request.tokenTypeName = tokenTypeName;
             return request;
 
         }

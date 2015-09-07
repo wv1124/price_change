@@ -24,6 +24,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.qianmi.hack.PcApplication;
 import com.qianmi.hack.R;
+import com.qianmi.hack.app.MyVolley;
 import com.qianmi.hack.bean.Product;
 import com.qianmi.hack.bean.ProductListResult;
 import com.qianmi.hack.network.GsonRequest;
@@ -136,12 +137,11 @@ public class ProductPage extends Fragment implements View.OnClickListener, AbsLi
         GsonRequest.Builder<ProductListResult> builder = new GsonRequest.Builder<>();
         GsonRequest request = builder.retClazz(ProductListResult.class)
                 .setUrl(PcApplication.SERVER_URL + "/supproducts/?page=" + curentPage)
-                .setToken(PcApplication.TOKEN)
                 .registerResListener(createSuccessListener())
                 .method(Request.Method.GET)
                 .create();
         L.d("**************load date :curentPage=" + curentPage);
-        ((TabHostActivity) ProductPage.this.getActivity()).startRequest(request);
+        MyVolley.getRequestQueue().add(request);
     }
 
     @Override
