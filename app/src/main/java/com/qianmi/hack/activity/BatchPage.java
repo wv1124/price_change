@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -188,6 +189,8 @@ public class BatchPage extends Fragment implements View.OnClickListener, AbsList
 
         private LayoutInflater mInflater;
         public List<Batch> mList;
+        private int[] resouces = new int[]{R.drawable.ic_poll_black_48dp,
+                R.drawable.ic_public_black_48dp, R.drawable.ic_whatshot_black_48dp};
 
         public CustomListAdapter(Context pContext, List<Batch> pList) {
             mInflater = LayoutInflater.from(pContext);
@@ -224,6 +227,7 @@ public class BatchPage extends Fragment implements View.OnClickListener, AbsList
                 convertView = mInflater.inflate(R.layout.batch_listitem, null);
 
                 holder = new ViewHolder();
+                holder.image = (ImageView) convertView.findViewById(R.id.batchimg);
                 holder.batchTime = (TextView) convertView.findViewById(R.id.batch_update_time);
                 holder.productDowns = (TextView) convertView.findViewById(R.id.product_downs);
                 holder.productModifications = (TextView) convertView.findViewById(R.id.product_modifications);
@@ -235,6 +239,7 @@ public class BatchPage extends Fragment implements View.OnClickListener, AbsList
 
             Batch batch = mList.get(position);
             //holder.mImage.setImageUrl(batch.getAppIcon());
+            holder.image.setImageResource(resouces[position % 3]);
             holder.batchTime.setText(batch.created);
             holder.productDowns.setText("下架:" + String.valueOf(batch.down_rows));
             holder.productUps.setText("上架:" + String.valueOf(batch.add_rows));
@@ -244,6 +249,7 @@ public class BatchPage extends Fragment implements View.OnClickListener, AbsList
     }
 
     private static class ViewHolder {
+        private ImageView image;
         private TextView batchTime;
         private TextView productModifications;
         private TextView productUps;
