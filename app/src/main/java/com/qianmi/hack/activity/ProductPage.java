@@ -1,9 +1,11 @@
 package com.qianmi.hack.activity;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -33,6 +35,7 @@ import com.qianmi.hack.utils.L;
 import java.util.ArrayList;
 import java.util.List;
 
+
 /**
  * Created by wv on 2015/8/20.
  */
@@ -52,7 +55,6 @@ public class ProductPage extends Fragment implements View.OnClickListener, AbsLi
     private boolean hasNext = true;
     private LayoutInflater mInflater;
     private LinearLayout loading;
-
 
     private Handler mHandler = new Handler() {
 
@@ -81,6 +83,8 @@ public class ProductPage extends Fragment implements View.OnClickListener, AbsLi
         requestDate(curPage);
         return view;
     }
+
+
 
     private void initView() {
         mAdapter = new CustomListAdapter(ProductPage.this.getActivity(), mList);
@@ -211,14 +215,7 @@ public class ProductPage extends Fragment implements View.OnClickListener, AbsLi
             if (convertView == null) {
                 convertView = mInflater.inflate(R.layout.product_listitem, null);
 
-                holder = new ViewHolder();
-                holder.mImage = (ImageView) convertView
-                        .findViewById(R.id.img);
-                holder.name = (TextView) convertView
-                        .findViewById(R.id.name);
-                holder.salePrice = (TextView) convertView.findViewById(R.id.sale_price);
-
-                holder.updateTime = (TextView) convertView.findViewById(R.id.update_time);
+                holder = new ViewHolder(convertView);
                 convertView.setTag(holder);
             } else {
                 holder = (ViewHolder) convertView.getTag();
@@ -242,11 +239,18 @@ public class ProductPage extends Fragment implements View.OnClickListener, AbsLi
         }
     }
 
-    private static class ViewHolder {
+    private static class ViewHolder{
         private ImageView mImage;
         private TextView name;
         private TextView salePrice;
         private TextView updateTime;
+
+        public ViewHolder(View v) {
+            mImage = (ImageView)v.findViewById(R.id.img);
+            name = (TextView)v.findViewById(R.id.name);
+            salePrice = (TextView)v.findViewById(R.id.sale_price);
+            updateTime = (TextView)v.findViewById(R.id.update_time);
+        }
     }
 
 }

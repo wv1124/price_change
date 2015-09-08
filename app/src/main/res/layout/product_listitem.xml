@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/ProductListItem"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:padding="@dimen/item_padding"
+    android:tag="front">
 
     <ImageView
         android:id="@+id/img"
@@ -13,44 +16,47 @@
         android:minHeight="50dp"
         android:minWidth="50dp" />
 
-    <LinearLayout
-        android:id="@+id/appInfo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:layout_marginLeft="5dip"
-        android:layout_toRightOf="@id/img"
-        android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/display_area"
+        android:layout_width="fill_parent"
+        android:layout_height="80dp"
+        android:layout_toEndOf="@+id/img"
+        android:layout_toRightOf="@+id/img"
+        android:padding="5dp">
 
         <TextView
             android:id="@+id/name"
-            style="@style/ProductNameText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="三星W2013电信3G玫瑰金" />
+            android:layout_alignParentTop="true"
+            android:singleLine="true"
+            android:text="三星W2013电信3G玫瑰金"
+            android:textSize="16dp"
+            android:textStyle="bold" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
+
+        <TextView
+            android:id="@+id/sale_price"
+            style="@style/ProductPriceText"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp">
-
-            <TextView
-                android:id="@+id/sale_price"
-                style="@style/ProductPriceText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="234.0" />
-
-
-        </LinearLayout>
+            android:layout_alignLeft="@+id/name"
+            android:layout_alignParentBottom="true"
+            android:text="234.0"
+            android:textSize="14dp" />
 
         <TextView
             android:id="@+id/update_time"
             style="@style/ProductUpdateTime"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="2015-08-18" />
-    </LinearLayout>
-
+            android:layout_alignParentBottom="true"
+            android:text="2015-08-18"
+            android:layout_alignTop="@+id/sale_price"
+            android:layout_toRightOf="@+id/name"
+            android:layout_toEndOf="@+id/name" />
+    </RelativeLayout>
 </RelativeLayout>
+
+

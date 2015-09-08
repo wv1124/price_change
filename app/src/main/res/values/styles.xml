@@ -58,7 +58,7 @@
     <!-- product list item 产品价格 -->
     <style name="ProductPriceText">
         <item name="android:textColor">#D7A240</item>
-        <item name="android:textSize">16sp</item>
+        <item name="android:textSize">18sp</item>
     </style>
 
     <!-- product list item 更新日期 -->
