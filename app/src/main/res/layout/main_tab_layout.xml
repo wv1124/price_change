@@ -15,7 +15,7 @@
             android:layout_gravity="center"
             android:layout_margin="0dp"
             android:gravity="center"
-            android:background="#00CC99"
+            android:background="@color/primary"
             android:text="商品"
             android:textColor="#FFFFFF"
             android:textSize="18sp"

@@ -18,7 +18,7 @@
     <color name="window_background">#FFF5F5F5</color>
 
     <!-- window -->
-    <color name="eposColorPrimary">#428BCA</color>
+    <color name="primary">#428BCA</color>
     <color name="eposColorPrimaryDark">#3276B1</color>
     <color name="eposColorAccent">#ffc63c</color>
 
