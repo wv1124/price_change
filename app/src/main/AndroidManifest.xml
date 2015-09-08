@@ -54,7 +54,7 @@
             </intent-filter>
         </activity>
         <activity android:name="com.qianmi.hack.activity.TabHostActivity"></activity>
-
+        <activity android:name=".activity.ChangePricePage"></activity>
         <service android:name="com.avos.avoscloud.PushService" />
         <receiver android:name="com.avos.avoscloud.AVBroadcastReceiver">
             <intent-filter>

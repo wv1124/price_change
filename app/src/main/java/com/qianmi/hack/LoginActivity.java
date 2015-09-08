@@ -66,10 +66,6 @@ public class LoginActivity extends BaseActivity {
 
     }
 
-    @Override
-    public boolean needInitRequestQueue() {
-        return true;
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +22,7 @@ import android.widget.Toast;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.qianmi.hack.BaseActivity;
 import com.qianmi.hack.PcApplication;
 import com.qianmi.hack.R;
 import com.qianmi.hack.app.MyVolley;
@@ -37,7 +37,7 @@ import java.util.List;
 /**
  * Created by wv on 2015/8/20.
  */
-public class ChangePricePage extends Fragment implements View.OnClickListener, AbsListView.OnScrollListener {
+public class ChangePricePage extends BaseActivity implements View.OnClickListener, AbsListView.OnScrollListener {
 
     private static final String TAG = "MainActivity";
 
@@ -53,6 +53,7 @@ public class ChangePricePage extends Fragment implements View.OnClickListener, A
     private int visibleLastIndex = 0;   //最后的可视项索引
     private int visibleItemCount;       // 当前窗口可见项总数
     private LinearLayout loading;
+    private String batchId;
 
     private Handler mHandler = new Handler() {
 
@@ -70,20 +71,31 @@ public class ChangePricePage extends Fragment implements View.OnClickListener, A
         ;
     };
 
+
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.activity_pricelist, null);
-        mListView = (ListView) view.findViewById(R.id.mListView);
-        loading = (LinearLayout) view.findViewById(R.id.loading);
+    public void onBeginRequest() {
+
+    }
+
+    @Override
+    public void onNetworkFailed() {
+
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_pricelist);
+        mListView = (ListView) findViewById(R.id.mListView);
+        loading = (LinearLayout) findViewById(R.id.loading);
         loading.setVisibility(View.GONE);
+        this.batchId = (String) getIntent().getSerializableExtra("batch");
         initView();
-        requestDate(curPage);
-        return view;
+        requestDate(curPage, batchId);
     }
 
     private void initView() {
-        mAdapter = new CustomListAdapter(ChangePricePage.this.getActivity(), mList);
+        mAdapter = new CustomListAdapter(this, mList);
         mAdapter.setOnCheckedChangeListener(priceLister);
         mListView.setAdapter(mAdapter);
         mListView.setOnScrollListener(this);     //添加滑动监听
@@ -103,14 +115,14 @@ public class ChangePricePage extends Fragment implements View.OnClickListener, A
         }
     }
 
-    private void requestDate(int curentPage) {
+    private void requestDate(int curentPage, String batchId) {
         mRequest = new GsonRequest(Request.Method.GET,
-                PcApplication.SERVER_URL + "/changenotifys/?page=" + curentPage, null, PriceChangeListResult.class,
+                PcApplication.SERVER_URL + "/batchs/"+batchId+"/modifications/?page=" + curentPage, null, PriceChangeListResult.class,
                 new Response.Listener<PriceChangeListResult>() {
                     @Override
                     public void onResponse(PriceChangeListResult resp) {
                         L.d("buildAppData return ");
-                        ((TabHostActivity) ChangePricePage.this.getActivity()).dismissLoadingDialog();
+                        ChangePricePage.this.dismissLoadingDialog();
                         if (resp != null) {
                             L.d(resp.toString());
                             //mList.clear();
@@ -133,7 +145,7 @@ public class ChangePricePage extends Fragment implements View.OnClickListener, A
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                ((TabHostActivity) ChangePricePage.this.getActivity()).handleError(error);
+                ChangePricePage.this.handleError(error);
             }
         });
         L.d("**************load date :curentPage=" + curentPage);
@@ -152,7 +164,7 @@ public class ChangePricePage extends Fragment implements View.OnClickListener, A
                 if (hasNext) {
                     Log.i("LOADMORE", "loading... page: " + hasNext);
                     loading.setVisibility(View.VISIBLE);
-                    requestDate(curPage);
+                    requestDate(curPage, batchId);
                 }
             }
         }
@@ -199,7 +211,7 @@ public class ChangePricePage extends Fragment implements View.OnClickListener, A
                     @Override
                     public void onResponse(Ret resp) {
                         L.d("change price return ");
-                        ((TabHostActivity) ChangePricePage.this.getActivity()).dismissLoadingDialog();
+                        ChangePricePage.this.dismissLoadingDialog();
                         if (resp != null && resp.ret.equalsIgnoreCase("0")) {
                             Toast.makeText(PcApplication.getInstance(), "同步成功!", Toast.LENGTH_LONG).show();
                         } else {
@@ -210,7 +222,7 @@ public class ChangePricePage extends Fragment implements View.OnClickListener, A
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                ((TabHostActivity) ChangePricePage.this.getActivity()).handleError(error);
+                ChangePricePage.this.handleError(error);
             }
         });
         L.d("changePrice start");

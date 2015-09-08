@@ -1,6 +1,7 @@
 package com.qianmi.hack.activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -18,7 +19,6 @@ import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.qianmi.hack.BaseActivity;
 import com.qianmi.hack.PcApplication;
 import com.qianmi.hack.R;
@@ -102,6 +102,12 @@ public class BatchPage extends Fragment implements View.OnClickListener, AbsList
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
                 Log.e(TAG, "click position:" + position);
+                Batch batch = (Batch) mAdapter.getItem(position);
+                String batchId = String.valueOf(batch.id);
+                Intent intent = new Intent(getActivity(), ChangePricePage.class);
+                intent.putExtra("batch", batchId);
+                startActivity(intent);
+
             }
         });
     }

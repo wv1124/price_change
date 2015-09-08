@@ -64,13 +64,6 @@ public abstract class BaseActivity extends AppCompatActivity {
      */
     public abstract void onNetworkFailed();
 
-    /**
-     * return true if want to use volley in this activity
-     *
-     * @return
-     */
-    public abstract boolean needInitRequestQueue();
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 

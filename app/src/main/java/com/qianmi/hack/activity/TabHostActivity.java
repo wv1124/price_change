@@ -46,7 +46,6 @@ public class TabHostActivity extends BaseActivity {
 
     }
 
-    @Override
     public boolean needInitRequestQueue() {
         return true;
     }

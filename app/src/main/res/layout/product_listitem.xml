@@ -53,8 +53,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:text="2015-08-18"
-            android:layout_alignTop="@+id/sale_price"
-            android:layout_toRightOf="@+id/name"
+            android:layout_toRightOf="@+id/sale_price"
             android:layout_toEndOf="@+id/name" />
     </RelativeLayout>
 </RelativeLayout>

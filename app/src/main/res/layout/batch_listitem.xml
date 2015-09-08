@@ -1,54 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     style="@style/BatchListItem"
-    android:layout_width="fill_parent"
-    android:layout_height="100dp"
-    android:background="#999999"
-    android:orientation="vertical">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical"
+    android:padding="@dimen/item_padding"
+    android:tag="front">
 
+    <ImageView
+        android:id="@+id/batchimg"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:background="@color/product_bg_color"
+        android:contentDescription="@string/image_desc"
+        android:minHeight="50dp"
+        android:minWidth="50dp"
+        android:src="@drawable/ic_poll_black_48dp" />
 
-    <TextView
-        android:id="@+id/batch_update_time"
-        style="@style/BatchTime"
+    <RelativeLayout
+        android:id="@+id/display_area"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="5dip"
-        android:text="2015-08-18 23:58:29" />
+        android:layout_height="60dp"
+        android:layout_toEndOf="@+id/batchimg"
+        android:layout_toRightOf="@+id/batchimg"
+        android:padding="5dp">
 
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"></LinearLayout>
+        <TextView
+            android:id="@+id/batch_update_time"
+            style="@style/BatchTime"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dip"
+            android:layout_alignParentTop="true"
+            android:text="2015-08-18 23:58" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="15dp">
+        <View
+            android:id="@+id/divide"
+            android:background="@color/lightgray"
+            android:layout_below="@+id/batch_update_time"
+            android:layout_width="fill_parent"
+            android:layout_height="0.5dp" />
 
         <TextView
             android:id="@+id/product_modifications"
-            style="@style/ProductPriceText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="3"
-            android:text="修改-15" />
+            android:layout_marginLeft="10.0dp"
+            android:layout_alignParentBottom="true"
+            android:singleLine="true"
+            android:text="修改:15"
+            android:layout_alignTop="@+id/product_ups" />
 
         <TextView
             android:id="@+id/product_ups"
-            style="@style/ProductPriceText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="20.0dp"
+            android:layout_toRightOf="@+id/product_modifications"
             android:layout_weight="3"
-            android:text="新增-3" />
+            android:text="新增:3"
+            android:layout_alignTop="@+id/product_downs" />
 
         <TextView
             android:id="@+id/product_downs"
-            style="@style/ProductPriceText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="20.0dp"
+            android:layout_toRightOf="@+id/product_ups"
             android:layout_weight="3"
-            android:text="下架-5" />
-
-    </LinearLayout>
+            android:text="下架:5" />
 
 
-</LinearLayout>
+    </RelativeLayout>
+</RelativeLayout>
