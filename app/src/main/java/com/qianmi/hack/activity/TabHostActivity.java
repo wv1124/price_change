@@ -25,14 +25,14 @@ public class TabHostActivity extends BaseActivity {
     private LayoutInflater layoutInflater;
 
     //定义数组来存放Fragment界面
-    private Class fragmentArray[] = {ProductPage.class, BatchPage.class, TradesPage.class, PrefsFragement.class};
+    private Class fragmentArray[] = {BatchPage.class, ProductPage.class, TradesPage.class, PrefsFragement.class};
 
     //定义数组来存放按钮图片
     private int mImageViewArray[] = {R.drawable.tab_home_btn, R.drawable.tab_message_btn, R.drawable.tab_selfinfo_btn,
             R.drawable.tab_more_btn};
 
     //Tab选项卡的文字
-    private String mTextviewArray[] = {"商品", "调价", "订单", "设置"};
+    private String mTextviewArray[] = {"调价", "商品", "订单", "设置"};
 
     private TextView title;
 
