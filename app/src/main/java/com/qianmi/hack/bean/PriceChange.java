@@ -15,6 +15,8 @@ public class PriceChange {
     public String gonghuo_product_name;
     public double gonghuo_price;
     public double draft_price;
+    public int draft_opt_type;
+    public String draft_price_source;
     public int type;
     public boolean is_sync;
 }

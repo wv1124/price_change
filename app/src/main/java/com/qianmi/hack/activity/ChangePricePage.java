@@ -117,7 +117,7 @@ public class ChangePricePage extends BaseActivity implements View.OnClickListene
 
     private void requestDate(int curentPage, String batchId) {
         mRequest = new GsonRequest(Request.Method.GET,
-                PcApplication.SERVER_URL + "/batchs/"+batchId+"/modifications/?page=" + curentPage, null, PriceChangeListResult.class,
+                PcApplication.SERVER_URL + "/batchs/" + batchId + "/modifications/?page=" + curentPage, null, PriceChangeListResult.class,
                 new Response.Listener<PriceChangeListResult>() {
                     @Override
                     public void onResponse(PriceChangeListResult resp) {
@@ -190,7 +190,7 @@ public class ChangePricePage extends BaseActivity implements View.OnClickListene
                     if (sync != null) {
                         sync.setText("已同步");
                         sync.setEnabled(false);
-                        sync.setTag(R.id.priceIcon, true);
+//                        sync.setTag(R.id.priceIcon, true);
                     }
                 }
             }
@@ -264,6 +264,92 @@ public class ChangePricePage extends BaseActivity implements View.OnClickListene
             mListener = listener;
         }
 
+        private int getResourceByType(int type) {
+            /**
+             CHANGE_TYPE = (
+             (1, u'上架'),
+             (2, u'降价'),
+             (3, u'下架'),
+             (4, u'涨价'),
+             (5, u'新增商品'),
+             (6, u'维持')
+             )
+             */
+            int resource = 0;
+            switch (type) {
+                case 1:
+                    resource = R.drawable.ic_product_up_24dp;
+                    break;
+                case 2:
+                    resource = R.drawable.ic_price_reduce_24dp;
+                    break;
+                case 3:
+                    resource = R.drawable.ic_product_down_24dp;
+                    break;
+                case 4:
+                    resource = R.drawable.ic_priceup_24dp;
+                    break;
+                case 5:
+                    resource = R.drawable.ic_new_product_24dp;
+                    break;
+                case 6:
+                    resource = R.drawable.ic_price_maintain_24dp;
+                    break;
+            }
+            return resource;
+        }
+
+        private String getOldDescByType(int type, String oldPrice, String newPrice, String source) {
+            String desc = "";
+            switch (type) {
+                case 1:
+                    desc = String.format("%s商品上架，新价格为￥%s", source, newPrice);
+                    break;
+                case 2:
+                    desc = String.format("%s从￥%s降至￥%s", source, oldPrice, newPrice);
+                    break;
+                case 3:
+                    desc = String.format("%s商品下架", source);
+                    break;
+                case 4:
+                    desc = String.format("%s从￥%s涨至￥%s", source, oldPrice, newPrice);
+                    break;
+                case 5:
+                    desc = String.format("%s新增商品", source);
+                    break;
+                case 6:
+                    //不应该出现
+                    break;
+            }
+            return desc;
+        }
+
+        private String getNewDescByType(int draft_type, String draft_supplier, String draft_price) {
+            String desc = "";
+            switch (draft_type) {
+                case 1:
+                    desc = String.format("拟采用%s货源,新价格￥%s", draft_supplier, draft_price);
+                    break;
+                case 2:
+                    desc = String.format("拟采用%s货源,降至￥%s", draft_supplier, draft_price);
+                    break;
+                case 3:
+                    desc = "拟将商品下架";
+                    break;
+                case 4:
+                    desc = String.format("拟采用%s货源,涨至￥%s", draft_supplier, draft_price);
+                    break;
+                case 5:
+                    desc = "新增商品";
+                    break;
+                case 6:
+                    desc = String.format("拟采用%s货源,维持￥%s", draft_supplier, draft_price);
+                    break;
+            }
+            return desc;
+        }
+
+
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             if (getCount() == 0) {
@@ -273,70 +359,33 @@ public class ChangePricePage extends BaseActivity implements View.OnClickListene
             ViewHolder holder = null;
             if (convertView == null) {
                 convertView = mInflater.inflate(R.layout.activity_price_list_item, null);
-
-                holder = new ViewHolder();
-                holder.priceIcon = (ImageView) convertView
-                        .findViewById(R.id.priceIcon);
-                holder.name = (TextView) convertView
-                        .findViewById(R.id.name);
-                holder.supplier = (TextView) convertView.findViewById(R.id.supplier);
-                holder.oldPrice = (TextView) convertView
-                        .findViewById(R.id.old_price);
-                holder.newPrice = (TextView) convertView
-                        .findViewById(R.id.new_price);
-                holder.draftPrice = (TextView) convertView
-                        .findViewById(R.id.draft_price);
-                holder.sync = (CheckBox) convertView
-                        .findViewById(R.id.sync);
+                holder = new ViewHolder(convertView);
                 convertView.setTag(holder);
             } else {
                 holder = (ViewHolder) convertView.getTag();
             }
-
-
             PriceChange ai = mList.get(position);
-            /**
-             * CHANGE_TYPE = (
-             (1, u’上架’),
-             (2, u’降价’),
-             (3, u’下架’),
-             (4, u’涨价’),
-             (5, u’新增商品’),
-             )
-             */
-            switch (ai.type) {
-                case 1:
-                    holder.priceIcon.setImageResource(R.drawable.upl);
-                    break;
-                case 2:
-                    holder.priceIcon.setImageResource(R.drawable.down);
-                    break;
-                case 3:
-                    holder.priceIcon.setImageResource(R.drawable.downl);
-                    break;
-                case 4:
-                    holder.priceIcon.setImageResource(R.drawable.up);
-                    break;
-                case 5:
-                    holder.priceIcon.setImageResource(R.drawable.add);
-                    break;
-            }
-
+            holder.draftAction.setImageResource(getResourceByType(ai.draft_opt_type));
+            holder.priceAction.setImageResource(getResourceByType(ai.type));
             holder.name.setText(ai.gonghuo_product_name);
-            holder.supplier.setText(ai.supplier);
-            holder.oldPrice.setText("原价: ￥" + String.valueOf(ai.old_price));
-            holder.newPrice.setText("新价: ￥" + String.valueOf(ai.new_price));
-            holder.draftPrice.setText("拟设价: ￥" + String.valueOf(ai.draft_price));
+            holder.oldPrice.setText(getOldDescByType(ai.type,
+                    String.valueOf(ai.old_price),
+                    String.valueOf(ai.new_price),
+                    ai.supplier));
+//            holder.newPrice.setText("新价格: ￥" + String.valueOf(ai.new_price));
+            holder.draftPrice.setText(getNewDescByType(ai.draft_opt_type,
+                    ai.draft_price_source,
+                    String.valueOf(ai.draft_price)));
             holder.sync.setTag(R.id.sync, ai.id);
 
-            Object b = holder.sync.getTag(R.id.priceIcon);
-            if (b != null && b instanceof Boolean) {
-                Boolean isSync = (Boolean) b;
-                if (isSync) {
-                    holder.sync.setChecked(true);
-                    holder.sync.setEnabled(false);
-                }
-            }
+//            Object b = holder.sync.getTag(R.id.priceIcon);
+//            if (b != null && b instanceof Boolean) {
+//                Boolean isSync = (Boolean) b;
+//                if (isSync) {
+//                    holder.sync.setChecked(true);
+//                    holder.sync.setEnabled(false);
+//                }
+//            }
 
             if (ai.is_sync) {
                 holder.sync.setText(R.string.sync_alredy);
@@ -355,13 +404,27 @@ public class ChangePricePage extends BaseActivity implements View.OnClickListene
     }
 
     private static class ViewHolder {
-        private ImageView priceIcon;
+        private ImageView priceAction;
         private TextView name;
-        private TextView supplier;
         private TextView oldPrice;
-        private TextView newPrice;
         private TextView draftPrice;
+        private ImageView draftAction;
         private CheckBox sync;
+
+        public ViewHolder(View convertView) {
+            priceAction = (ImageView) convertView
+                    .findViewById(R.id.price_action);
+            name = (TextView) convertView
+                    .findViewById(R.id.name);
+            oldPrice = (TextView) convertView
+                    .findViewById(R.id.old_price);
+            draftPrice = (TextView) convertView
+                    .findViewById(R.id.draft_price);
+            sync = (CheckBox) convertView
+                    .findViewById(R.id.sync);
+            draftAction = (ImageView) convertView.findViewById(R.id.draft_action);
+
+        }
     }
 }
 
