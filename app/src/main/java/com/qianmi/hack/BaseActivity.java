@@ -14,8 +14,10 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.animation.BounceInterpolator;
@@ -26,6 +28,7 @@ import android.widget.Toast;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.qianmi.hack.listener.BackGestureListener;
 import com.qianmi.hack.utils.L;
 
 import java.lang.reflect.Method;
@@ -46,6 +49,11 @@ public abstract class BaseActivity extends AppCompatActivity {
     private ProgressDialog mLoadingDialog;
     private Snackbar mSnackbar;
 
+    /** 手势监听 */
+    GestureDetector mGestureDetector;
+    /** 是否需要监听手势关闭功能 */
+    private boolean mNeedBackGesture = false;
+
     @Nullable
     @Bind(R.id.toolbar)
     Toolbar toolbar;
@@ -54,6 +62,28 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Bind(R.id.toolbar_title)
     TextView mToolbarTitle;
 
+    private void initGestureDetector() {
+        if (mGestureDetector == null) {
+            mGestureDetector = new GestureDetector(getApplicationContext(),
+                    new BackGestureListener(this));
+        }
+    }
+
+    /*
+        * 设置是否进行手势监听
+    */
+    public void setNeedBackGesture(boolean mNeedBackGesture){
+        this.mNeedBackGesture = mNeedBackGesture;
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        // TODO Auto-generated method stub
+        if(mNeedBackGesture){
+            return mGestureDetector.onTouchEvent(ev) || super.dispatchTouchEvent(ev);
+        }
+        return super.dispatchTouchEvent(ev);
+    }
     /**
      * callback which need to do for request http when enter current view
      */
@@ -71,6 +101,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
         //TODO
         super.onCreate(savedInstanceState);
+        initGestureDetector();
 
 
     }

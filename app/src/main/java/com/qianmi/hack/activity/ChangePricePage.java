@@ -73,7 +73,6 @@ public class ChangePricePage extends BaseActivity implements View.OnClickListene
         ;
     };
 
-
     @Override
     public void onBeginRequest() {
 
@@ -93,6 +92,7 @@ public class ChangePricePage extends BaseActivity implements View.OnClickListene
         loading.setVisibility(View.GONE);
         this.batchId = (String) getIntent().getSerializableExtra("batch");
         initView();
+        setNeedBackGesture(true);
         requestDate(curPage, batchId);
     }
 
