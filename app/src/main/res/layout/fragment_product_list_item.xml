@@ -32,8 +32,8 @@
             android:layout_alignParentTop="true"
             android:singleLine="true"
             android:text="三星W2013电信3G玫瑰金"
-            android:textSize="16dp"
-            android:textStyle="bold" />
+            style="@style/ProductNameText"
+            />
 
 
         <TextView

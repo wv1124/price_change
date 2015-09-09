@@ -79,7 +79,7 @@ public class BatchPage extends Fragment implements View.OnClickListener, AbsList
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         mInflater = inflater;
-        View view = inflater.inflate(R.layout.batch_listview, null);
+        View view = inflater.inflate(R.layout.fragment_batch_list_view, null);
         loading = (LinearLayout) view.findViewById(R.id.loading);
         loading.setVisibility(View.GONE);
         mListView = (ListView) view.findViewById(R.id.mListView);
@@ -224,7 +224,7 @@ public class BatchPage extends Fragment implements View.OnClickListener, AbsList
             }
             ViewHolder holder = null;
             if (convertView == null) {
-                convertView = mInflater.inflate(R.layout.batch_listitem, null);
+                convertView = mInflater.inflate(R.layout.fragment_batch_list_item, null);
 
                 holder = new ViewHolder();
                 holder.image = (ImageView) convertView.findViewById(R.id.batchimg);

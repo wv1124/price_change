@@ -1,11 +1,9 @@
 package com.qianmi.hack.activity;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -74,7 +72,7 @@ public class ProductPage extends Fragment implements View.OnClickListener, AbsLi
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         mInflater = inflater;
-        View view = inflater.inflate(R.layout.activity_productlist, null);
+        View view = inflater.inflate(R.layout.fragment_product_list_view, null);
         loading = (LinearLayout) view.findViewById(R.id.loading);
         loading.setVisibility(View.GONE);
         mListView = (ListView) view.findViewById(R.id.mListView);
@@ -213,7 +211,7 @@ public class ProductPage extends Fragment implements View.OnClickListener, AbsLi
             }
             ViewHolder holder = null;
             if (convertView == null) {
-                convertView = mInflater.inflate(R.layout.product_listitem, null);
+                convertView = mInflater.inflate(R.layout.fragment_product_list_item, null);
 
                 holder = new ViewHolder(convertView);
                 convertView.setTag(holder);

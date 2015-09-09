@@ -1,6 +1,5 @@
 package com.qianmi.hack.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -8,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import com.qianmi.hack.LoginActivity;
 import com.qianmi.hack.R;
 
 /**
@@ -21,7 +19,7 @@ public class PrefsFragement extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.activity_setting, null);
+        View view = inflater.inflate(R.layout.fragment_setting, null);
         logout = (Button) view.findViewById(R.id.btn_logout);
         logout.setOnClickListener(this);
         return view;

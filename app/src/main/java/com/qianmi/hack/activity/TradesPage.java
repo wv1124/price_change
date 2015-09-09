@@ -65,7 +65,7 @@ public class TradesPage extends Fragment implements View.OnClickListener, AbsLis
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.activity_tradelist, null);
+        View view = inflater.inflate(R.layout.fragment_trade_list_view, null);
         mListView = (ExpandableListView) view.findViewById(R.id.mListView);
         loading = (LinearLayout) view.findViewById(R.id.loading);
         loading.setVisibility(View.GONE);
@@ -263,7 +263,7 @@ public class TradesPage extends Fragment implements View.OnClickListener, AbsLis
         public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
             ViewHolder holder = null;
             if (convertView == null) {
-                convertView = mInflater.inflate(R.layout.trade_listview, null);
+                convertView = mInflater.inflate(R.layout.fragment_trade_list_item, null);
 
                 holder = new ViewHolder();
                 holder.img = (ImageView) convertView.findViewById(R.id.img);
@@ -312,7 +312,7 @@ public class TradesPage extends Fragment implements View.OnClickListener, AbsLis
             }
             ChildViewHolder holder = null;
             if (convertView == null) {
-                convertView = mInflater.inflate(R.layout.trade_listview_child, null);
+                convertView = mInflater.inflate(R.layout.fragment_trade_list_item_child, null);
 
                 holder = new ChildViewHolder();
                 holder.img = (ImageView) convertView.findViewById(R.id.img);

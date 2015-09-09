@@ -85,7 +85,7 @@ public class ChangePricePage extends BaseActivity implements View.OnClickListene
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_pricelist);
+        setContentView(R.layout.activity_price_list);
         mListView = (ListView) findViewById(R.id.mListView);
         loading = (LinearLayout) findViewById(R.id.loading);
         loading.setVisibility(View.GONE);
@@ -272,7 +272,7 @@ public class ChangePricePage extends BaseActivity implements View.OnClickListene
 //			System.out.println("position = "+position);
             ViewHolder holder = null;
             if (convertView == null) {
-                convertView = mInflater.inflate(R.layout.pricechange_listview, null);
+                convertView = mInflater.inflate(R.layout.activity_price_list_item, null);
 
                 holder = new ViewHolder();
                 holder.priceIcon = (ImageView) convertView
