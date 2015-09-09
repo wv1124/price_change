@@ -19,4 +19,5 @@ public class PriceChange {
     public String draft_price_source;
     public int type;
     public boolean is_sync;
+    public String pic_url;
 }

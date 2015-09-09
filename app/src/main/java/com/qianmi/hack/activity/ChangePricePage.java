@@ -22,6 +22,8 @@ import android.widget.Toast;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.qianmi.hack.BaseActivity;
 import com.qianmi.hack.PcApplication;
 import com.qianmi.hack.R;
@@ -372,7 +374,12 @@ public class ChangePricePage extends BaseActivity implements View.OnClickListene
                     String.valueOf(ai.old_price),
                     String.valueOf(ai.new_price),
                     ai.supplier));
-//            holder.newPrice.setText("新价格: ￥" + String.valueOf(ai.new_price));
+            Glide.with(convertView.getContext())
+                    .load(ai.pic_url)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .centerCrop()
+                    .placeholder(R.drawable.order_detail_proof_preload)
+                    .into(holder.productImg);
             holder.draftPrice.setText(getNewDescByType(ai.draft_opt_type,
                     ai.draft_price_source,
                     String.valueOf(ai.draft_price)));
@@ -404,6 +411,7 @@ public class ChangePricePage extends BaseActivity implements View.OnClickListene
     }
 
     private static class ViewHolder {
+        private ImageView productImg;
         private ImageView priceAction;
         private TextView name;
         private TextView oldPrice;
@@ -423,6 +431,7 @@ public class ChangePricePage extends BaseActivity implements View.OnClickListene
             sync = (CheckBox) convertView
                     .findViewById(R.id.sync);
             draftAction = (ImageView) convertView.findViewById(R.id.draft_action);
+            productImg = (ImageView) convertView.findViewById(R.id.product_img);
 
         }
     }
