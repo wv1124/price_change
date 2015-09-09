@@ -50,7 +50,6 @@ public class ChangePricePage extends BaseActivity implements View.OnClickListene
     private ListView mListView;
     private int curPage = 1;
     private boolean hasNext = true;
-    private GsonRequest mRequest;
 
     private int visibleLastIndex = 0;   //最后的可视项索引
     private int visibleItemCount;       // 当前窗口可见项总数
@@ -117,41 +116,45 @@ public class ChangePricePage extends BaseActivity implements View.OnClickListene
         }
     }
 
-    private void requestDate(int curentPage, String batchId) {
-        mRequest = new GsonRequest(Request.Method.GET,
-                PcApplication.SERVER_URL + "/batchs/" + batchId + "/modifications/?page=" + curentPage, null, PriceChangeListResult.class,
-                new Response.Listener<PriceChangeListResult>() {
-                    @Override
-                    public void onResponse(PriceChangeListResult resp) {
-                        L.d("buildAppData return ");
-                        ChangePricePage.this.dismissLoadingDialog();
-                        if (resp != null) {
-                            L.d(resp.toString());
-                            //mList.clear();
-                            mList.addAll(resp.results);
-                            if (resp.next == null || resp.next.length() == 0 || resp.next == "null") {
-                                hasNext = false;
-                            } else {
-                                hasNext = true;
-                            }
-                            Message _Msg = mHandler.obtainMessage(LOAD_DATA_FINISH, mList);
-                            mHandler.sendMessage(_Msg);
-                            if (loading != null) {
-                                loading.setVisibility(View.GONE);
-                            }
-
-                        } else {
-                            L.e("requestDate return error");
-                        }
-                    }
-                }, new Response.ErrorListener() {
+    private Response.Listener createSuccessListener() {
+        return new Response.Listener<PriceChangeListResult>() {
             @Override
-            public void onErrorResponse(VolleyError error) {
-                ChangePricePage.this.handleError(error);
+            public void onResponse(PriceChangeListResult resp) {
+                L.d("buildAppData return ");
+                ChangePricePage.this.dismissLoadingDialog();
+                if (resp != null) {
+                    L.d(resp.toString());
+                    mList.addAll(resp.results);
+                    hasNext = resp.next != null;
+                    Message _Msg = mHandler.obtainMessage(LOAD_DATA_FINISH, mList);
+                    mHandler.sendMessage(_Msg);
+                    if (loading != null) {
+                        loading.setVisibility(View.GONE);
+                    }
+
+                } else {
+                    L.e("requestDate return error");
+                }
             }
-        });
-        L.d("**************load date :curentPage=" + curentPage);
-        MyVolley.getRequestQueue().add(mRequest);
+        };
+    }
+
+    private void requestDate(int currentPage, String batchId) {
+        GsonRequest.Builder<PriceChangeListResult> builder = new GsonRequest.Builder<>();
+        GsonRequest request = builder
+                .retClazz(PriceChangeListResult.class)
+                .method(Request.Method.GET)
+                .setUrl(String.format("%s/batchs/%s/modifications/?page=%d", PcApplication.SERVER_URL, batchId, currentPage))
+                .registerResListener(createSuccessListener())
+                .registerErrorListener(new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        ChangePricePage.this.handleError(error);
+                    }
+                })
+                .create();
+        L.d("**************load date :currentPage=" + currentPage);
+        MyVolley.getRequestQueue().add(request);
     }
 
     @Override
@@ -207,9 +210,13 @@ public class ChangePricePage extends BaseActivity implements View.OnClickListene
     private void changePrice(int id) {
         Ret ret = new Ret();
         ret.id = id;
-        GsonRequest request = new GsonRequest(Request.Method.PUT,
-                PcApplication.SERVER_URL + "changenotifys/" + id + "/", ret, Ret.class,
-                new Response.Listener<Ret>() {
+        GsonRequest.Builder<Ret> builder = new GsonRequest.Builder<>();
+        GsonRequest request = builder
+                .retClazz(Ret.class)
+                .method(Request.Method.PUT)
+                .setUrl(PcApplication.SERVER_URL + "changenotifys/" + id + "/")
+                .setRequest(ret)
+                .registerResListener(new Response.Listener<Ret>() {
                     @Override
                     public void onResponse(Ret resp) {
                         L.d("change price return ");
@@ -221,13 +228,17 @@ public class ChangePricePage extends BaseActivity implements View.OnClickListene
                             Toast.makeText(PcApplication.getInstance(), "修改价格失败!", Toast.LENGTH_LONG).show();
                         }
                     }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                ChangePricePage.this.handleError(error);
-            }
-        });
+                })
+                .registerErrorListener(new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        ChangePricePage.this.handleError(error);
+                    }
+                })
+                .create();
+
         L.d("changePrice start");
+
         MyVolley.getRequestQueue().add(request);
     }
 
@@ -396,14 +407,11 @@ public class ChangePricePage extends BaseActivity implements View.OnClickListene
 
             if (ai.is_sync) {
                 holder.sync.setText(R.string.sync_alredy);
-                holder.sync.setChecked(true);
-                holder.sync.setEnabled(false);
+                holder.isChecked.setImageResource(R.drawable.ic_checked_48dp);
 
             } else {
                 holder.sync.setText(R.string.sync);
-                holder.sync.setChecked(false);
-                holder.sync.setEnabled(true);
-                holder.sync.setOnCheckedChangeListener(mListener);
+                holder.isChecked.setImageResource(R.drawable.ic_uncheck_48dp);
             }
 
             return convertView;
@@ -417,7 +425,8 @@ public class ChangePricePage extends BaseActivity implements View.OnClickListene
         private TextView oldPrice;
         private TextView draftPrice;
         private ImageView draftAction;
-        private CheckBox sync;
+        private TextView sync;
+        private ImageView isChecked;
 
         public ViewHolder(View convertView) {
             priceAction = (ImageView) convertView
@@ -428,10 +437,11 @@ public class ChangePricePage extends BaseActivity implements View.OnClickListene
                     .findViewById(R.id.old_price);
             draftPrice = (TextView) convertView
                     .findViewById(R.id.draft_price);
-            sync = (CheckBox) convertView
+            sync = (TextView) convertView
                     .findViewById(R.id.sync);
             draftAction = (ImageView) convertView.findViewById(R.id.draft_action);
             productImg = (ImageView) convertView.findViewById(R.id.product_img);
+            isChecked = (ImageView) convertView.findViewById(R.id.is_checked);
 
         }
     }

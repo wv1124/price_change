@@ -118,18 +118,29 @@
 
     </RelativeLayout>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="50dp"
         android:layout_height="91dp"
         android:layout_alignParentRight="true">
-
-        <CheckBox
-            android:id="@+id/sync"
+        <TextView
+            android:id = "@+id/sync"
+            android:paddingTop="5dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical|right"
-            android:text="@string/sync" />
+            android:layout_alignParentTop="true"
+            android:text="未同步"/>
 
-    </LinearLayout>
+        <ImageView
+            android:id="@+id/is_checked"
+            android:paddingTop="5dp"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="false"
+            android:layout_below="@+id/sync"
+            android:layout_alignParentLeft="true"
+            android:src="@drawable/ic_uncheck_48dp" />
+
+    </RelativeLayout>
 
 </RelativeLayout>
