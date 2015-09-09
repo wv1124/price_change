@@ -330,22 +330,22 @@ public class ChangePricePage extends BaseActivity implements View.OnClickListene
             String desc = "";
             switch (draft_type) {
                 case 1:
-                    desc = String.format("拟采用%s货源,新价格￥%s", draft_supplier, draft_price);
+                    desc = String.format("拟采用%s货源新价格￥%s", draft_supplier, draft_price);
                     break;
                 case 2:
-                    desc = String.format("拟采用%s货源,降至￥%s", draft_supplier, draft_price);
+                    desc = String.format("拟采用%s货源降至￥%s", draft_supplier, draft_price);
                     break;
                 case 3:
                     desc = "拟将商品下架";
                     break;
                 case 4:
-                    desc = String.format("拟采用%s货源,涨至￥%s", draft_supplier, draft_price);
+                    desc = String.format("拟采用%s货源涨至￥%s", draft_supplier, draft_price);
                     break;
                 case 5:
                     desc = "新增商品";
                     break;
                 case 6:
-                    desc = String.format("拟采用%s货源,维持￥%s", draft_supplier, draft_price);
+                    desc = String.format("拟采用%s货源维持￥%s", draft_supplier, draft_price);
                     break;
             }
             return desc;
