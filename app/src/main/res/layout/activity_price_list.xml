@@ -29,7 +29,9 @@
         android:layout_height="wrap_content"
         android:layout_weight="2"
         android:cacheColorHint="@android:color/transparent"
-        android:fadingEdgeLength="0dp" />
+        android:fadingEdgeLength="0dp"
+        android:dividerHeight="20dp"
+        android:padding="2dp"/>
 
     <LinearLayout
         android:id="@+id/loading"

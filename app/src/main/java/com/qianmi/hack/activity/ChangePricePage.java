@@ -316,13 +316,13 @@ public class ChangePricePage extends BaseActivity implements View.OnClickListene
             String desc = "";
             switch (type) {
                 case 1:
-                    desc = String.format("%s商品上架，新价格为￥%s", source, newPrice);
+                    desc = String.format("%s上架新价格为￥%s", source, newPrice);
                     break;
                 case 2:
                     desc = String.format("%s从￥%s降至￥%s", source, oldPrice, newPrice);
                     break;
                 case 3:
-                    desc = String.format("%s商品下架", source);
+                    desc = String.format("%s下架", source);
                     break;
                 case 4:
                     desc = String.format("%s从￥%s涨至￥%s", source, oldPrice, newPrice);
