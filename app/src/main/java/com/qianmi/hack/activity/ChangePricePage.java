@@ -9,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
@@ -27,6 +26,7 @@ import com.qianmi.hack.BaseActivity;
 import com.qianmi.hack.PcApplication;
 import com.qianmi.hack.R;
 import com.qianmi.hack.app.MyVolley;
+import com.qianmi.hack.bean.Batch;
 import com.qianmi.hack.bean.PriceChange;
 import com.qianmi.hack.bean.PriceChangeListResult;
 import com.qianmi.hack.network.GsonRequest;
@@ -88,10 +88,13 @@ public class ChangePricePage extends BaseActivity implements View.OnClickListene
         mListView = (ListView) findViewById(R.id.mListView);
         loading = (LinearLayout) findViewById(R.id.loading);
         loading.setVisibility(View.GONE);
-        this.batchId = (String) getIntent().getSerializableExtra("batch");
+        Batch batch = (Batch) getIntent().getSerializableExtra("batch");
+        this.batchId = String.valueOf(batch.id);
         initView();
+        TextView title = (TextView) findViewById(R.id.title);
+        title.setText(batch.created+"变更");
         setNeedBackGesture(true);
-        requestDate(curPage, batchId);
+        requestData(curPage, batchId);
     }
 
     private void initView() {
@@ -123,13 +126,13 @@ public class ChangePricePage extends BaseActivity implements View.OnClickListene
                     }
 
                 } else {
-                    L.e("requestDate return error");
+                    L.e("requestData return error");
                 }
             }
         };
     }
 
-    private void requestDate(int currentPage, String batchId) {
+    private void requestData(int currentPage, String batchId) {
         GsonRequest.Builder<PriceChangeListResult> builder = new GsonRequest.Builder<>();
         GsonRequest request = builder
                 .retClazz(PriceChangeListResult.class)
@@ -159,7 +162,7 @@ public class ChangePricePage extends BaseActivity implements View.OnClickListene
                 if (hasNext) {
                     Log.i("LOADMORE", "loading... page: " + hasNext);
                     loading.setVisibility(View.VISIBLE);
-                    requestDate(curPage, batchId);
+                    requestData(curPage, batchId);
                 }
             }
         }

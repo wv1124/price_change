@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
-import android.test.InstrumentationTestCase;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -60,7 +59,7 @@ public class BatchPage extends Fragment implements View.OnClickListener, AbsList
     //list view的实例
     private SwipeMenuListView mListView;
     //当前page页数，默认从1开始
-    private int curPage = 1;
+    private int currentPage = 1;
     //布局管理器
     private LayoutInflater mInflater;
     //加载的时候显示的图标，这里获取句柄用于控制图标的显示
@@ -85,6 +84,11 @@ public class BatchPage extends Fragment implements View.OnClickListener, AbsList
         ;
     };
 
+    /**
+     * 用于转到dp到像素px
+     * @param dp
+     * @return
+     */
     private int dp2px(int dp) {
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp,
                 getResources().getDisplayMetrics());
@@ -99,19 +103,28 @@ public class BatchPage extends Fragment implements View.OnClickListener, AbsList
         loading.setVisibility(View.GONE);
         mListView = (SwipeMenuListView) view.findViewById(R.id.mListView);
 
-        initView();
-        requestDate(curPage);
+        initListView();
+        requestDate(currentPage);
         return view;
     }
 
 
-    private void initView() {
+    /**
+     * 用于初始化该页面中最重要的组件ListView，
+     * 设置其数据Adapter
+     * 设置滚动监听
+     * 设置每个Item左滑动的菜单
+     * 设置点击Item的事件触发
+     */
+    private void initListView() {
         //创建Adapter
         mAdapter = new CustomListAdapter(getActivity(), modelList);
         //设置ListView的控制源为Adapter
         mListView.setAdapter(mAdapter);
         mListView.setOnScrollListener(this);     //添加滑动监听
+        //预先加载一次，看看是否合适？
         mAdapter.notifyDataSetChanged();
+        //设置点击ListItem后转到该批次下面所有的变更一览页面
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
@@ -119,9 +132,8 @@ public class BatchPage extends Fragment implements View.OnClickListener, AbsList
                                     int position, long id) {
                 Log.e(TAG, "click position:" + position);
                 Batch batch = (Batch) mAdapter.getItem(position);
-                String batchId = String.valueOf(batch.id);
                 Intent intent = new Intent(getActivity(), ChangePricePage.class);
-                intent.putExtra("batch", batchId);
+                intent.putExtra("batch", batch);
                 startActivity(intent);
 
             }
@@ -262,11 +274,11 @@ public class BatchPage extends Fragment implements View.OnClickListener, AbsList
             L.d("*************** onScrollStateChanged itemsLastIndex=" + itemsLastIndex + ", lastIndex=" + lastIndex);
             if (visibleLastIndex == lastIndex) {
                 //如果是自动加载,可以在这里放置异步加载数据的代码
-                ++curPage;
+                ++currentPage;
                 if (hasNext) {
                     Log.i("LOAD MORE", "loading... page: " + hasNext);
                     loading.setVisibility(View.VISIBLE);
-                    requestDate(curPage);
+                    requestDate(currentPage);
                 }
             }
         }
