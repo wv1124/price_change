@@ -41,11 +41,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
+import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout;
+import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
+
 /**
  * Created by caozupeng on 15/8/31.
  * 显示价格更新的批次信息
  */
-public class BatchPage extends Fragment implements View.OnClickListener, AbsListView.OnScrollListener {
+public class BatchPage extends Fragment implements OnRefreshListener, View.OnClickListener, AbsListView.OnScrollListener {
     //设置一个事件的ID
     private static final int LOAD_DATA_FINISH = 10;
 
@@ -70,6 +74,9 @@ public class BatchPage extends Fragment implements View.OnClickListener, AbsList
     private int visibleLastIndex = 0;   //最后的可视项索引
     private int visibleItemCount;       // 当前窗口可见项总数
 
+    //下拉刷新组件
+    private PullToRefreshLayout mPullToRefreshLayout;
+
     private Handler mHandler = new Handler() {
 
         public void handleMessage(Message msg) {
@@ -86,6 +93,7 @@ public class BatchPage extends Fragment implements View.OnClickListener, AbsList
 
     /**
      * 用于转到dp到像素px
+     *
      * @param dp
      * @return
      */
@@ -102,9 +110,18 @@ public class BatchPage extends Fragment implements View.OnClickListener, AbsList
         loading = (LinearLayout) view.findViewById(R.id.loading);
         loading.setVisibility(View.GONE);
         mListView = (SwipeMenuListView) view.findViewById(R.id.mListView);
-
+        mPullToRefreshLayout = (PullToRefreshLayout) view.findViewById(R.id.ptr_layout);
+        // Now setup the PullToRefreshLayout
+        ActionBarPullToRefresh.from(getActivity())
+                // Mark All Children as pullable
+                .allChildrenArePullable()
+                        // Set a OnRefreshListener
+                .listener(this)
+                        // Finally commit the setup to our PullToRefreshLayout
+                .setup(mPullToRefreshLayout);
         initListView();
         requestDate(currentPage);
+
         return view;
     }
 
@@ -183,11 +200,12 @@ public class BatchPage extends Fragment implements View.OnClickListener, AbsList
             public boolean onMenuItemClick(int position, SwipeMenu menu, int index) {
                 Batch item = modelList.get(position);
                 Log.d(TAG, "batch id is " + item.id);
-                ((BaseActivity)getActivity()).showLoadingDialog();
+                ((BaseActivity) getActivity()).showLoadingDialog();
                 batchUpdateChange(item.id, position);
                 return true;
             }
         });
+
     }
 
 
@@ -266,17 +284,27 @@ public class BatchPage extends Fragment implements View.OnClickListener, AbsList
 
     }
 
+
+    /**
+     * 正在滚动时回调，回调2-3次，手指没抛则回调2次。scrollState = 2的这次不回调
+     * 回调顺序如下
+     * 第1次：scrollState = SCROLL_STATE_TOUCH_SCROLL(1) 正在滚动
+     * 第2次：scrollState = SCROLL_STATE_FLING(2) 手指做了抛的动作（手指离开屏幕前，用力滑了一下）
+     * 第3次：scrollState = SCROLL_STATE_IDLE(0) 停止滚动
+     *
+     * @param view
+     * @param scrollState
+     */
     @Override
     public void onScrollStateChanged(AbsListView view, int scrollState) {
         int itemsLastIndex = mAdapter.getCount() - 1;    //数据集最后一项的索引
-        int lastIndex = itemsLastIndex;             //加上底部的loadMoreView项
         if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
-            L.d("*************** onScrollStateChanged itemsLastIndex=" + itemsLastIndex + ", lastIndex=" + lastIndex);
-            if (visibleLastIndex == lastIndex) {
+            Log.d(TAG, "当前条数 " + visibleLastIndex);
+            if (visibleLastIndex == itemsLastIndex) {
                 //如果是自动加载,可以在这里放置异步加载数据的代码
                 ++currentPage;
                 if (hasNext) {
-                    Log.i("LOAD MORE", "loading... page: " + hasNext);
+                    Log.i(TAG, "loading... page: ");
                     loading.setVisibility(View.VISIBLE);
                     requestDate(currentPage);
                 }
@@ -284,17 +312,35 @@ public class BatchPage extends Fragment implements View.OnClickListener, AbsList
         }
     }
 
+    /**
+     * 滚动时一直回调，直到停止滚动时才停止回调。单击时回调一次。
+     *
+     * @param view             ListView对象引用
+     * @param firstVisibleItem 当前能看见的第一个列表项ID（从0开始
+     * @param visibleItemCount 当前能看见的列表项个数（小半个也算）
+     * @param totalItemCount   列表项总数
+     */
     @Override
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
         this.visibleItemCount = visibleItemCount;
         visibleLastIndex = firstVisibleItem + visibleItemCount - 1;
     }
 
+    @Override
+    public void onRefreshStarted(View view) {
+        Log.d(TAG, "上一页");
+        loading.setVisibility(View.VISIBLE);
+        modelList.clear();
+        currentPage = 1;
+        requestDate(currentPage);
+        mPullToRefreshLayout.setRefreshComplete();
+    }
+
     private class CustomListAdapter extends BaseAdapter {
 
         private LayoutInflater mInflater;
         public List<Batch> mList;
-        private int[] resouces = new int[]{R.drawable.ic_poll_black_48dp,
+        private int[] resources = new int[]{R.drawable.ic_poll_black_48dp,
                 R.drawable.ic_public_black_48dp, R.drawable.ic_whatshot_black_48dp};
 
         public CustomListAdapter(Context pContext, List<Batch> pList) {
@@ -344,7 +390,7 @@ public class BatchPage extends Fragment implements View.OnClickListener, AbsList
 
             Batch batch = mList.get(position);
             //holder.mImage.setImageUrl(batch.getAppIcon());
-            holder.image.setImageResource(resouces[position % 3]);
+            holder.image.setImageResource(resources[position % 3]);
             holder.batchTime.setText(batch.created);
             holder.productDowns.setText("下架:" + String.valueOf(batch.down_rows));
             holder.productUps.setText("上架:" + String.valueOf(batch.add_rows));
