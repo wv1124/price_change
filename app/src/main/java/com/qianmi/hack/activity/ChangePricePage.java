@@ -41,7 +41,7 @@ import java.util.List;
  */
 public class ChangePricePage extends BaseActivity implements View.OnClickListener, AbsListView.OnScrollListener {
 
-    private static final String TAG = "MainActivity";
+    private static final String TAG = "ChangePriceActivity";
 
     private static final int LOAD_DATA_FINISH = 10;
 
@@ -97,14 +97,18 @@ public class ChangePricePage extends BaseActivity implements View.OnClickListene
 
     private void initView() {
         mAdapter = new CustomListAdapter(this, mList);
-        mAdapter.setOnCheckedChangeListener(priceLister);
         mListView.setAdapter(mAdapter);
         mListView.setOnScrollListener(this);     //添加滑动监听
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-                Log.e(TAG, "click position:" + position);
+                PriceChange priceChange = mList.get(position);
+                Log.v(TAG, "get pricechange id" + priceChange.id);
+                if (!priceChange.is_sync) {
+                    ChangePricePage.this.showLoadingDialog();
+                    changePrice(priceChange.id, position);
+                }
 
             }
         });
@@ -183,31 +187,12 @@ public class ChangePricePage extends BaseActivity implements View.OnClickListene
         visibleLastIndex = firstVisibleItem + visibleItemCount - 1;
     }
 
-    private CompoundButton.OnCheckedChangeListener priceLister = new CompoundButton.OnCheckedChangeListener() {
-        @Override
-        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            if (isChecked && buttonView != null) {
-                Object changeId = (Object) buttonView.getTag(R.id.sync);
-                L.d("change id :" + changeId);
-                if (changeId != null && changeId instanceof Integer) {
-                    changePrice((Integer) changeId);
-                    CheckBox sync = ((CheckBox) buttonView);
-                    if (sync != null) {
-                        sync.setText("已同步");
-                        sync.setEnabled(false);
-//                        sync.setTag(R.id.priceIcon, true);
-                    }
-                }
-            }
-        }
-    };
-
     class Ret {
         public String ret;
         public int id;
     }
 
-    private void changePrice(int id) {
+    private void changePrice(int id, final int position) {
         Ret ret = new Ret();
         ret.id = id;
         GsonRequest.Builder<Ret> builder = new GsonRequest.Builder<>();
@@ -222,7 +207,10 @@ public class ChangePricePage extends BaseActivity implements View.OnClickListene
                         L.d("change price return ");
                         ChangePricePage.this.dismissLoadingDialog();
                         if (resp != null && resp.ret.equalsIgnoreCase("0")) {
-                            Toast.makeText(PcApplication.getInstance(), "同步成功!", Toast.LENGTH_LONG).show();
+                            PriceChange priceChange = mList.get(position);
+                            priceChange.is_sync = true;
+                            mAdapter.notifyDataSetChanged();
+                            Toast.makeText(PcApplication.getInstance(), "同步操作成功!", Toast.LENGTH_LONG).show();
                         } else {
                             L.e("changePrice return error");
                             Toast.makeText(PcApplication.getInstance(), "修改价格失败!", Toast.LENGTH_LONG).show();
@@ -394,16 +382,8 @@ public class ChangePricePage extends BaseActivity implements View.OnClickListene
             holder.draftPrice.setText(getNewDescByType(ai.draft_opt_type,
                     ai.draft_price_source,
                     String.valueOf(ai.draft_price)));
-            holder.sync.setTag(R.id.sync, ai.id);
+            holder.isChecked.setTag(R.id.sync, ai.id);
 
-//            Object b = holder.sync.getTag(R.id.priceIcon);
-//            if (b != null && b instanceof Boolean) {
-//                Boolean isSync = (Boolean) b;
-//                if (isSync) {
-//                    holder.sync.setChecked(true);
-//                    holder.sync.setEnabled(false);
-//                }
-//            }
 
             if (ai.is_sync) {
                 holder.sync.setText(R.string.sync_alredy);
