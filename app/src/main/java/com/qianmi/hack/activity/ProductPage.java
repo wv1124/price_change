@@ -33,11 +33,15 @@ import com.qianmi.hack.utils.L;
 import java.util.ArrayList;
 import java.util.List;
 
+import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
+import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout;
+import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
+
 
 /**
  * Created by wv on 2015/8/20.
  */
-public class ProductPage extends Fragment implements View.OnClickListener, AbsListView.OnScrollListener {
+public class ProductPage extends Fragment implements OnRefreshListener, View.OnClickListener, AbsListView.OnScrollListener {
 
     private static final String TAG = "MainActivity";
 
@@ -49,10 +53,13 @@ public class ProductPage extends Fragment implements View.OnClickListener, AbsLi
     private List<Product> mList = new ArrayList<Product>();
     private CustomListAdapter mAdapter;
     private ListView mListView;
-    private int curPage = 1;
+    private int currentPage = 1;
     private boolean hasNext = true;
     private LayoutInflater mInflater;
     private LinearLayout loading;
+    //下拉刷新组件
+    private PullToRefreshLayout mPullToRefreshLayout;
+
 
     private Handler mHandler = new Handler() {
 
@@ -76,13 +83,29 @@ public class ProductPage extends Fragment implements View.OnClickListener, AbsLi
         loading = (LinearLayout) view.findViewById(R.id.loading);
         loading.setVisibility(View.GONE);
         mListView = (ListView) view.findViewById(R.id.mListView);
-
+        mPullToRefreshLayout = (PullToRefreshLayout) view.findViewById(R.id.ptr_layout);
+        // Now setup the PullToRefreshLayout
+        ActionBarPullToRefresh.from(getActivity())
+                // Mark All Children as pullable
+                .allChildrenArePullable()
+                        // Set a OnRefreshListener
+                .listener(this)
+                        // Finally commit the setup to our PullToRefreshLayout
+                .setup(mPullToRefreshLayout);
         initView();
-        requestDate(curPage);
+        requestDate(currentPage);
         return view;
     }
 
-
+    @Override
+    public void onRefreshStarted(View view) {
+        Log.d(TAG, "上一页");
+        loading.setVisibility(View.VISIBLE);
+        mList.clear();
+        currentPage = 1;
+        requestDate(currentPage);
+        mPullToRefreshLayout.setRefreshComplete();
+    }
 
     private void initView() {
         mAdapter = new CustomListAdapter(ProductPage.this.getActivity(), mList);
@@ -156,11 +179,11 @@ public class ProductPage extends Fragment implements View.OnClickListener, AbsLi
             L.d("*************** onScrollStateChanged itemsLastIndex=" + itemsLastIndex + ", lastIndex=" + lastIndex);
             if (visibleLastIndex == lastIndex) {
                 //如果是自动加载,可以在这里放置异步加载数据的代码
-                ++curPage;
+                ++currentPage;
                 if (hasNext) {
                     Log.i(TAG, "loading... page: " + hasNext);
                     loading.setVisibility(View.VISIBLE);
-                    requestDate(curPage);
+                    requestDate(currentPage);
                 }
             }
         }
