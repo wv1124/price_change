@@ -92,7 +92,7 @@ public class ChangePricePage extends BaseActivity implements View.OnClickListene
         this.batchId = String.valueOf(batch.id);
         initView();
         TextView title = (TextView) findViewById(R.id.title);
-        title.setText(batch.created+"变更");
+        title.setText(batch.created + "变更");
         setNeedBackGesture(true);
         requestData(curPage, batchId);
     }
@@ -150,17 +150,26 @@ public class ChangePricePage extends BaseActivity implements View.OnClickListene
         MyVolley.getRequestQueue().add(request);
     }
 
+    /**
+     * 正在滚动时回调，回调2-3次，手指没抛则回调2次。scrollState = 2的这次不回调
+     * 回调顺序如下
+     * 第1次：scrollState = SCROLL_STATE_TOUCH_SCROLL(1) 正在滚动
+     * 第2次：scrollState = SCROLL_STATE_FLING(2) 手指做了抛的动作（手指离开屏幕前，用力滑了一下）
+     * 第3次：scrollState = SCROLL_STATE_IDLE(0) 停止滚动
+     *
+     * @param view
+     * @param scrollState
+     */
     @Override
     public void onScrollStateChanged(AbsListView view, int scrollState) {
-        int itemsLastIndex = mAdapter.getCount() - 1;    //数据集最后一项的索引
-        int lastIndex = itemsLastIndex;             //加上底部的loadMoreView项
+        int lastIndex = mAdapter.getCount() - 1;             //加上底部的loadMoreView项
+        //在滑动停止下来的时候开始计算是否到了底部
         if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
-            L.d("*************** onScrollStateChanged itemsLastIndex=" + itemsLastIndex + ", lastIndex=" + lastIndex);
             if (visibleLastIndex == lastIndex) {
                 //如果是自动加载,可以在这里放置异步加载数据的代码
                 ++curPage;
                 if (hasNext) {
-                    Log.i("LOADMORE", "loading... page: " + hasNext);
+                    Log.i(TAG, "loading... page: ");
                     loading.setVisibility(View.VISIBLE);
                     requestData(curPage, batchId);
                 }
@@ -168,10 +177,16 @@ public class ChangePricePage extends BaseActivity implements View.OnClickListene
         }
     }
 
+    /**
+     * 滚动时一直回调，直到停止滚动时才停止回调。单击时回调一次。
+     *
+     * @param view             ListView对象引用
+     * @param firstVisibleItem 当前能看见的第一个列表项ID（从0开始
+     * @param visibleItemCount 当前能看见的列表项个数（小半个也算）
+     * @param totalItemCount   列表项总数
+     */
     @Override
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-        //L.d("------------ onScrollStateChanged firstVisibleItem=" + firstVisibleItem
-        //        + ", visibleItemCount=" + visibleItemCount + ", totalItemCount=" + totalItemCount);
         this.visibleItemCount = visibleItemCount;
         visibleLastIndex = firstVisibleItem + visibleItemCount - 1;
     }
@@ -383,7 +398,7 @@ public class ChangePricePage extends BaseActivity implements View.OnClickListene
                         //position被类似闭包包住了，状态被保留住了，所以必须用new client事件对象处理
                         PriceChange priceChange = mList.get(position);
                         Log.d(TAG, "checked is onclick, id=" + priceChange.id + " position=" + position);
-                        if(!priceChange.is_sync) {
+                        if (!priceChange.is_sync) {
                             ChangePricePage.this.showLoadingDialog();
                             changePrice(priceChange.id, position);
                         }
