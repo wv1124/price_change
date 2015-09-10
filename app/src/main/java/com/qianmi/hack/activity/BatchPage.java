@@ -2,11 +2,14 @@ package com.qianmi.hack.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,11 +18,14 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
+import com.baoyz.swipemenulistview.SwipeMenu;
+import com.baoyz.swipemenulistview.SwipeMenuCreator;
+import com.baoyz.swipemenulistview.SwipeMenuItem;
+import com.baoyz.swipemenulistview.SwipeMenuListView;
 import com.qianmi.hack.BaseActivity;
 import com.qianmi.hack.PcApplication;
 import com.qianmi.hack.R;
@@ -48,7 +54,7 @@ public class BatchPage extends Fragment implements View.OnClickListener, AbsList
     //自定义的展现Adapter，因为Item是特别定制的
     private CustomListAdapter mAdapter;
     //list view的实例
-    private ListView mListView;
+    private SwipeMenuListView mListView;
     //当前page页数，默认从1开始
     private int curPage = 1;
     //布局管理器
@@ -75,6 +81,11 @@ public class BatchPage extends Fragment implements View.OnClickListener, AbsList
         ;
     };
 
+    private int dp2px(int dp) {
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp,
+                getResources().getDisplayMetrics());
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -82,7 +93,7 @@ public class BatchPage extends Fragment implements View.OnClickListener, AbsList
         View view = inflater.inflate(R.layout.fragment_batch_list_view, null);
         loading = (LinearLayout) view.findViewById(R.id.loading);
         loading.setVisibility(View.GONE);
-        mListView = (ListView) view.findViewById(R.id.mListView);
+        mListView = (SwipeMenuListView) view.findViewById(R.id.mListView);
 
         initView();
         requestDate(curPage);
@@ -109,6 +120,54 @@ public class BatchPage extends Fragment implements View.OnClickListener, AbsList
                 intent.putExtra("batch", batchId);
                 startActivity(intent);
 
+            }
+        });
+
+        // step 1. create a MenuCreator
+        SwipeMenuCreator creator = new SwipeMenuCreator() {
+
+            @Override
+            public void create(SwipeMenu menu) {
+                // create "open" item
+                SwipeMenuItem openItem = new SwipeMenuItem(
+                        getActivity());
+                // set item background
+                openItem.setBackground(new ColorDrawable(Color.rgb(0xC9, 0xC9,
+                        0xCE)));
+                // set item width
+                openItem.setWidth(dp2px(90));
+                // set item title
+                openItem.setTitle("全部同步");
+                // set item title fontsize
+                openItem.setTitleSize(18);
+                // set item title font color
+                openItem.setTitleColor(Color.WHITE);
+                // add to menu
+                menu.addMenuItem(openItem);
+
+                // create "delete" item
+                SwipeMenuItem allSyncMenuItem = new SwipeMenuItem(
+                        getActivity());
+                // set item background
+                allSyncMenuItem.setBackground(R.color.lightgray);
+                // set item width
+                allSyncMenuItem.setWidth(dp2px(90));
+                // set a icon
+                allSyncMenuItem.setIcon(R.drawable.ic_uncheck_48dp);
+                // add to menu
+                menu.addMenuItem(allSyncMenuItem);
+            }
+        };
+        // set creator
+        mListView.setMenuCreator(creator);
+
+        // step 2. listener item click event
+        mListView.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(int position, SwipeMenu menu, int index) {
+                Batch item = modelList.get(position);
+                Log.d(TAG, "batch id is " + item.id);
+                return false;
             }
         });
     }
