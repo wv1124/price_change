@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -99,19 +98,6 @@ public class ChangePricePage extends BaseActivity implements View.OnClickListene
         mAdapter = new CustomListAdapter(this, mList);
         mListView.setAdapter(mAdapter);
         mListView.setOnScrollListener(this);     //添加滑动监听
-        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view,
-                                    int position, long id) {
-                PriceChange priceChange = mList.get(position);
-                Log.v(TAG, "get pricechange id" + priceChange.id);
-                if (!priceChange.is_sync) {
-                    ChangePricePage.this.showLoadingDialog();
-                    changePrice(priceChange.id, position);
-                }
-
-            }
-        });
     }
 
     @Override
@@ -261,10 +247,6 @@ public class ChangePricePage extends BaseActivity implements View.OnClickListene
             return position;
         }
 
-        public void setOnCheckedChangeListener(CompoundButton.OnCheckedChangeListener listener) {
-            mListener = listener;
-        }
-
         private int getResourceByType(int type) {
             /**
              CHANGE_TYPE = (
@@ -352,11 +334,10 @@ public class ChangePricePage extends BaseActivity implements View.OnClickListene
 
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(final int position, View convertView, ViewGroup parent) {
             if (getCount() == 0) {
                 return null;
             }
-//			System.out.println("position = "+position);
             ViewHolder holder = null;
             if (convertView == null) {
                 convertView = mInflater.inflate(R.layout.activity_price_list_item, null);
@@ -383,6 +364,7 @@ public class ChangePricePage extends BaseActivity implements View.OnClickListene
                     ai.draft_price_source,
                     String.valueOf(ai.draft_price)));
             holder.isChecked.setTag(R.id.sync, ai.id);
+            holder.pressArea.setTag(R.id.sync, ai.id);
 
 
             if (ai.is_sync) {
@@ -392,6 +374,18 @@ public class ChangePricePage extends BaseActivity implements View.OnClickListene
             } else {
                 holder.sync.setText(R.string.sync);
                 holder.isChecked.setImageResource(R.drawable.ic_uncheck_48dp);
+                holder.pressArea.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        //position被类似闭包包住了，状态被保留住了，所以必须用new client事件对象处理
+                        PriceChange priceChange = mList.get(position);
+                        Log.d(TAG, "checked is onclick, id=" + priceChange.id + " position=" + position);
+                        if(!priceChange.is_sync) {
+                            ChangePricePage.this.showLoadingDialog();
+                            changePrice(priceChange.id, position);
+                        }
+                    }
+                });
             }
 
             return convertView;
@@ -407,6 +401,7 @@ public class ChangePricePage extends BaseActivity implements View.OnClickListene
         private ImageView draftAction;
         private TextView sync;
         private ImageView isChecked;
+        private View pressArea;
 
         public ViewHolder(View convertView) {
             priceAction = (ImageView) convertView
@@ -422,6 +417,7 @@ public class ChangePricePage extends BaseActivity implements View.OnClickListene
             draftAction = (ImageView) convertView.findViewById(R.id.draft_action);
             productImg = (ImageView) convertView.findViewById(R.id.product_img);
             isChecked = (ImageView) convertView.findViewById(R.id.is_checked);
+            pressArea = (View) convertView.findViewById(R.id.press_area);
 
         }
     }

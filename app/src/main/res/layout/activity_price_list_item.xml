@@ -122,6 +122,7 @@
     </RelativeLayout>
 
     <RelativeLayout
+        android:id="@+id/press_area"
         android:layout_width="50dp"
         android:layout_height="91dp"
         android:layout_alignParentRight="true">
