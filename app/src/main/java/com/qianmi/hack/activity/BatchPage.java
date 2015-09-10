@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
+import android.test.InstrumentationTestCase;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -19,6 +20,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -36,7 +38,9 @@ import com.qianmi.hack.network.GsonRequest;
 import com.qianmi.hack.utils.L;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by caozupeng on 15/8/31.
@@ -167,9 +171,39 @@ public class BatchPage extends Fragment implements View.OnClickListener, AbsList
             public boolean onMenuItemClick(int position, SwipeMenu menu, int index) {
                 Batch item = modelList.get(position);
                 Log.d(TAG, "batch id is " + item.id);
-                return false;
+                ((BaseActivity)getActivity()).showLoadingDialog();
+                batchUpdateChange(item.id, position);
+                return true;
             }
         });
+    }
+
+
+    private void batchUpdateChange(int batchId, int position) {
+        Map<String, Integer> batchInfo = new HashMap<>();
+        batchInfo.put("id", batchId);
+        GsonRequest.Builder<Map> builder = new GsonRequest.Builder<>();
+        GsonRequest request = builder
+                .retClazz(Map.class)
+                .method(Request.Method.PUT)
+                .setUrl(PcApplication.SERVER_URL + "batchs/" + batchId + "/")
+                .setRequest(batchInfo)
+                .registerResListener(new Response.Listener<Map<String, Double>>() {
+                    @Override
+                    public void onResponse(Map<String, Double> response) {
+                        ((BaseActivity) getActivity()).dismissLoadingDialog();
+                        int success = response.get("success_count").intValue();
+                        int fail = response.get("fail_count").intValue();
+                        int skip = response.get("skip_count").intValue();
+                        Toast.makeText(PcApplication.getInstance(),
+                                String.format("同步操作成功%s条,失败%s条,略过%s条", success, fail, skip),
+                                Toast.LENGTH_LONG).show();
+                        mAdapter.notifyDataSetChanged();
+
+                    }
+                })
+                .create();
+        MyVolley.getRequestQueue().add(request);
     }
 
 

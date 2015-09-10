@@ -16,7 +16,7 @@
             android:layout_margin="0dp"
             android:gravity="center"
             android:background="@color/primary"
-            android:text="商品"
+            android:text="调价"
             android:textColor="#FFFFFF"
             android:textSize="18sp"
             android:textStyle="bold" />
