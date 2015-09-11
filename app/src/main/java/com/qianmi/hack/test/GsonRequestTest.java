@@ -8,10 +8,12 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
+import com.qianmi.hack.bean.ProductDetail;
 import com.qianmi.hack.network.GsonRequest;
 import com.qianmi.hack.network.JwtAuthStack;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
@@ -122,6 +124,30 @@ public class GsonRequestTest extends InstrumentationTestCase {
                     }
                 })
 
+                .create();
+        mVolleyQueue.add(infoRequest);
+        countDownLatch.await();
+    }
+
+    public void testGetProductDetail() throws Exception {
+        final CountDownLatch countDownLatch = new CountDownLatch(1);
+        GsonRequest.Builder<ProductDetail> builder = new GsonRequest.Builder<>();
+        GsonRequest infoRequest = builder
+                .retClazz(ProductDetail.class)
+                .method(Request.Method.GET)
+                .setUrl("http://frey.sj001.com/supproducts/g514824/")
+                .registerResListener(new Response.Listener<ProductDetail>() {
+                    @Override
+                    public void onResponse(ProductDetail response) {
+                        Log.d(TAG, String.valueOf(response));
+                        for (List pairs : response.recently_changes) {
+                            int x = ((Double) pairs.get(0)).intValue();
+                            int y = ((Double) pairs.get(1)).intValue();
+                            Log.v(TAG, x + ", " + y);
+                        }
+                        countDownLatch.countDown();
+                    }
+                })
                 .create();
         mVolleyQueue.add(infoRequest);
         countDownLatch.await();
