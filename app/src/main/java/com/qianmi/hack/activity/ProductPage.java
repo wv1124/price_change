@@ -1,6 +1,7 @@
 package com.qianmi.hack.activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -29,6 +30,7 @@ import com.qianmi.hack.BaseActivity;
 import com.qianmi.hack.PcApplication;
 import com.qianmi.hack.R;
 import com.qianmi.hack.app.MyVolley;
+import com.qianmi.hack.bean.Batch;
 import com.qianmi.hack.bean.Product;
 import com.qianmi.hack.bean.ProductListResult;
 import com.qianmi.hack.network.GsonRequest;
@@ -95,13 +97,24 @@ public class ProductPage extends Fragment implements OnRefreshListener, View.OnC
         loading.setVisibility(View.GONE);
         mListView = (ListView) view.findViewById(R.id.mListView);
         initPullRefresh(view);
-        initView();
+        initListView();
+        initSearchInput(view);
+        requestDate(currentPage, mKeyword);
+        return view;
+    }
+
+    private void initSearchInput(View view) {
         deleteText = (ImageView) view.findViewById(R.id.ivDeleteText);
         deleteText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 etSearch.setText("");
-                btnSearch.callOnClick();
+                btnSearch.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        btnSearch.performClick();
+                    }
+                });
             }
         });
         btnSearch = (Button) view.findViewById(R.id.btnSearch);
@@ -111,7 +124,7 @@ public class ProductPage extends Fragment implements OnRefreshListener, View.OnC
                 currentPage = 1;
                 mKeyword = etSearch.getText().toString();
                 mList.clear();
-                Log.d(TAG, "keyword = "+ mKeyword);
+                Log.d(TAG, "keyword = " + mKeyword);
                 requestDate(currentPage, mKeyword);
             }
         });
@@ -137,8 +150,6 @@ public class ProductPage extends Fragment implements OnRefreshListener, View.OnC
 
             }
         });
-        requestDate(currentPage, mKeyword);
-        return view;
     }
 
     private void initPullRefresh(View view) {
@@ -163,7 +174,7 @@ public class ProductPage extends Fragment implements OnRefreshListener, View.OnC
         mPullToRefreshLayout.setRefreshComplete();
     }
 
-    private void initView() {
+    private void initListView() {
         mAdapter = new CustomListAdapter(ProductPage.this.getActivity(), mList);
         mListView.setAdapter(mAdapter);
         mListView.setOnScrollListener(this);     //添加滑动监听
@@ -174,6 +185,10 @@ public class ProductPage extends Fragment implements OnRefreshListener, View.OnC
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
                 Log.e(TAG, "click position:" + position);
+                Product product = (Product) mAdapter.getItem(position);
+                Intent intent = new Intent(getActivity(), ProductDetailActivity.class);
+                intent.putExtra("product", product);
+                startActivity(intent);
             }
         });
     }
@@ -231,11 +246,11 @@ public class ProductPage extends Fragment implements OnRefreshListener, View.OnC
 
         }
         GsonRequest request = request = builder.retClazz(ProductListResult.class)
-                    .setUrl(url.toString())
-                    .registerResListener(createSuccessListener())
-                    .registerErrorListener(((BaseActivity) getActivity()).createErrorListener())
-                    .method(Request.Method.GET)
-                    .create();
+                .setUrl(url.toString())
+                .registerResListener(createSuccessListener())
+                .registerErrorListener(((BaseActivity) getActivity()).createErrorListener())
+                .method(Request.Method.GET)
+                .create();
 
         L.d("**************load data :currentPage=" + currentPage);
         MyVolley.getRequestQueue().add(request);

@@ -1,9 +1,11 @@
 package com.qianmi.hack.bean;
 
+import java.io.Serializable;
+
 /**
  * Created by wv on 2015/8/21.
  */
-public class Product {
+public class Product implements Serializable{
     public String item_id;
     public String sku_id;
     public String product_name;

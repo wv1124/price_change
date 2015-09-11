@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:id="@+id/header"
+        android:layout_width="fill_parent"
+        android:background="@color/primary"
+        android:layout_height="@dimen/head_height">
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center"
+            android:layout_margin="2dp"
+            android:background="@color/primary"
+            android:gravity="center"
+            android:text="产品详情"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+    <ImageView
+        android:id="@+id/product_detail_img"
+        android:layout_width="140dp"
+        android:layout_height="200dp"
+        android:background="@color/product_bg_color"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/header"
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_alignParentStart="true" />
+
+    <RelativeLayout
+        android:id="@+id/info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/header"
+        android:layout_toRightOf="@+id/product_detail_img"
+        android:layout_toEndOf="@+id/product_detail_img"
+        android:layout_alignBottom="@+id/product_detail_img"
+        android:layout_marginLeft="15dp"
+        android:layout_marginStart="15dp">
+        <TextView
+            android:id="@+id/product_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="三星G3139-电信3G-4G黑"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            />
+        <TextView
+            android:id="@+id/sup_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/product_name"
+            android:layout_alignStart="@+id/product_name"
+            android:layout_below="@+id/product_name"
+            android:layout_marginTop="18dp"
+            style="@style/ProductPriceText"
+            android:text="￥3650"
+            android:textSize="14dp" />
+        <TextView
+            android:id="@+id/wztextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/sup_price"
+            android:layout_alignStart="@+id/sup_price"
+            android:layout_below="@+id/sup_price"
+            android:layout_marginTop="26dp"
+            android:text="勿争价格:" />
+        <TextView
+            android:id="@+id/wz_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignTop="@+id/wztextView"
+            android:layout_marginRight="5dp"
+            android:text="￥3630" />
+        <TextView
+            android:id="@+id/xbdytextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/wztextView"
+            android:layout_alignStart="@+id/wztextView"
+            android:layout_below="@+id/wztextView"
+            android:layout_marginTop="26dp"
+            android:text="新邦定源价格:" />
+
+        <TextView
+            android:id="@+id/xbdy_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignTop="@+id/xbdytextView"
+            android:layout_marginRight="5dp"
+            android:text="￥3670"
+            />
+    </RelativeLayout>
+
+
+
+
+
+
+
+
+
+    <lecho.lib.hellocharts.view.LineChartView
+        android:id="@+id/chart"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/product_detail_img"
+        android:layout_marginTop="10dp"
+        android:padding="3dp"/>
+
+</RelativeLayout>
