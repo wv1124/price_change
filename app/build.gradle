@@ -1,5 +1,8 @@
 apply plugin: 'com.android.application'
 
+def buildVersionCode = 1
+def buildVersionName = "1.0"
+
 android {
     compileSdkVersion 22
     buildToolsVersion "22.0.1"
@@ -12,11 +15,11 @@ android {
         }
     }
     defaultConfig {
-        applicationId "com.qianmi.hack"
+        applicationId "com.qianmi.hack.app"
         minSdkVersion 11
         targetSdkVersion 22
-        versionCode 1
-        versionName "1.0"
+        versionCode buildVersionCode
+        versionName buildVersionName
     }
     buildTypes {
         release {
@@ -25,12 +28,22 @@ android {
             signingConfig signingConfigs.myConfigs
         }
     }
-    packagingOptions{
+    packagingOptions {
         exclude 'META-INF/LICENSE.txt'
         exclude 'META-INF/NOTICE.txt'
     }
 }
+task upload2server(type: Exec, dependsOn: ':app:assembleRelease') {
+    workingDir '/Users/caozupeng/PycharmProjects/androidupdate'
+    commandLine 'python', 'sshupload.py', buildDir, '/var/django_static/static/android', buildVersionCode
+    //store the output instead of printing to the console:
+    standardOutput = new ByteArrayOutputStream()
 
+    //extension method stopTomcat.output() can be used to obtain the output:
+    ext.output = {
+        return standardOutput.toString()
+    }
+}
 repositories {
     jcenter()
 }
