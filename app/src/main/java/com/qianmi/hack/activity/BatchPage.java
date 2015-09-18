@@ -77,20 +77,6 @@ public class BatchPage extends Fragment implements OnRefreshListener, View.OnCli
     //下拉刷新组件
     private PullToRefreshLayout mPullToRefreshLayout;
 
-    private Handler mHandler = new Handler() {
-
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case LOAD_DATA_FINISH:
-                    mAdapter.mList = modelList;
-                    mAdapter.notifyDataSetChanged();
-                    break;
-            }
-        }
-
-        ;
-    };
-
     /**
      * 用于转到dp到像素px
      *
@@ -249,9 +235,8 @@ public class BatchPage extends Fragment implements OnRefreshListener, View.OnCli
                     List<Batch> listResult = resp.results;
                     modelList.addAll(listResult);
                     hasNext = resp.next != null;
-                    //将结果通知到监听器中，修改界面显示结果
-                    Message _Msg = mHandler.obtainMessage(LOAD_DATA_FINISH, modelList);
-                    mHandler.sendMessage(_Msg);
+                    mAdapter.mList = modelList;
+                    mAdapter.notifyDataSetChanged();
                     if (loading != null) {
                         loading.setVisibility(View.GONE);
                     }
