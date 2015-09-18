@@ -35,9 +35,7 @@ import java.util.List;
  */
 public class TradesPage extends Fragment implements View.OnClickListener, AbsListView.OnScrollListener {
 
-    private static final String TAG = "MainActivity";
-
-    private static final int LOAD_DATA_FINISH = 10;
+    private static final String TAG = "TradePage";
 
     private List<Trade> mList = new ArrayList<Trade>();
     private TradeListAdapter mAdapter;
@@ -47,20 +45,6 @@ public class TradesPage extends Fragment implements View.OnClickListener, AbsLis
     private LinearLayout loading;
     private int visibleLastIndex = 0;   //最后的可视项索引
     private int visibleItemCount;       // 当前窗口可见项总数
-
-    private Handler mHandler = new Handler() {
-
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case LOAD_DATA_FINISH:
-                    mAdapter.mList = mList;
-                    mAdapter.notifyDataSetChanged();
-                    break;
-            }
-        }
-
-        ;
-    };
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -138,8 +122,8 @@ public class TradesPage extends Fragment implements View.OnClickListener, AbsLis
                         hasNext = true;
                     }
 
-                    Message _Msg = mHandler.obtainMessage(LOAD_DATA_FINISH, mList);
-                    mHandler.sendMessage(_Msg);
+                    mAdapter.mList = mList;
+                    mAdapter.notifyDataSetChanged();
                     if (loading != null) {
                         loading.setVisibility(View.GONE);
                     }

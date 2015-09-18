@@ -40,9 +40,7 @@ import java.util.List;
  */
 public class ChangePricePage extends BaseActivity implements View.OnClickListener, AbsListView.OnScrollListener {
 
-    private static final String TAG = "ChangePriceActivity";
-
-    private static final int LOAD_DATA_FINISH = 10;
+    private static final String TAG = "ChangePricePage";
 
     private List<PriceChange> mList = new ArrayList<PriceChange>();
     private CustomListAdapter mAdapter;
@@ -54,22 +52,6 @@ public class ChangePricePage extends BaseActivity implements View.OnClickListene
     private int visibleItemCount;       // 当前窗口可见项总数
     private LinearLayout loading;
     private String batchId;
-
-    private Handler mHandler = new Handler() {
-
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case LOAD_DATA_FINISH:
-                    mAdapter.mList = mList;
-                    mAdapter.notifyDataSetChanged();
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        ;
-    };
 
     @Override
     public void onBeginRequest() {
@@ -119,8 +101,8 @@ public class ChangePricePage extends BaseActivity implements View.OnClickListene
                     L.d(resp.toString());
                     mList.addAll(resp.results);
                     hasNext = resp.next != null;
-                    Message _Msg = mHandler.obtainMessage(LOAD_DATA_FINISH, mList);
-                    mHandler.sendMessage(_Msg);
+                    mAdapter.mList = mList;
+                    mAdapter.notifyDataSetChanged();
                     if (loading != null) {
                         loading.setVisibility(View.GONE);
                     }

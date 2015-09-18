@@ -33,6 +33,7 @@ import lecho.lib.hellocharts.view.LineChartView;
  * Created by wv on 2015/8/21.
  */
 public class ProductDetailActivity extends BaseActivity {
+    private static String TAG = "ProductDetail";
     private ImageView detailImage;
     private TextView productName;
     private TextView supPrice;

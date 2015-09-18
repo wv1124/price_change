@@ -50,11 +50,9 @@ import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
  * 显示价格更新的批次信息
  */
 public class BatchPage extends Fragment implements OnRefreshListener, View.OnClickListener, AbsListView.OnScrollListener {
-    //设置一个事件的ID
-    private static final int LOAD_DATA_FINISH = 10;
 
     //给自己一个名字，日志中可以显示
-    private static final String TAG = "BatchPageActivity";
+    private static final String TAG = "BatchPageA";
 
     //驻留在内存中的Model对象列表，用于缓存
     private List<Batch> modelList = new ArrayList<>();

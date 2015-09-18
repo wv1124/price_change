@@ -51,9 +51,7 @@ import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
  */
 public class ProductPage extends Fragment implements OnRefreshListener, View.OnClickListener, AbsListView.OnScrollListener {
 
-    private static final String TAG = "MainActivity";
-
-    private static final int LOAD_DATA_FINISH = 10;
+    private static final String TAG = "ProductPage";
 
     private int visibleLastIndex = 0;   //最后的可视项索引
     private int visibleItemCount;       // 当前窗口可见项总数
@@ -72,21 +70,6 @@ public class ProductPage extends Fragment implements OnRefreshListener, View.OnC
     private String mKeyword;
     private ImageView deleteText;
     private Button btnSearch;
-
-
-    private Handler mHandler = new Handler() {
-
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case LOAD_DATA_FINISH:
-                    mAdapter.mList = mList;
-                    mAdapter.notifyDataSetChanged();
-                    break;
-            }
-        }
-
-        ;
-    };
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -216,9 +199,8 @@ public class ProductPage extends Fragment implements OnRefreshListener, View.OnC
                     mList.addAll(resp.results);
                     //判断是否还有下一页
                     hasNext = resp.next != null;
-                    //将结果通知到监听器中，修改界面显示结果
-                    Message _Msg = mHandler.obtainMessage(LOAD_DATA_FINISH, mList);
-                    mHandler.sendMessage(_Msg);
+                    mAdapter.mList = mList;
+                    mAdapter.notifyDataSetChanged();
                     //将load控件隐藏掉
                     if (loading != null) {
                         loading.setVisibility(View.GONE);
