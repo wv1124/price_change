@@ -56,7 +56,7 @@ public class ProductDetailActivity extends BaseActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product_detail);
-//        this.setNeedBackGesture(true);
+        this.setNeedBackGesture(true);
         detailImage = (ImageView) findViewById(R.id.product_detail_img);
         productName = (TextView) findViewById(R.id.product_name);
         supPrice = (TextView) findViewById(R.id.sup_price);
@@ -79,7 +79,7 @@ public class ProductDetailActivity extends BaseActivity {
     }
 
     private void initChart(LineChartView chart) {
-        chart.setInteractive(true);
+        chart.setInteractive(false);
         chart.setZoomType(ZoomType.HORIZONTAL);
         chart.setContainerScrollEnabled(true, ContainerScrollType.HORIZONTAL);
 
