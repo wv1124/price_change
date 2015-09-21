@@ -33,6 +33,12 @@
         <item name="android:orientation">vertical</item>
     </style>
 
+    <style name="Theme.Transparent" parent="android:Theme">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@color/window_background</item>
+    </style>
+
     <!-- toolbar -->
     <style name="ToolbarTextAppearance">
         <item name="android:textSize">17sp</item>

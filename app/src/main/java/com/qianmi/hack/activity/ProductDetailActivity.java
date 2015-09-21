@@ -3,6 +3,7 @@ package com.qianmi.hack.activity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -28,11 +29,13 @@ import lecho.lib.hellocharts.model.Line;
 import lecho.lib.hellocharts.model.LineChartData;
 import lecho.lib.hellocharts.model.PointValue;
 import lecho.lib.hellocharts.view.LineChartView;
+import me.imid.swipebacklayout.lib.SwipeBackLayout;
+import me.imid.swipebacklayout.lib.app.SwipeBackActivity;
 
 /**
  * Created by wv on 2015/8/21.
  */
-public class ProductDetailActivity extends BaseActivity {
+public class ProductDetailActivity extends SwipeBackActivity {
     private static String TAG = "ProductDetail";
     private ImageView detailImage;
     private TextView productName;
@@ -43,20 +46,11 @@ public class ProductDetailActivity extends BaseActivity {
     private String productId;
     private Product product;
 
-    @Override
-    public void onBeginRequest() {
-
-    }
-
-    @Override
-    public void onNetworkFailed() {
-
-    }
+    private SwipeBackLayout mSwipeBackLayout;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product_detail);
-        this.setNeedBackGesture(true);
         detailImage = (ImageView) findViewById(R.id.product_detail_img);
         productName = (TextView) findViewById(R.id.product_name);
         supPrice = (TextView) findViewById(R.id.sup_price);
@@ -74,12 +68,16 @@ public class ProductDetailActivity extends BaseActivity {
                 .placeholder(R.drawable.order_detail_proof_preload)
                 .into(detailImage);
         initChart(chart);
+
+        mSwipeBackLayout = getSwipeBackLayout();
+        mSwipeBackLayout.setEdgeTrackingEnabled(SwipeBackLayout.EDGE_LEFT);
+
         requestData(productId);
 
     }
 
     private void initChart(LineChartView chart) {
-        chart.setInteractive(false);
+        chart.setInteractive(true);
         chart.setZoomType(ZoomType.HORIZONTAL);
         chart.setContainerScrollEnabled(true, ContainerScrollType.HORIZONTAL);
 
