@@ -2,8 +2,6 @@ package com.qianmi.hack.activity;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -247,7 +245,7 @@ public class TradesPage extends Fragment implements View.OnClickListener, AbsLis
         public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
             ViewHolder holder = null;
             if (convertView == null) {
-                convertView = mInflater.inflate(R.layout.fragment_trade_list_item, null);
+                convertView = mInflater.inflate(R.layout.fragment_trade_list_item_order, null);
 
                 holder = new ViewHolder();
                 holder.img = (ImageView) convertView.findViewById(R.id.img);
