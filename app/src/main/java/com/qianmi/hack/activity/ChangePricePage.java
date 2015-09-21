@@ -2,8 +2,6 @@ package com.qianmi.hack.activity;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,7 +20,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.qianmi.hack.BaseActivity;
 import com.qianmi.hack.PcApplication;
 import com.qianmi.hack.R;
 import com.qianmi.hack.app.MyVolley;
@@ -38,7 +35,7 @@ import java.util.List;
 /**
  * Created by wv on 2015/8/20.
  */
-public class ChangePricePage extends BaseActivity implements View.OnClickListener, AbsListView.OnScrollListener {
+public class ChangePricePage extends BaseActivityWithSwipeBack implements View.OnClickListener, AbsListView.OnScrollListener {
 
     private static final String TAG = "ChangePricePage";
 
@@ -53,15 +50,6 @@ public class ChangePricePage extends BaseActivity implements View.OnClickListene
     private LinearLayout loading;
     private String batchId;
 
-    @Override
-    public void onBeginRequest() {
-
-    }
-
-    @Override
-    public void onNetworkFailed() {
-
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,7 +63,6 @@ public class ChangePricePage extends BaseActivity implements View.OnClickListene
         initView();
         TextView title = (TextView) findViewById(R.id.title);
         title.setText(batch.created + "变更");
-        setNeedBackGesture(true);
         requestData(curPage, batchId);
     }
 

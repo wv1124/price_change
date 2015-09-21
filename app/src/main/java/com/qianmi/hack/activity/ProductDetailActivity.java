@@ -33,7 +33,9 @@ import me.imid.swipebacklayout.lib.SwipeBackLayout;
 import me.imid.swipebacklayout.lib.app.SwipeBackActivity;
 
 /**
- * Created by wv on 2015/8/21.
+ * Created by Joe on 2015/9/21.
+ * 展示商品的详情、大图、勿争和新邦定源的各自的价格
+ * 还有近十次价格变化曲线图
  */
 public class ProductDetailActivity extends SwipeBackActivity {
     private static String TAG = "ProductDetail";
@@ -42,10 +44,11 @@ public class ProductDetailActivity extends SwipeBackActivity {
     private TextView supPrice;
     private TextView wzPrice;
     private TextView xbdyPrice;
+    //用于统计的曲线图
     private LineChartView chart;
     private String productId;
     private Product product;
-
+    //用于手势滑动返回
     private SwipeBackLayout mSwipeBackLayout;
 
     public void onCreate(Bundle savedInstanceState) {
