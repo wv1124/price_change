@@ -315,7 +315,7 @@ public class ProductPage extends Fragment implements OnRefreshListener, View.OnC
                     .load(ai.pic_url)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .centerCrop()
-                    .placeholder(R.drawable.order_detail_proof_preload)
+//                    .placeholder(R.drawable.order_detail_proof_preload)
                     .into(holder.mImage);
             //holder.mImage.setImageUrl(ai.getAppIcon());
             holder.name.setText(ai.product_name);

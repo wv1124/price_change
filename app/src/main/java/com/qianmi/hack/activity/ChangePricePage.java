@@ -345,7 +345,7 @@ public class ChangePricePage extends BaseActivityWithSwipeBack implements View.O
                     .load(ai.pic_url)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .centerCrop()
-                    .placeholder(R.drawable.order_detail_proof_preload)
+//                    .placeholder(R.drawable.order_detail_proof_preload)
                     .into(holder.productImg);
             holder.draftPrice.setText(getNewDescByType(ai.draft_opt_type,
                     ai.draft_price_source,

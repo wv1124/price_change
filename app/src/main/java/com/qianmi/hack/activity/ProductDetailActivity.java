@@ -68,7 +68,7 @@ public class ProductDetailActivity extends SwipeBackActivity {
                 .load(product.pic_url)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .centerCrop()
-                .placeholder(R.drawable.order_detail_proof_preload)
+//                .placeholder(R.drawable.order_detail_proof_preload)
                 .into(detailImage);
         initChart(chart);
 
