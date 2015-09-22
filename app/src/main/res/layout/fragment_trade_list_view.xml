@@ -5,13 +5,21 @@
     android:orientation="vertical"
     tools:context=".ProductListActivity">
 
-    <ExpandableListView
-        android:id="@+id/mListView"
+
+    <uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/ptr_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:cacheColorHint="@android:color/transparent"
-        android:fadingEdgeLength="0dp"
-        android:layout_weight="2"/>
+        android:layout_height="match_parent">
+
+        <com.baoyz.swipemenulistview.SwipeMenuListView
+            android:id="@+id/mListView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="2dp"
+            android:layout_weight="4"
+            android:divider="@android:color/transparent"
+            android:dividerHeight="5dp" />
+    </uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout>
 
     <LinearLayout
         android:id="@+id/loading"

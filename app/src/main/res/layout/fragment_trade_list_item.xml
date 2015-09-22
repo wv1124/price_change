@@ -15,6 +15,17 @@
         android:layout_marginLeft="5dp"
         android:text="2015-10-18" />
 
+
+    <TextView
+        android:id="@+id/order_deliver_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@+id/order_complete_status"
+        android:layout_alignParentTop="true"
+        android:layout_marginRight="5dp"
+        android:text="已发货" />
+
+
     <TextView
         android:id="@+id/order_complete_status"
         android:layout_width="wrap_content"
@@ -30,7 +41,7 @@
         android:layout_height="0.5dp"
         android:layout_below="@+id/order_date"
         android:layout_marginTop="2dp"
-        android:background="@color/lightgray" />
+        android:background="@color/transparent" />
 
     <ImageView
         android:id="@+id/item_img1"
@@ -38,7 +49,10 @@
         android:layout_height="50dp"
         android:layout_below="@+id/trade_divide1"
         android:layout_marginLeft="5dp"
-        android:src="@drawable/ic_poll_black_48dp" />
+        android:layout_marginTop="3dp"
+        android:padding="1dp"
+        android:src="@drawable/ic_poll_black_48dp"
+        />
 
     <ImageView
         android:id="@+id/item_img2"
@@ -46,6 +60,8 @@
         android:layout_height="50dp"
         android:layout_below="@+id/trade_divide1"
         android:layout_marginLeft="2dp"
+        android:layout_marginTop="3dp"
+        android:padding="1dp"
         android:layout_toRightOf="@+id/item_img1"
         android:src="@drawable/ic_poll_black_48dp" />
 
@@ -55,6 +71,8 @@
         android:layout_height="50dp"
         android:layout_below="@+id/trade_divide1"
         android:layout_marginLeft="2dp"
+        android:layout_marginTop="3dp"
+        android:padding="1dp"
         android:layout_toRightOf="@+id/item_img2"
         android:src="@drawable/ic_poll_black_48dp" />
 
@@ -74,8 +92,8 @@
         android:layout_width="fill_parent"
         android:layout_height="0.5dp"
         android:layout_below="@+id/item_img1"
-        android:layout_marginTop="2dp"
-        android:background="@color/lightgray" />
+        android:layout_marginTop="0dp"
+        android:background="@color/transparent" />
 
 
     <TextView
@@ -86,7 +104,7 @@
         android:layout_alignParentRight="true"
         android:layout_below="@+id/trade_divide2"
         android:layout_marginRight="5dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="8dp"
         android:text="￥1356" />
 
     <TextView
@@ -94,7 +112,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/trade_divide2"
         android:layout_marginRight="2dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="10dp"
         android:layout_toLeftOf="@+id/total_fee"
         android:text="合计：" />
 

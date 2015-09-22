@@ -10,4 +10,5 @@ public class Order {
     public String title;
     public int num;
     public double unit_cost;
+    public String pic_path;
 }

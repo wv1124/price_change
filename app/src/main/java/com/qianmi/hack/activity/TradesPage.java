@@ -8,14 +8,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
-import android.widget.BaseExpandableListAdapter;
-import android.widget.ExpandableListView;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.qianmi.hack.BaseActivity;
 import com.qianmi.hack.PcApplication;
 import com.qianmi.hack.R;
 import com.qianmi.hack.app.MyVolley;
@@ -28,56 +31,64 @@ import com.qianmi.hack.utils.L;
 import java.util.ArrayList;
 import java.util.List;
 
+import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
+import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout;
+import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
+
 /**
  * Created by wv on 2015/8/20.
  */
-public class TradesPage extends Fragment implements View.OnClickListener, AbsListView.OnScrollListener {
+public class TradesPage extends Fragment implements OnRefreshListener, View.OnClickListener, AbsListView.OnScrollListener {
 
     private static final String TAG = "TradePage";
 
-    private List<Trade> mList = new ArrayList<Trade>();
-    private TradeListAdapter mAdapter;
-    private ExpandableListView mListView;
-    private int curPage = 1;
+    private List<Trade> mList = new ArrayList<>();
+    private CustomListAdaper mAdapter;
+    private ListView mListView;
+    private int currentPage = 1;
     private boolean hasNext = true;
     private LinearLayout loading;
     private int visibleLastIndex = 0;   //最后的可视项索引
     private int visibleItemCount;       // 当前窗口可见项总数
+    //下拉刷新组件
+    private PullToRefreshLayout mPullToRefreshLayout;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_trade_list_view, null);
-        mListView = (ExpandableListView) view.findViewById(R.id.mListView);
+        mListView = (ListView) view.findViewById(R.id.mListView);
         loading = (LinearLayout) view.findViewById(R.id.loading);
         loading.setVisibility(View.GONE);
+        mPullToRefreshLayout = (PullToRefreshLayout) view.findViewById(R.id.ptr_layout);
+        // Now setup the PullToRefreshLayout
+        ActionBarPullToRefresh.from(getActivity())
+                // Mark All Children as pullable
+                .allChildrenArePullable()
+                        // Set a OnRefreshListener
+                .listener(this)
+                        // Finally commit the setup to our PullToRefreshLayout
+                .setup(mPullToRefreshLayout);
         initView();
-        requestDate(curPage);
+        requestDate(currentPage);
         return view;
     }
 
+    @Override
+    public void onRefreshStarted(View view) {
+        Log.d(TAG, "上一页");
+        loading.setVisibility(View.VISIBLE);
+        mList.clear();
+        currentPage = 1;
+        requestDate(currentPage);
+        mPullToRefreshLayout.setRefreshComplete();
+    }
+
     private void initView() {
-        mAdapter = new TradeListAdapter(TradesPage.this.getActivity(), mList);
+        mAdapter = new CustomListAdaper(getActivity(), mList);
         mListView.setAdapter(mAdapter);
         mListView.setOnScrollListener(this);     //添加滑动监听
         mAdapter.notifyDataSetChanged();
-       /* mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (view.findViewById(R.id.updown) != null) {
-                    ImageView updown = (ImageView) view.findViewById(R.id.updown);
-                    if (updown != null) {
-                        if ((boolean) view.getTag(R.id.updown)) {
-                            updown.setImageResource(R.drawable.up);     // up
-                            view.setTag(R.id.updown, true);
-                        } else {
-                            updown.setImageResource(R.drawable.down);     // down
-                            view.setTag(R.id.updown, false);
-                        }
-                    }
-                }
-            }
-        });*/
     }
 
     @Override
@@ -90,14 +101,14 @@ public class TradesPage extends Fragment implements View.OnClickListener, AbsLis
     public void loadData(final int type) {
         switch (type) {
             case 0:     // TODO 下拉刷新
-                //requestDate(++curPage);
+                //requestDate(++currentPage);
                 break;
 
             case 1:         // TODO 加载更多
                 if (hasNext) {
-                    requestDate(++curPage);
+                    requestDate(++currentPage);
                 } else {
-                    ((TabHostActivity) TradesPage.this.getActivity()).showSnackMsg("No more data!");
+                    ((BaseActivity) getActivity()).showSnackMsg("No more data!");
                 }
                 break;
         }
@@ -109,7 +120,7 @@ public class TradesPage extends Fragment implements View.OnClickListener, AbsLis
             @Override
             public void onResponse(TradeListResult resp) {
                 L.d("buildAppData return ");
-                ((TabHostActivity) TradesPage.this.getActivity()).dismissLoadingDialog();
+                ((BaseActivity) getActivity()).dismissLoadingDialog();
                 if (resp != null) {
                     L.d(resp.toString());
                     //mList.clear();
@@ -127,7 +138,7 @@ public class TradesPage extends Fragment implements View.OnClickListener, AbsLis
                     }
 
                 } else {
-                    L.e("lonin return error");
+                    L.e("fetch return error");
                 }
             }
         };
@@ -147,17 +158,17 @@ public class TradesPage extends Fragment implements View.OnClickListener, AbsLis
 
     @Override
     public void onScrollStateChanged(AbsListView view, int scrollState) {
-        int itemsLastIndex = mAdapter.getGroupCount() - 1;    //数据集最后一项的索引
+        int itemsLastIndex = mAdapter.getCount() - 1;    //数据集最后一项的索引
         int lastIndex = itemsLastIndex;             //加上底部的loadMoreView项
         if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
             L.d("*************** onScrollStateChanged itemsLastIndex=" + itemsLastIndex + ", lastIndex=" + lastIndex);
             if (visibleLastIndex == lastIndex) {
                 //如果是自动加载,可以在这里放置异步加载数据的代码
-                ++curPage;
+                ++currentPage;
                 if (hasNext) {
                     Log.i("LOADMORE", "loading... page: " + hasNext);
                     loading.setVisibility(View.VISIBLE);
-                    requestDate(curPage);
+                    requestDate(currentPage);
                 }
             }
         }
@@ -165,18 +176,16 @@ public class TradesPage extends Fragment implements View.OnClickListener, AbsLis
 
     @Override
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-        //L.d("------------ onScrollStateChanged firstVisibleItem=" + firstVisibleItem
-        //        + ", visibleItemCount=" + visibleItemCount + ", totalItemCount=" + totalItemCount);
         this.visibleItemCount = visibleItemCount;
         visibleLastIndex = firstVisibleItem + visibleItemCount - 1;
     }
 
-    private class TradeListAdapter extends BaseExpandableListAdapter {
 
+    private class CustomListAdaper extends BaseAdapter {
         private LayoutInflater mInflater;
         public List<Trade> mList;
 
-        public TradeListAdapter(Context pContext, List<Trade> pList) {
+        public CustomListAdaper(Context pContext, List<Trade> pList) {
             mInflater = LayoutInflater.from(pContext);
             if (pList != null) {
                 mList = pList;
@@ -186,162 +195,95 @@ public class TradesPage extends Fragment implements View.OnClickListener, AbsLis
         }
 
         @Override
-        public int getGroupCount() {
-            if (mList == null) {
-                return 0;
-            } else {
-                return mList.size();
-            }
+        public int getCount() {
+            return mList.size();
         }
 
         @Override
-        public int getChildrenCount(int groupPosition) {
-            Trade order = mList.get(groupPosition);
-            if (order != null && order.orders != null) {
-                return order.orders.size();
-            }
-            return 0;
+        public Object getItem(int i) {
+            return mList.get(i);
         }
 
         @Override
-        public Object getGroup(int groupPosition) {
-            if (mList != null) {
-                return mList.get(groupPosition);
-            } else {
+        public long getItemId(int i) {
+            return i;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup viewGroup) {
+            if (getCount() == 0) {
                 return null;
             }
-        }
-
-        @Override
-        public Object getChild(int groupPosition, int childPosition) {
-            if (mList != null) {
-                Trade order = mList.get(groupPosition);
-                if (order != null && order.orders != null) {
-                    return order.orders.get(childPosition);
-                } else {
-                    return null;
-                }
-            } else {
-                return null;
-            }
-        }
-
-        @Override
-        public long getGroupId(int groupPosition) {
-            return 0;
-        }
-
-        @Override
-        public long getChildId(int groupPosition, int childPosition) {
-            return 0;
-        }
-
-        @Override
-        public boolean hasStableIds() {
-            return false;
-        }
-
-        @Override
-        public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
             ViewHolder holder = null;
             if (convertView == null) {
-                convertView = mInflater.inflate(R.layout.fragment_trade_list_item_order, null);
-
-                holder = new ViewHolder();
-                holder.img = (ImageView) convertView.findViewById(R.id.img);
-                holder.updown = (ImageView) convertView.findViewById(R.id.updown);
-                holder.tid = (TextView) convertView
-                        .findViewById(R.id.tid);
-                holder.payment = (TextView) convertView
-                        .findViewById(R.id.payment);
-                holder.totalFee = (TextView) convertView.findViewById(R.id.totalFee);
-                holder.payStatus = (TextView) convertView
-                        .findViewById(R.id.payStatus);
-                holder.deliverStatus = (TextView) convertView
-                        .findViewById(R.id.deliverStatus);
-                holder.comletetStatus = (TextView) convertView
-                        .findViewById(R.id.comletetStatus);
-                holder.status = (TextView) convertView.findViewById(R.id.status);
+                convertView = mInflater.inflate(R.layout.fragment_trade_list_item, null);
+                holder = new ViewHolder(convertView);
                 convertView.setTag(holder);
             } else {
                 holder = (ViewHolder) convertView.getTag();
             }
+            Trade trade = mList.get(position);
+            holder.totalFee.setText("￥" + String.valueOf(trade.total_fee));
+            holder.orderCompleteStatus.setText(trade.complete_status_display);
+            holder.orderDeliverStatus.setText(trade.deliver_status_display);
+            if (trade.orders != null) {
+                List<Order> orders = trade.orders;
+                holder.orderCount.setText("有" + orders.size() + "个商品");
+                holder.itemImg1.setVisibility(View.VISIBLE);
+                holder.itemImg2.setVisibility(View.GONE);
+                holder.itemImg3.setVisibility(View.GONE);
+                Glide.with(convertView.getContext())
+                        .load(orders.get(0).pic_path)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .centerCrop()
+                        .into(holder.itemImg1);
+                holder.itemImg1.setVisibility(View.VISIBLE);
+                if (orders.size() >= 2) {
+                    holder.itemImg2.setVisibility(View.VISIBLE);
+                    Glide.with(convertView.getContext())
+                            .load(orders.get(1).pic_path)
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .centerCrop()
+                            .into(holder.itemImg2);
+                }
+                if (orders.size() == 3) {
+                    holder.itemImg3.setVisibility(View.VISIBLE);
+                    Glide.with(convertView.getContext())
+                            .load(orders.get(2).pic_path)
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .centerCrop()
+                            .into(holder.itemImg3);
+                }
 
-            Trade ai = mList.get(groupPosition);
-            if (ai.complete_status == 0) { //进行中
-                holder.status.setText("进行中");
-            } else if (ai.complete_status == 1) { //已完成
-                holder.status.setText("已完成");
-            } else if (ai.complete_status == 2) { //作废
-                holder.status.setText("作废");
-            }
-            holder.tid.setText("订单号:" + ai.tid);
-            holder.payment.setText("应付金额: ￥" +
-                    String.valueOf(ai.payment));
-            holder.totalFee.setText("订单总额: ￥" +
-                    String.valueOf(ai.total_fee));
-            holder.payStatus.setText(ai.pay_status_display);
-            holder.deliverStatus.setText(ai.deliver_status_display);
-            holder.comletetStatus.setText(ai.complete_status_display);
-            return convertView;
-        }
-
-        @Override
-        public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-            Trade ai = mList.get(groupPosition);
-            if (ai == null || ai.orders == null) {
-                return null;
-            }
-            ChildViewHolder holder = null;
-            if (convertView == null) {
-                convertView = mInflater.inflate(R.layout.fragment_trade_list_item_child, null);
-
-                holder = new ChildViewHolder();
-                holder.img = (ImageView) convertView.findViewById(R.id.img);
-                holder.name = (TextView) convertView
-                        .findViewById(R.id.name);
-                holder.price = (TextView) convertView
-                        .findViewById(R.id.price);
-                holder.num = (TextView) convertView
-                        .findViewById(R.id.num);
-                convertView.setTag(holder);
             } else {
-                holder = (ChildViewHolder) convertView.getTag();
+                holder.orderCount.setText("没有商品");
             }
-
-            Order order = ai.orders.get(childPosition);
-            if (order != null) {
-                //holder.img.setImageResource(ai.img);
-                holder.name.setText(order.title);
-                holder.price.setText("￥" + String.valueOf(order.unit_cost));
-                holder.num.setText("X" + String.valueOf(order.num));
-            }
+            holder.orderDate.setText(trade.created);
 
             return convertView;
         }
-
-        @Override
-        public boolean isChildSelectable(int groupPosition, int childPosition) {
-            return false;
-        }
     }
 
-    private static class ChildViewHolder {
-        private ImageView img;
-        private TextView name;
-        private TextView price;
-        private TextView num;
-    }
 
     private static class ViewHolder {
-        private ImageView img;
-        private ImageView updown;
-        private TextView tid;
-        private TextView payment;
+        private TextView orderDate;
+        private TextView orderDeliverStatus;
+        private TextView orderCompleteStatus;
+        private ImageView itemImg1;
+        private ImageView itemImg2;
+        private ImageView itemImg3;
+        private TextView orderCount;
         private TextView totalFee;
-        private TextView payStatus;
-        private TextView deliverStatus;
-        private TextView comletetStatus;
-        private TextView status;
+
+        public ViewHolder(View convertView) {
+            itemImg1 = (ImageView) convertView.findViewById(R.id.item_img1);
+            itemImg2 = (ImageView) convertView.findViewById(R.id.item_img2);
+            itemImg3 = (ImageView) convertView.findViewById(R.id.item_img3);
+            orderDate = (TextView) convertView.findViewById(R.id.order_date);
+            orderDeliverStatus = (TextView) convertView.findViewById(R.id.order_deliver_status);
+            orderCompleteStatus = (TextView) convertView.findViewById(R.id.order_complete_status);
+            orderCount = (TextView) convertView.findViewById(R.id.order_count);
+            totalFee = (TextView) convertView.findViewById(R.id.total_fee);
+        }
     }
 }
