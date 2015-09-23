@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="5dp"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <RelativeLayout
+        android:id="@+id/level3_relative_layout1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="2dp">
+
+        <ImageView
+            android:id="@+id/icon_record"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:src="@drawable/icon_record" />
+
+        <TextView
+            style="@style/OrderDetailBarTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="2dp"
+            android:layout_toRightOf="@+id/icon_record"
+            android:text="付款记录" />
+
+        <TextView
+            android:id="@+id/order_pay_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginRight="15dp"
+            android:layout_marginTop="2dp"
+            android:text="未支付" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/level3_relative_layout1"
+        android:layout_marginLeft="25dp"
+        android:layout_marginTop="2dp">
+
+        <TextView
+            android:id="@+id/pay_type_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="余额支付" />
+
+    </LinearLayout>
+</RelativeLayout>

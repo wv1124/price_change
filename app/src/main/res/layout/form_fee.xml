@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="5dp"
+    android:padding="5dp"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <RelativeLayout
+        android:id="@+id/level2_relative_layout1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="2dp">
+
+        <ImageView
+            android:id="@+id/icon_yen"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:src="@drawable/icon_yen" />
+
+        <TextView
+            style="@style/OrderDetailBarTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="2dp"
+            android:layout_toRightOf="@+id/icon_yen"
+            android:text="订单金额" />
+
+        <TextView
+            android:id="@+id/totle_fee"
+            style="@style/OrderDetailBarPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginRight="15dp"
+            android:layout_marginTop="2dp"
+            android:text="￥2770.0" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/level2_relative_layout2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/level2_relative_layout1"
+        android:layout_marginLeft="25dp"
+        android:layout_marginTop="5dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:text="商品金额" />
+
+        <TextView
+            android:id="@+id/total_trade_fee"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginRight="15dp"
+            android:layout_marginTop="2dp"
+            android:text="￥3000.0" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/level2_relative_layout3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/level2_relative_layout2"
+        android:layout_marginLeft="25dp"
+        android:layout_marginTop="5dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:text="优惠金额" />
+
+        <TextView
+            android:id="@+id/discount_fee"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginRight="15dp"
+            android:layout_marginTop="2dp"
+            android:text="￥250.0" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/level2_relative_layout4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/level2_relative_layout3"
+        android:layout_marginLeft="25dp"
+        android:layout_marginTop="5dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:text="配送费用" />
+
+        <TextView
+            android:id="@+id/post_fee"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginRight="15dp"
+            android:layout_marginTop="2dp"
+            android:text="￥20.0" />
+    </RelativeLayout>
+</RelativeLayout>

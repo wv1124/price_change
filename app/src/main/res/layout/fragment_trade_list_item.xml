@@ -45,8 +45,8 @@
 
     <ImageView
         android:id="@+id/item_img1"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:layout_below="@+id/trade_divide1"
         android:layout_marginLeft="5dp"
         android:layout_marginTop="3dp"
@@ -56,8 +56,8 @@
 
     <ImageView
         android:id="@+id/item_img2"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:layout_below="@+id/trade_divide1"
         android:layout_marginLeft="2dp"
         android:layout_marginTop="3dp"
@@ -67,8 +67,8 @@
 
     <ImageView
         android:id="@+id/item_img3"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:layout_below="@+id/trade_divide1"
         android:layout_marginLeft="2dp"
         android:layout_marginTop="3dp"
@@ -104,7 +104,7 @@
         android:layout_alignParentRight="true"
         android:layout_below="@+id/trade_divide2"
         android:layout_marginRight="5dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="3dp"
         android:text="￥1356" />
 
     <TextView
@@ -112,7 +112,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/trade_divide2"
         android:layout_marginRight="2dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="5dp"
         android:layout_toLeftOf="@+id/total_fee"
         android:text="合计：" />
 

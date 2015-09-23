@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="5dp"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <RelativeLayout
+        android:id="@+id/address_relative_layout1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="2dp">
+
+        <ImageView
+            android:id="@+id/icon_addr"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:src="@drawable/icon_addr" />
+
+        <TextView
+            style="@style/OrderDetailBarTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="2dp"
+            android:layout_toRightOf="@+id/icon_addr"
+            android:text="收货地址" />
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_below="@+id/address_relative_layout1"
+        android:layout_marginLeft="25dp"
+        android:layout_marginTop="3dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/reciver_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="曹祖鹏"/>
+        <TextView
+            android:id="@+id/reciver_mobile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginRight="15dp"
+            android:layout_marginTop="2dp"
+            android:text="13684521560" />
+        <TextView
+            android:layout_below="@id/reciver_name"
+
+            android:layout_marginTop="3dp"
+            android:id="@+id/reciver_address"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="北京北京市东城区118号"/>
+    </RelativeLayout>
+</RelativeLayout>
