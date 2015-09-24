@@ -10,7 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"
-        android:layout_marginTop="2dp">
+        android:layout_marginTop="@dimen/level_margin_top">
 
         <ImageView
             android:id="@+id/icon_addr"
@@ -25,7 +25,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
-            android:layout_marginTop="2dp"
+            android:layout_marginTop="@dimen/bar_title_top_margin"
             android:layout_toRightOf="@+id/icon_addr"
             android:text="收货地址" />
 
@@ -35,7 +35,7 @@
     <RelativeLayout
         android:layout_below="@+id/address_relative_layout1"
         android:layout_marginLeft="25dp"
-        android:layout_marginTop="3dp"
+        android:layout_marginTop="@dimen/level_first_text_margin_top"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
         <TextView

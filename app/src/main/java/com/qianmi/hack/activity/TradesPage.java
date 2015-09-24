@@ -1,6 +1,7 @@
 package com.qianmi.hack.activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -8,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -88,6 +90,18 @@ public class TradesPage extends Fragment implements OnRefreshListener, View.OnCl
         mAdapter = new CustomListAdaper(getActivity(), mList);
         mListView.setAdapter(mAdapter);
         mListView.setOnScrollListener(this);     //添加滑动监听
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+                Log.e(TAG, "click position:" + position);
+                Trade trade = (Trade) mAdapter.getItem(position);
+                Intent intent = new Intent(getActivity(), TradeDetailActivity.class);
+                intent.putExtra("tradeId", trade.tid);
+                startActivity(intent);
+            }
+        });
         mAdapter.notifyDataSetChanged();
     }
 

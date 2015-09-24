@@ -53,9 +53,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.qianmi.hack.activity.TabHostActivity"></activity>
-        <activity android:name=".activity.ChangePricePage" android:theme="@style/Theme.Transparent"></activity>
-        <activity android:name=".activity.ProductDetailActivity" android:theme="@style/Theme.Transparent"></activity>
+        <activity android:name="com.qianmi.hack.activity.TabHostActivity"/>
+        <activity android:name=".activity.ChangePricePage" android:theme="@style/Theme.Transparent"/>
+        <activity android:name=".activity.ProductDetailActivity" android:theme="@style/Theme.Transparent"/>
+        <activity android:name=".activity.TradeDetailActivity" android:theme="@style/Theme.Transparent"/>
         <service android:name="com.avos.avoscloud.PushService" />
         <receiver android:name="com.avos.avoscloud.AVBroadcastReceiver">
             <intent-filter>

@@ -3,7 +3,24 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-
+    <LinearLayout
+        android:id="@+id/header"
+        android:layout_width="fill_parent"
+        android:background="@color/primary"
+        android:layout_height="@dimen/head_height">
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center"
+            android:layout_margin="2dp"
+            android:background="@color/primary"
+            android:gravity="center"
+            android:text="订单详情"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+    </LinearLayout>
 
     <include
         android:id="@+id/level1"
@@ -13,8 +30,8 @@
     <View
         android:id="@+id/tradedetail_divide1"
         android:layout_width="fill_parent"
-        android:layout_height="0.5dp"
-        android:layout_marginTop="2dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="@dimen/divide_margin_last_level_top"
         android:background="@color/gray_background" />
 
     <include
@@ -24,8 +41,8 @@
     <View
         android:id="@+id/tradedetail_divide2"
         android:layout_width="fill_parent"
-        android:layout_height="0.5dp"
-        android:layout_marginTop="2dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="@dimen/divide_margin_last_level_top"
         android:background="@color/gray_background" />
 
     <include
@@ -35,8 +52,8 @@
     <View
         android:id="@+id/tradedetail_divide3"
         android:layout_width="fill_parent"
-        android:layout_height="0.5dp"
-        android:layout_marginTop="2dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="@dimen/divide_margin_last_level_top"
         android:background="@color/gray_background" />
 
     <include

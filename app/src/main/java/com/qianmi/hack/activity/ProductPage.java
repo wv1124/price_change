@@ -3,8 +3,6 @@ package com.qianmi.hack.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -30,7 +28,6 @@ import com.qianmi.hack.BaseActivity;
 import com.qianmi.hack.PcApplication;
 import com.qianmi.hack.R;
 import com.qianmi.hack.app.MyVolley;
-import com.qianmi.hack.bean.Batch;
 import com.qianmi.hack.bean.Product;
 import com.qianmi.hack.bean.ProductListResult;
 import com.qianmi.hack.network.GsonRequest;
@@ -82,7 +79,7 @@ public class ProductPage extends Fragment implements OnRefreshListener, View.OnC
         initPullRefresh(view);
         initListView();
         initSearchInput(view);
-        requestDate(currentPage, mKeyword);
+        requestData(currentPage, mKeyword);
         return view;
     }
 
@@ -108,7 +105,7 @@ public class ProductPage extends Fragment implements OnRefreshListener, View.OnC
                 mKeyword = etSearch.getText().toString();
                 mList.clear();
                 Log.d(TAG, "keyword = " + mKeyword);
-                requestDate(currentPage, mKeyword);
+                requestData(currentPage, mKeyword);
             }
         });
         etSearch = (EditText) view.findViewById(R.id.etSearch);
@@ -153,7 +150,7 @@ public class ProductPage extends Fragment implements OnRefreshListener, View.OnC
         loading.setVisibility(View.VISIBLE);
         mList.clear();
         currentPage = 1;
-        requestDate(currentPage, mKeyword);
+        requestData(currentPage, mKeyword);
         mPullToRefreshLayout.setRefreshComplete();
     }
 
@@ -212,7 +209,7 @@ public class ProductPage extends Fragment implements OnRefreshListener, View.OnC
         };
     }
 
-    private void requestDate(int currentPage, String keyword) {
+    private void requestData(int currentPage, String keyword) {
         GsonRequest.Builder<ProductListResult> builder = new GsonRequest.Builder<>();
         StringBuilder url = new StringBuilder();
 
@@ -251,7 +248,7 @@ public class ProductPage extends Fragment implements OnRefreshListener, View.OnC
                 if (hasNext) {
                     Log.i(TAG, "loading... page: " + hasNext);
                     loading.setVisibility(View.VISIBLE);
-                    requestDate(currentPage, mKeyword);
+                    requestData(currentPage, mKeyword);
                 }
             }
         }
