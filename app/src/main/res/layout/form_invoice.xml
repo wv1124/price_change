@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="5dp"
+    android:padding="5dp"
+    android:orientation="vertical">
+    <RelativeLayout
+        android:id="@+id/level2_relative_layout1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="@dimen/level_margin_top">
+
+        <ImageView
+            android:id="@+id/icon_bill"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:src="@drawable/icon_bill" />
+
+        <TextView
+            style="@style/OrderDetailBarTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="@dimen/bar_title_top_margin"
+            android:layout_toRightOf="@+id/icon_bill"
+            android:text="发票信息" />
+
+        <TextView
+            android:id="@+id/invoice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginRight="@dimen/bar_text_margin_right"
+            android:layout_marginTop="2dp"
+            android:text="发票未开" />
+    </RelativeLayout>
+</RelativeLayout>

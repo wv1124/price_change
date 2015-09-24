@@ -40,9 +40,11 @@ public class TradeDetailActivity extends BaseActivityWithSwipeBack {
     TextView reciverAddress;
     String tradeId;
     TextView itemCount;
-    private ImageView itemImg1;
-    private ImageView itemImg2;
-    private ImageView itemImg3;
+    ImageView itemImg1;
+    ImageView itemImg2;
+    ImageView itemImg3;
+    TextView invoice;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -64,6 +66,7 @@ public class TradeDetailActivity extends BaseActivityWithSwipeBack {
         itemImg1 = (ImageView) findViewById(R.id.item_img1);
         itemImg2 = (ImageView) findViewById(R.id.item_img2);
         itemImg3 = (ImageView) findViewById(R.id.item_img3);
+        invoice = (TextView) findViewById(R.id.invoice);
         Log.v(TAG, String.format("get tradeId is %s", tradeId));
         requestData(tradeId);
     }
@@ -85,6 +88,7 @@ public class TradeDetailActivity extends BaseActivityWithSwipeBack {
                 reciverName.setText(response.reciver_name);
                 reciverMobile.setText(response.reciver_mobile);
                 reciverAddress.setText(response.getFullAddress());
+                invoice.setText(response.invoice_flag_display);
                 if (response.orders != null) {
                     List<Order> orders = response.orders;
                     itemCount.setText( orders.size() + "个商品");

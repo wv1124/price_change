@@ -3,11 +3,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
+
     <LinearLayout
         android:id="@+id/header"
         android:layout_width="fill_parent"
-        android:background="@color/primary"
-        android:layout_height="@dimen/head_height">
+        android:layout_height="@dimen/head_height"
+        android:background="@color/primary">
+
         <TextView
             android:id="@+id/title"
             android:layout_width="fill_parent"
@@ -47,7 +49,7 @@
 
     <include
         android:id="@+id/level3"
-        layout="@layout/form_payment"/>
+        layout="@layout/form_payment" />
 
     <View
         android:id="@+id/tradedetail_divide3"
@@ -58,7 +60,7 @@
 
     <include
         android:id="@+id/level4"
-        layout="@layout/form_address"/>
+        layout="@layout/form_address" />
 
 
     <View
@@ -70,6 +72,17 @@
 
     <include
         android:id="@+id/level5"
-        layout="@layout/form_items"/>
+        layout="@layout/form_items" />
+
+    <View
+        android:id="@+id/tradedetail_divide5"
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="@dimen/divide_margin_last_level_top"
+        android:background="@color/gray_background" />
+
+    <include
+        android:id="@+id/level6"
+        layout="@layout/form_invoice" />
 
 </LinearLayout>
