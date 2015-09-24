@@ -60,4 +60,16 @@
         android:id="@+id/level4"
         layout="@layout/form_address"/>
 
+
+    <View
+        android:id="@+id/tradedetail_divide4"
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="@dimen/divide_margin_last_level_top"
+        android:background="@color/gray_background" />
+
+    <include
+        android:id="@+id/level5"
+        layout="@layout/form_items"/>
+
 </LinearLayout>
