@@ -126,6 +126,7 @@ public class TradeDetailActivity extends BaseActivityWithSwipeBack {
     }
 
     private void requestData(String tradeId) {
+        this.showLoadingDialog();
         GsonRequest.Builder<TradeDetail> builder = new GsonRequest.Builder<>();
         GsonRequest request = builder.retClazz(TradeDetail.class)
                 .method(Request.Method.GET)
