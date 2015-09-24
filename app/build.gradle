@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 
-def buildVersionCode = 5
-def buildVersionName = "1.4"
+def buildVersionCode = 6
+def buildVersionName = "1.5"
 
 android {
     compileSdkVersion 22
