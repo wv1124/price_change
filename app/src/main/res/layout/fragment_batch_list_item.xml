@@ -10,70 +10,82 @@
 
     <ImageView
         android:id="@+id/batchimg"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:background="@color/product_bg_color"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
         android:contentDescription="@string/image_desc"
-        android:minHeight="50dp"
-        android:minWidth="50dp"
-        android:src="@drawable/ic_poll_black_48dp" />
+        android:src="@drawable/batch_grey_1"
+        android:padding="3dp"/>
 
     <RelativeLayout
         android:id="@+id/display_area"
-        android:layout_width="fill_parent"
-        android:layout_height="60dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_toEndOf="@+id/batchimg"
         android:layout_toRightOf="@+id/batchimg"
-        android:padding="5dp">
+        android:padding="5dp"
+        android:layout_marginRight="20dp">
 
         <TextView
             android:id="@+id/batch_update_time"
             style="@style/BatchTime"
-            android:layout_width="fill_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="5dip"
+            android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
             android:text="2015-08-18 23:58" />
 
         <View
             android:id="@+id/divide"
-            android:background="@color/lightgray"
-            android:layout_below="@+id/batch_update_time"
             android:layout_width="fill_parent"
-            android:layout_height="0.5dp" />
+            android:layout_height="0.5dp"
+            android:layout_below="@+id/batch_update_time"
+            android:layout_marginTop="5dp"
+            android:background="@color/lightgray" />
 
-        <TextView
-            android:id="@+id/product_modifications"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="3"
-            android:layout_marginLeft="10.0dp"
-            android:layout_alignParentBottom="true"
-            android:singleLine="true"
-            android:text="修改:15"
-            android:layout_alignTop="@+id/product_ups" />
+            android:layout_below="@+id/divide"
+            android:layout_marginTop="5dp">
 
-        <TextView
-            android:id="@+id/product_ups"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_marginLeft="20.0dp"
-            android:layout_toRightOf="@+id/product_modifications"
-            android:layout_weight="3"
-            android:text="新增:3"
-            android:layout_alignTop="@+id/product_downs" />
+            <TextView
+                android:id="@+id/product_modifications"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_weight="3"
+                android:singleLine="true"
+                android:text="修改:15" />
 
-        <TextView
-            android:id="@+id/product_downs"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_marginLeft="20.0dp"
-            android:layout_toRightOf="@+id/product_ups"
-            android:layout_weight="3"
-            android:text="下架:5" />
+            <TextView
+                android:id="@+id/product_ups"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginLeft="10dp"
+                android:layout_weight="3"
+                android:text="新增:3" />
+
+            <TextView
+                android:id="@+id/product_downs"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10.0dp"
+                android:layout_weight="3"
+                android:text="下架:5" />
+
+        </LinearLayout>
 
 
     </RelativeLayout>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="0dp"
+        android:src="@drawable/right_1" />
 </RelativeLayout>

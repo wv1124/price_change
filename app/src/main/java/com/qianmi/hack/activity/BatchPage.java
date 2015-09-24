@@ -149,8 +149,7 @@ public class BatchPage extends Fragment implements OnRefreshListener, View.OnCli
                 SwipeMenuItem openItem = new SwipeMenuItem(
                         getActivity());
                 // set item background
-                openItem.setBackground(new ColorDrawable(Color.rgb(0xC9, 0xC9,
-                        0xCE)));
+                openItem.setBackground(R.color.secondary);
                 // set item width
                 openItem.setWidth(dp2px(90));
                 // set item title
@@ -170,7 +169,7 @@ public class BatchPage extends Fragment implements OnRefreshListener, View.OnCli
                 // set item width
                 allSyncMenuItem.setWidth(dp2px(90));
                 // set a icon
-                allSyncMenuItem.setIcon(R.drawable.ic_uncheck_48dp);
+                allSyncMenuItem.setIcon(R.drawable.icon_sync);
                 // add to menu
                 menu.addMenuItem(allSyncMenuItem);
             }
@@ -323,8 +322,8 @@ public class BatchPage extends Fragment implements OnRefreshListener, View.OnCli
 
         private LayoutInflater mInflater;
         public List<Batch> mList;
-        private int[] resources = new int[]{R.drawable.ic_poll_black_48dp,
-                R.drawable.ic_public_black_48dp, R.drawable.ic_whatshot_black_48dp};
+//        private int[] resources = new int[]{R.drawable.batch_grey_1,
+//                R.drawable.ic_public_black_48dp, R.drawable.ic_whatshot_black_48dp};
 
         public CustomListAdapter(Context pContext, List<Batch> pList) {
             mInflater = LayoutInflater.from(pContext);
@@ -373,7 +372,7 @@ public class BatchPage extends Fragment implements OnRefreshListener, View.OnCli
 
             Batch batch = mList.get(position);
             //holder.mImage.setImageUrl(batch.getAppIcon());
-            holder.image.setImageResource(resources[position % 3]);
+//            holder.image.setImageResource(resources[position % 3]);
             holder.batchTime.setText(batch.created);
             holder.productDowns.setText("下架:" + String.valueOf(batch.down_rows));
             holder.productUps.setText("上架:" + String.valueOf(batch.add_rows));

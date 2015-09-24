@@ -21,9 +21,11 @@
     <color name="primary">#6699CC</color>
     <color name="primarydark">#3276B1</color>
     <color name="eposColorAccent">#ffc63c</color>
+    <color name="secondary">#43c6a6</color>
 
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
+    <color name="whitegray">#939495</color>
     <color name="red">#ffff1b40</color>
     <color name="lightgray">#ffbbb7b4</color>
     <color name="dark_back">#222429</color>

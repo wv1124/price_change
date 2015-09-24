@@ -39,7 +39,7 @@
             android:id="@+id/load_more"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10.0dp"
+            android:layout_marginLeft="5.0dp"
             android:gravity="center"
             android:text="@string/p2refresh_head_load_more"
             android:textColor="@color/black">
