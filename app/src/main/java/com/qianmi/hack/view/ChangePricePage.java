@@ -1,4 +1,4 @@
-package com.qianmi.hack.activity;
+package com.qianmi.hack.view;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -22,7 +22,8 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.qianmi.hack.PcApplication;
 import com.qianmi.hack.R;
-import com.qianmi.hack.app.MyVolley;
+import com.qianmi.hack.common.MyVolley;
+import com.qianmi.hack.base.BaseActivityWithSwipeBack;
 import com.qianmi.hack.bean.Batch;
 import com.qianmi.hack.bean.PriceChange;
 import com.qianmi.hack.bean.PriceChangeListResult;

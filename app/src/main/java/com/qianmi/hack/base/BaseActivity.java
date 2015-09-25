@@ -1,4 +1,4 @@
-package com.qianmi.hack;
+package com.qianmi.hack.base;
 
 import android.app.ActionBar;
 import android.app.AlertDialog;
@@ -28,8 +28,11 @@ import android.widget.Toast;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.qianmi.hack.PcApplication;
+import com.qianmi.hack.R;
 import com.qianmi.hack.listener.BackGestureListener;
 import com.qianmi.hack.utils.L;
+import com.qianmi.hack.view.LoginActivity;
 
 import java.lang.reflect.Method;
 

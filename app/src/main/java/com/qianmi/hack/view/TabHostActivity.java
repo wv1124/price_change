@@ -1,4 +1,4 @@
-package com.qianmi.hack.activity;
+package com.qianmi.hack.view;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentTabHost;
@@ -9,8 +9,8 @@ import android.widget.TabHost;
 import android.widget.TextView;
 
 import com.avos.avoscloud.PushService;
-import com.qianmi.hack.BaseActivity;
 import com.qianmi.hack.R;
+import com.qianmi.hack.base.BaseActivity;
 
 
 /**

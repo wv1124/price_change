@@ -1,4 +1,4 @@
-package com.qianmi.hack.activity;
+package com.qianmi.hack.view;
 
 import android.content.Context;
 import android.content.Intent;
@@ -20,10 +20,10 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.qianmi.hack.BaseActivity;
 import com.qianmi.hack.PcApplication;
 import com.qianmi.hack.R;
-import com.qianmi.hack.app.MyVolley;
+import com.qianmi.hack.common.MyVolley;
+import com.qianmi.hack.base.BaseActivity;
 import com.qianmi.hack.bean.Order;
 import com.qianmi.hack.bean.Trade;
 import com.qianmi.hack.bean.TradeListResult;

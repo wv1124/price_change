@@ -1,4 +1,4 @@
-package com.qianmi.hack.test;
+package com.qianmi.hack;
 
 import android.test.InstrumentationTestCase;
 import android.util.Log;

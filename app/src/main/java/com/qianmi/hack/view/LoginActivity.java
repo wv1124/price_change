@@ -1,4 +1,4 @@
-package com.qianmi.hack;
+package com.qianmi.hack.view;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -18,13 +18,14 @@ import android.view.Window;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.qianmi.hack.activity.TabHostActivity;
-import com.qianmi.hack.app.MyVolley;
+import com.qianmi.hack.PcApplication;
+import com.qianmi.hack.R;
+import com.qianmi.hack.common.MyVolley;
+import com.qianmi.hack.base.BaseActivity;
 import com.qianmi.hack.bean.LoginRequest;
 import com.qianmi.hack.bean.Token;
 import com.qianmi.hack.network.GsonRequest;

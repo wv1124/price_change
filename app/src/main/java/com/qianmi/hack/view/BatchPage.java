@@ -1,12 +1,9 @@
-package com.qianmi.hack.activity;
+package com.qianmi.hack.view;
 
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.util.TypedValue;
@@ -27,10 +24,10 @@ import com.baoyz.swipemenulistview.SwipeMenu;
 import com.baoyz.swipemenulistview.SwipeMenuCreator;
 import com.baoyz.swipemenulistview.SwipeMenuItem;
 import com.baoyz.swipemenulistview.SwipeMenuListView;
-import com.qianmi.hack.BaseActivity;
 import com.qianmi.hack.PcApplication;
 import com.qianmi.hack.R;
-import com.qianmi.hack.app.MyVolley;
+import com.qianmi.hack.common.MyVolley;
+import com.qianmi.hack.base.BaseActivity;
 import com.qianmi.hack.bean.Batch;
 import com.qianmi.hack.bean.BatchListResult;
 import com.qianmi.hack.network.GsonRequest;

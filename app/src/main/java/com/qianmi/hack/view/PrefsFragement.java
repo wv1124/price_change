@@ -1,4 +1,4 @@
-package com.qianmi.hack.activity;
+package com.qianmi.hack.view;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;

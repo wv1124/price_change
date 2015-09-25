@@ -1,4 +1,4 @@
-package com.qianmi.hack.activity;
+package com.qianmi.hack.base;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -15,9 +15,9 @@ import android.widget.Toast;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.qianmi.hack.LoginActivity;
 import com.qianmi.hack.R;
 import com.qianmi.hack.utils.L;
+import com.qianmi.hack.view.LoginActivity;
 
 import me.imid.swipebacklayout.lib.app.SwipeBackActivity;
 

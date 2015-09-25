@@ -3,7 +3,7 @@ package com.qianmi.hack.listener;
 import android.view.GestureDetector.OnGestureListener;
 import android.view.MotionEvent;
 
-import com.qianmi.hack.BaseActivity;
+import com.qianmi.hack.base.BaseActivity;
 
 
 /**
