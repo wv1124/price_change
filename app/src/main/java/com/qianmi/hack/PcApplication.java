@@ -2,6 +2,8 @@ package com.qianmi.hack;
 
 import android.app.Activity;
 import android.app.Application;
+import android.text.TextUtils;
+import android.util.Log;
 
 import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVInstallation;
@@ -9,7 +11,9 @@ import com.avos.avoscloud.AVOSCloud;
 import com.avos.avoscloud.SaveCallback;
 import com.qianmi.hack.common.MyVolley;
 import com.qianmi.hack.network.RequestManager;
+import com.qianmi.hack.utils.Constant;
 import com.qianmi.hack.utils.L;
+import com.qianmi.hack.utils.SPUtils;
 
 import java.lang.ref.WeakReference;
 import java.util.Stack;
@@ -52,9 +56,17 @@ public class PcApplication extends Application {
             }
         });
 
-
         sInstance = this;
         MyVolley.init(this);
+        String token = (String) SPUtils.get(this, Constant.TOKEN, "");
+        if (!TextUtils.isEmpty(token)) {
+            Log.d("Application", "get local token is " + token);
+            TOKEN = token;
+            MyVolley.getJwtAuthStack().setAuth(TOKEN);
+        } else {
+            Log.d("Application", "no token in local");
+        }
+
     }
 
     @Override

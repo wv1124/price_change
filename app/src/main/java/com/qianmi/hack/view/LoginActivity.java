@@ -24,10 +24,10 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.qianmi.hack.PcApplication;
 import com.qianmi.hack.R;
-import com.qianmi.hack.common.MyVolley;
 import com.qianmi.hack.base.BaseActivity;
 import com.qianmi.hack.bean.LoginRequest;
 import com.qianmi.hack.bean.Token;
+import com.qianmi.hack.common.MyVolley;
 import com.qianmi.hack.network.GsonRequest;
 import com.qianmi.hack.utils.Constant;
 import com.qianmi.hack.utils.FileUtil;
@@ -50,7 +50,7 @@ import butterknife.OnClick;
 
 public class LoginActivity extends BaseActivity {
 
-    private static final String REQ_TAG = "login";
+    private static final String REQ_TAG = "LOGIN_ACTIVITY";
     private Context mContext;
 
     @Bind(R.id.et_login_username)
@@ -215,7 +215,7 @@ public class LoginActivity extends BaseActivity {
                     @Override
                     public void onResponse(Token resp) {
                         LoginActivity.this.dismissLoadingDialog();
-                        L.d("TAG", "token is " + resp.token);
+                        L.d(REQ_TAG, "token is " + resp.token);
                         if (resp != null) {
                             PcApplication.TOKEN = resp.token;
                             MyVolley.getJwtAuthStack().setAuth(resp.token);
@@ -391,8 +391,7 @@ public class LoginActivity extends BaseActivity {
                     install();
                     resetBtn();
                 }
-            }
-            else {
+            } else {
                 progressDialog.setProgress(values[0]);
             }
         }
