@@ -73,10 +73,7 @@ public class LoginActivity extends BaseActivity {
         startLoginRequestData();
     }
 
-    //安装文件
-    private File installAPK = null;
 
-    ProgressDialog progressDialog;
 
     @Override
     public void onBeginRequest() {
@@ -96,7 +93,7 @@ public class LoginActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_login);
-        checkVersion();
+
         mWrapperUsername.setErrorEnabled(true);
         mWrapperPwd.setErrorEnabled(true);
 
@@ -278,133 +275,5 @@ public class LoginActivity extends BaseActivity {
     }
 
 
-    private void checkVersion() {
-        GsonRequest.Builder<Map> builder = new GsonRequest.Builder<>();
-        GsonRequest versionRequest = builder
-                .retClazz(Map.class)
-                .setUrl(PcApplication.SERVER_URL + "static/android/version.json")
-                .method(Request.Method.GET)
-                .registerResListener(new Response.Listener<Map>() {
-                    @Override
-                    public void onResponse(Map response) {
-                        int newVersion = Double.valueOf(String.valueOf(response.get("version"))).intValue();
-                        int currentVersionCode = getVersionCode(LoginActivity.this.getApplicationContext());
-                        if (newVersion > currentVersionCode) {
-//                            Toast.makeText(PcApplication.getInstance(), "有新版本!", Toast.LENGTH_LONG).show();
-                            showUpdateDialog(PcApplication.SERVER_URL + "static/android/app-release.apk", "new version");
-                        }
 
-                    }
-                })
-                .create();
-        MyVolley.getRequestQueue().add(versionRequest);
-    }
-
-    public static int getVersionCode(Context context) {
-        try {
-            return context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionCode;
-        } catch (PackageManager.NameNotFoundException e) {
-            return 0;
-        }
-    }
-
-
-    private void showUpdateDialog(final String downloadUrl, final String message) {
-        AlertDialog.Builder updateAlertDialog = new AlertDialog.Builder(this);
-//        updateAlertDialog.setCancelable(false);
-        updateAlertDialog.setTitle("版本更新");
-        updateAlertDialog.setMessage("有新版本，是否下载？");
-        updateAlertDialog.setNegativeButton("确定",
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                        mLoginBtn.setClickable(false);
-                        progressDialog = new ProgressDialog(LoginActivity.this);
-                        progressDialog.setCanceledOnTouchOutside(false);
-                        progressDialog.setTitle("正在下载");
-                        progressDialog.setMessage("请稍候...");
-                        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                        progressDialog.show();
-                        new DownloadFileAsync().execute(downloadUrl);
-                    }
-                }).setPositiveButton("取消", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-            }
-        });
-        //if (!isFinishing())
-        updateAlertDialog.show();
-    }
-
-
-    class DownloadFileAsync extends AsyncTask<String, Integer, File> {
-        private float fileSize = 0;
-
-        @Override
-        protected File doInBackground(String... params) {
-            installAPK = FileUtil.createFile("freyr-new.apk");
-
-            try {
-
-                URL url = new URL(URLDecoder.decode(params[0], "UTF-8"));
-                URLConnection conn = url.openConnection();
-                conn.connect();
-                InputStream in = conn.getInputStream();
-                fileSize = conn.getContentLength();
-                if (fileSize > 0 && null != in) {
-                    int length = 0;
-                    int readLength = 0;
-                    byte[] data = new byte[1024];
-                    if (null != installAPK && installAPK.exists()) {
-                        FileOutputStream fos = new FileOutputStream(installAPK);
-                        while ((length = in.read(data)) != -1) {
-                            readLength += length;
-                            publishProgress((int) ((readLength / (float) fileSize) * 100));
-                            fos.write(data, 0, length);
-                        }
-                        fos.flush();
-                        fos.close();
-                        in.close();
-                    }
-                }
-            } catch (MalformedURLException e) {
-                Log.e(REQ_TAG, "doInBackground failure!!!", e);
-                publishProgress(-1);
-            } catch (IOException e) {
-                publishProgress(-1);
-                Log.e(REQ_TAG, "doInBackground failure!!!", e);
-            }
-            return installAPK;
-        }
-
-        @Override
-        protected void onProgressUpdate(Integer... values) {
-            super.onProgressUpdate(values);
-            if (-1 == values[0]) {
-                resetBtn();
-            } else if (100 <= values[0]) {
-                if (null != installAPK && installAPK.exists() && installAPK.length() > 0) {
-                    // unInstall(getActivity().getPackageName());
-                    progressDialog.dismiss();
-                    install();
-                    resetBtn();
-                }
-            } else {
-                progressDialog.setProgress(values[0]);
-            }
-        }
-
-
-        private void resetBtn() {
-            mLoginBtn.setClickable(true);
-        }
-    }
-
-    private void install() {
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setDataAndType(Uri.fromFile(installAPK), "application/vnd.android.package-archive");
-        startActivity(intent);
-    }
 }
