@@ -42,7 +42,6 @@ import butterknife.ButterKnife;
 public abstract class BaseActivity extends AppCompatActivity {
 
     private CommonReceiver mCommonReceiver = null;
-    protected AlertDialog mExitDialog;
 
     private boolean mNetworkOK = false;
 
@@ -284,19 +283,20 @@ public abstract class BaseActivity extends AppCompatActivity {
      * @param context
      */
     public void exitApplication(Context context) {
-        mExitDialog = new AlertDialog.Builder(context).create();
+
+        final AlertDialog mExitDialog = new AlertDialog.Builder(context).create();
         mExitDialog.show();
-        mExitDialog.getWindow().setContentView(R.layout.dialog_exit_alert);
-        mExitDialog.getWindow().findViewById(R.id.tv_ok).setOnClickListener(new View.OnClickListener() {
+
+        mExitDialog.setContentView(R.layout.dialog_exit_alert);
+        mExitDialog.findViewById(R.id.tv_ok).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mExitDialog.dismiss();
-                mExitDialog = null;
                 PcApplication application = (PcApplication) getApplication();
                 application.exit();
             }
         });
-        mExitDialog.getWindow().findViewById(R.id.tv_cancel).setOnClickListener(new View.OnClickListener() {
+        mExitDialog.findViewById(R.id.tv_cancel).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mExitDialog.dismiss();
@@ -406,16 +406,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
     }
 
-    public void warningAnimation(View view) {
-        if (view == null)
-            return;
-        view.setScaleX(0.2f);
-        view.setScaleY(0.2f);
-        view.animate().scaleX(1.0f)
-                .setDuration(1300).setStartDelay(300).setInterpolator(new BounceInterpolator()).start();
-        view.animate().scaleY(1.0f)
-                .setDuration(1300).setStartDelay(300).setInterpolator(new BounceInterpolator()).start();
-    }
 
     public boolean isShowBackIcon() {
         return mShowBackIcon;

@@ -277,29 +277,10 @@ public class TabHostActivity extends BaseActivity {
     }
 
 
-    private void quitDialog() {
-        AlertDialog.Builder quitDialog = new AlertDialog.Builder(this);
-        quitDialog.setTitle("退出");
-        quitDialog.setMessage("是否退出？");
-        quitDialog.setNegativeButton("确定",
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        PcApplication.getInstance().exit();
-                    }
-                }).setPositiveButton("取消", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-            }
-        });
-        quitDialog.show();
-    }
-
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            quitDialog();
+            exitApplication(this);
         }
         return false;
     }
