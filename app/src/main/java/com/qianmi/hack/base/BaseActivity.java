@@ -52,9 +52,13 @@ public abstract class BaseActivity extends AppCompatActivity {
     private ProgressDialog mLoadingDialog;
     private Snackbar mSnackbar;
 
-    /** 手势监听 */
+    /**
+     * 手势监听
+     */
     GestureDetector mGestureDetector;
-    /** 是否需要监听手势关闭功能 */
+    /**
+     * 是否需要监听手势关闭功能
+     */
     private boolean mNeedBackGesture = false;
 
     @Nullable
@@ -75,18 +79,19 @@ public abstract class BaseActivity extends AppCompatActivity {
     /*
         * 设置是否进行手势监听
     */
-    public void setNeedBackGesture(boolean mNeedBackGesture){
+    public void setNeedBackGesture(boolean mNeedBackGesture) {
         this.mNeedBackGesture = mNeedBackGesture;
     }
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         // TODO Auto-generated method stub
-        if(mNeedBackGesture){
+        if (mNeedBackGesture) {
             return mGestureDetector.onTouchEvent(ev) || super.dispatchTouchEvent(ev);
         }
         return super.dispatchTouchEvent(ev);
     }
+
     /**
      * callback which need to do for request http when enter current view
      */

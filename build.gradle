@@ -3,7 +3,7 @@
 buildscript {
     repositories {
         jcenter()
-        mavenLocal()
+//        mavenLocal()
         maven {
             url "http://mvn.leancloud.cn/nexus/content/repositories/releases"
         }
