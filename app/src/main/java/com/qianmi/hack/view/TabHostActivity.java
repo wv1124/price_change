@@ -11,6 +11,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTabHost;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -273,5 +274,33 @@ public class TabHostActivity extends BaseActivity {
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setDataAndType(Uri.fromFile(installAPK), "application/vnd.android.package-archive");
         startActivity(intent);
+    }
+
+
+    private void quitDialog() {
+        AlertDialog.Builder quitDialog = new AlertDialog.Builder(this);
+        quitDialog.setTitle("退出");
+        quitDialog.setMessage("是否退出？");
+        quitDialog.setNegativeButton("确定",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        PcApplication.getInstance().exit();
+                    }
+                }).setPositiveButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        quitDialog.show();
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            quitDialog();
+        }
+        return false;
     }
 }
