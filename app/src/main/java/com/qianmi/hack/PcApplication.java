@@ -12,7 +12,7 @@ import com.qianmi.hack.network.RequestManager;
 import com.qianmi.hack.utils.L;
 
 import java.lang.ref.WeakReference;
-import java.util.LinkedList;
+import java.util.Stack;
 
 /**
  * Created by wv on 2015/8/19.
@@ -23,7 +23,7 @@ public class PcApplication extends Application {
     public static String TOKEN = "";
     public static String INSTALLATION_ID = "";
     public static final String SIGN_SECRET = "secret";
-
+    private Stack<WeakReference<Activity>> activityStacks = new Stack<WeakReference<Activity>>();
     private static PcApplication sInstance;
 
     public static PcApplication getInstance() {
@@ -64,15 +64,83 @@ public class PcApplication extends Application {
 
     public void addActivity(Activity activity) {
         if (null != activity) {
-            activityList.add(new WeakReference<>(activity));
+            activityStacks.add(new WeakReference<>(activity));
         }
     }
 
-    private LinkedList<WeakReference<Activity>> activityList = new LinkedList<WeakReference<Activity>>();
+    /**
+     * 获取当前Activity（堆栈中最后一个压入的）
+     */
+    public Activity currentActivity() {
+        WeakReference<Activity> activityRef = activityStacks.lastElement();
+        return activityRef.get();
+    }
+
+
+    /**
+     * 移除当前Activity（堆栈中最后一个压入的）
+     */
+    public void removeActivity() {
+        WeakReference<Activity> activityRef = activityStacks.lastElement();
+        removeActivity(activityRef);
+    }
+
+
+    /**
+     * 移除指定的Activity
+     */
+    public void removeActivity(WeakReference<Activity> activityRef) {
+        if (activityRef != null) {
+            activityStacks.remove(activityRef);
+        }
+    }
+
+    /**
+     * 结束当前Activity（堆栈中最后一个压入的）
+     */
+    public void finishActivity() {
+        WeakReference<Activity> activityRef = activityStacks.lastElement();
+        finishActivity(activityRef);
+    }
+
+    /**
+     * 结束指定的Activity
+     */
+    public void finishActivity(WeakReference<Activity> activityRef) {
+        if (activityRef != null) {
+            activityStacks.remove(activityRef);
+            Activity activity = activityRef.get();
+            activity.finish();
+        }
+    }
+
+    /**
+     * 结束指定类名的Activity
+     */
+    public void finishActivity(Class<?> cls) {
+        for (WeakReference<Activity> ref : activityStacks) {
+            Class<?> refClazz = ref.get().getClass();
+            if (refClazz.equals(cls)) {
+                finishActivity(ref);
+            }
+        }
+    }
+
+    /**
+     * 结束所有Activity
+     */
+    public void finishAllActivity() {
+        for (int i = 0, size = activityStacks.size(); i < size; i++) {
+            if (activityStacks.get(i) != null) {
+                finishActivity(activityStacks.get(i));
+            }
+        }
+        activityStacks.clear();
+    }
 
     public void printActivityStackInfo() {
         L.d(" -- bottom --");
-        for (WeakReference activity : activityList) {
+        for (WeakReference activity : activityStacks) {
             if (activity != null) {
                 Activity a = (Activity) activity.get();
                 if (a != null) {
@@ -85,7 +153,7 @@ public class PcApplication extends Application {
 
     public void exit() {
         printActivityStackInfo();
-        for (WeakReference activity : activityList) {
+        for (WeakReference activity : activityStacks) {
             if (activity != null && activity.get() != null) {
                 //L.d("Exit" + ((Activity)activity.get()).getClass().getSimpleName() + " --");
                 ((Activity) activity.get()).finish();
